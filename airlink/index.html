@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="icon-192.svg">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <title>AirLink · 邻里书架</title>
-  <meta name="build-id" content="202605031030">
+  <meta name="build-id" content="202605031205">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;700&display=swap">
   <style>
@@ -261,7 +261,28 @@ const CSS = `
   @keyframes confetti{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(340px) rotate(720deg);opacity:0}}
   @keyframes scanLine{0%{top:12px;opacity:.9}48%{top:108px;opacity:.9}50%{top:108px;opacity:0}52%{top:12px;opacity:0}100%{top:12px;opacity:.9}}
   @keyframes dotB{0%,80%,100%{transform:scale(.7);opacity:.4}40%{transform:scale(1);opacity:1}}
+  @keyframes liquidPageIn{0%{opacity:.55;transform:translateY(12px) scale(.982);filter:blur(2px)}58%{opacity:1;transform:translateY(-2px) scale(1.006);filter:blur(0)}100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+  @keyframes liquidBreath{0%,100%{transform:scaleX(1) scaleY(1)}45%{transform:scaleX(1.06) scaleY(.96)}70%{transform:scaleX(.985) scaleY(1.025)}}
+  @keyframes liquidSpark{0%{transform:translateX(-140%) rotate(16deg);opacity:0}32%{opacity:.95}100%{transform:translateX(140%) rotate(16deg);opacity:0}}
   .dot{width:7px;height:7px;border-radius:50%;background:#667eea;display:inline-block;animation:dotB 1.2s ease-in-out infinite;}
+  .liquid-tab-page{animation:liquidPageIn .42s cubic-bezier(.18,.9,.2,1) both;transform-origin:50% 100%;will-change:opacity,transform,filter;}
+  .liquid-tab-shell{isolation:isolate;overflow:hidden;}
+  .liquid-tab-shell:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,255,255,.78));backdrop-filter:blur(22px) saturate(1.7);-webkit-backdrop-filter:blur(22px) saturate(1.7);z-index:0;}
+  .liquid-tab-blob{position:absolute;top:8px;width:68px;height:52px;pointer-events:none;z-index:1;filter:url(#airlink-liquid-goo);transition:left .52s cubic-bezier(.18,1.2,.2,1),transform .52s cubic-bezier(.18,1.2,.2,1);will-change:left,transform;}
+  .liquid-tab-core{position:absolute;inset:4px 5px;border-radius:26px;background:linear-gradient(145deg,rgba(255,255,255,.92),rgba(232,238,255,.54) 52%,rgba(204,216,255,.42));box-shadow:inset 0 1px 1px rgba(255,255,255,.98),inset 0 -10px 22px rgba(102,126,234,.18),0 14px 34px rgba(102,126,234,.25),0 2px 10px rgba(31,41,55,.08);border:1px solid rgba(255,255,255,.82);backdrop-filter:blur(18px) saturate(1.9);-webkit-backdrop-filter:blur(18px) saturate(1.9);animation:liquidBreath 2.4s cubic-bezier(.22,1,.36,1) infinite;}
+  .liquid-tab-core:before{content:"";position:absolute;inset:4px 8px 58% 9px;border-radius:999px;background:linear-gradient(100deg,rgba(255,255,255,.98),rgba(255,255,255,.28));opacity:.9;}
+  .liquid-tab-core:after{content:"";position:absolute;top:4px;bottom:5px;width:22px;border-radius:999px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.72),transparent);animation:liquidSpark 1.45s ease-in-out infinite;}
+  .liquid-tab-dot{position:absolute;border-radius:50%;background:rgba(232,238,255,.78);box-shadow:inset 0 1px 1px rgba(255,255,255,.95),0 8px 18px rgba(102,126,234,.18);}
+  .liquid-tab-dot.a{width:18px;height:18px;left:1px;top:18px;}
+  .liquid-tab-dot.b{width:13px;height:13px;right:2px;top:25px;}
+  .liquid-tab-button{transition:color .24s ease,transform .28s cubic-bezier(.22,1,.36,1);}
+  .liquid-tab-button svg,.liquid-tab-label{transition:transform .28s cubic-bezier(.22,1,.36,1),font-weight .2s ease,text-shadow .2s ease;}
+  .liquid-tab-button.is-active svg{transform:translateY(-2px) scale(1.08);filter:drop-shadow(0 4px 8px rgba(102,126,234,.18));}
+  .liquid-tab-button.is-active .liquid-tab-label{transform:translateY(-1px);text-shadow:0 3px 12px rgba(102,126,234,.22);}
+  @media (prefers-reduced-motion: reduce){
+    .liquid-tab-page,.liquid-tab-core,.liquid-tab-core:after{animation:none!important;}
+    .liquid-tab-blob,.liquid-tab-button,.liquid-tab-button svg,.liquid-tab-label{transition:none!important;}
+  }
   input,button,textarea{font-family:'DM Sans',sans-serif;}
   ::-webkit-scrollbar{display:none;}
 `;
@@ -2392,7 +2413,7 @@ function AirLink(){
       /* Fake status bar removed for mobile deploy */
 
       /* Scroll area */
-      , React.createElement('div', { key: tab, style: {height:"calc(100% - 80px - env(safe-area-inset-bottom, 0px))",overflowY:"auto",paddingBottom:20}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1494}}
+      , React.createElement('div', { key: tab, className: "liquid-tab-page", style: {height:"calc(100% - 80px - env(safe-area-inset-bottom, 0px))",overflowY:"auto",paddingBottom:20}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1494}}
 
         /* DISCOVER */
         , tab===0 && (
@@ -2741,14 +2762,28 @@ function AirLink(){
       )
 
       /* Bottom nav */
-      , React.createElement('div', { style: {position:"absolute",bottom:0,left:0,right:0,height:"calc(80px + env(safe-area-inset-bottom, 0px))",background:"#fff",borderTop:"1px solid #f0f2f8",display:"flex",alignItems:"center",justifyContent:"space-around",paddingBottom:"calc(8px + env(safe-area-inset-bottom, 0px))",boxShadow:"0 -4px 20px rgba(0,0,0,0.06)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1684}}
+      , React.createElement('svg', { width: "0", height: "0", style: {position:"absolute"}, "aria-hidden": "true", focusable: "false" },
+        React.createElement('defs', null,
+          React.createElement('filter', { id: "airlink-liquid-goo" },
+            React.createElement('feGaussianBlur', { in: "SourceGraphic", stdDeviation: "7", result: "blur" }),
+            React.createElement('feColorMatrix', { in: "blur", mode: "matrix", values: "1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7", result: "goo" }),
+            React.createElement('feBlend', { in: "SourceGraphic", in2: "goo" })
+          )
+        )
+      )
+      , React.createElement('div', { className: "liquid-tab-shell", style: {position:"absolute",bottom:0,left:0,right:0,height:"calc(80px + env(safe-area-inset-bottom, 0px))",background:"rgba(255,255,255,0.78)",borderTop:"1px solid rgba(232,236,244,0.82)",display:"flex",alignItems:"center",justifyContent:"space-around",paddingBottom:"calc(8px + env(safe-area-inset-bottom, 0px))",boxShadow:"0 -8px 30px rgba(25,31,45,0.08)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1684}}
+        , React.createElement('div', { className: "liquid-tab-blob", style: {left:`calc(${tab * 25}% + 12.5% - 34px)`}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1685}}
+          , React.createElement('div', { className: "liquid-tab-dot a", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1686}})
+          , React.createElement('div', { className: "liquid-tab-core", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1687}})
+          , React.createElement('div', { className: "liquid-tab-dot b", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1688}})
+        )
         , TABS.map((t,i)=>{
           const count=i===2?unreadN:i===1?(myBooks.length+borrowed.length):0;
           return (
-            React.createElement('button', { key: t, onClick: ()=>setTab(i), style: {flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:3,border:"none",background:"transparent",cursor:"pointer",color:tab===i?"#667eea":"#8892a4",position:"relative",padding:"8px 0"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1688}}
+            React.createElement('button', { key: t, className: `liquid-tab-button ${tab===i?"is-active":""}`, onClick: ()=>setTab(i), style: {flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:3,border:"none",background:"transparent",cursor:"pointer",color:tab===i?"#667eea":"#8892a4",position:"relative",padding:"8px 0",zIndex:2}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1688}}
               , React.createElement(TabIcon, { i: i, active: tab===i, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1689}})
               , count>0&&React.createElement('div', { style: {position:"absolute",top:4,right:"calc(50% - 20px)",width:16,height:16,background:"#ef4444",borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,color:"#fff",fontWeight:700,border:"2px solid #fff"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1690}}, count>9?"9+":count)
-              , React.createElement('span', { style: {fontSize:10,fontWeight:tab===i?700:500}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1691}}, t)
+              , React.createElement('span', { className: "liquid-tab-label", style: {fontSize:10,fontWeight:tab===i?700:500}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1691}}, t)
             )
           );
         })

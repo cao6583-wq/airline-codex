@@ -1,5 +1,5 @@
 // AirLink Service Worker — auto-versioned
-const BUILD_ID = '202605031030';
+const BUILD_ID = '202605031205';
 const CACHE_NAME = 'airlink-' + BUILD_ID;
 const CORE_ASSETS = [
   './',

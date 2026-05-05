@@ -1,6 +1,6 @@
 # LinkNest · 邻里书架
 
-邻里图书共享 App — PWA 版本
+邻里图书共享手机网页版。当前阶段优先开发 Safari / Chrome 直接访问的手机网页体验，原生 App 和安装体验放到后续阶段。
 
 ## 文件结构
 
@@ -10,11 +10,11 @@ airlink-app/
 ├── vercel.json         # Vercel 部署配置
 ├── netlify.toml        # Netlify 部署配置
 ├── README.md
-├── manifest.json       # PWA 清单
-├── sw.js               # Service Worker（离线支持）
+├── manifest.json       # Web 清单
+├── sw.js               # Service Worker（网页缓存/离线兜底）
 ├── favicon.png
-├── icon-192.png        # App 图标
-├── icon-512.png        # App 图标（大）
+├── icon-192.png        # 历史图标
+├── icon-512.png        # 历史图标（大）
 ├── linknest-favicon.png
 ├── linknest-icon-192.png
 ├── linknest-icon-512.png
@@ -65,19 +65,19 @@ airlink-app/
 
 ---
 
-## 用户如何安装为 App
+## 手机网页版使用
 
-### iPhone / iPad (Safari)
+### iPhone / iPad
 1. 用 Safari 打开网站链接
-2. 点击底部分享按钮 📤
-3. 选择「添加到主屏幕」
-4. 确认 → App 图标出现在桌面 ✓
+2. 直接在浏览器中使用 LinkNest
+3. 允许定位、相机、通知等权限后可测试对应功能
 
-### Android (Chrome)
+### Android
 1. 用 Chrome 打开网站链接
-2. 点击右上角菜单 ⋮
-3. 选择「添加到主屏幕」或「安装应用」
-4. 确认 → 安装完成 ✓
+2. 直接在浏览器中使用 LinkNest
+3. 允许定位、相机、通知等权限后可测试对应功能
+
+原生 iOS / Android App、添加到主屏幕图标和应用商店发布后续再开发。
 
 ---
 
@@ -85,8 +85,8 @@ airlink-app/
 
 - **框架**：React 18（优先加载本地 `vendor/`，CDN 作为备用源）
 - **JSX 转译**：Babel Standalone（浏览器内实时转译）
-- **PWA**：Service Worker + Web Manifest
-- **离线**：核心资源本地缓存，断网可打开
+- **手机网页版**：面向 Safari / Chrome 的移动端浏览器体验
+- **网页缓存**：Service Worker + Web Manifest 仅用于网页缓存、基础离线兜底和浏览器元信息
 - **构建工具**：仍可直接部署静态文件，也可用 Vite 构建 `dist/`
 - **云端后端**：Supabase Auth + Postgres（通过 `supabase-js@2` CDN，可在「我」页填写项目配置）
 
@@ -99,6 +99,7 @@ airlink-app/
 - Service Worker 会预缓存核心本地文件，提升离线可打开概率。
 - React 运行库优先走本地 `vendor/`，CDN 作为备用源；运行库加载失败时会显示明确提示。
 - 「我」页面新增应用诊断，可检查更新、重新加载、查看错误日志数量并清除错误日志。
+- 产品方向调整为手机网页版优先，manifest 改为浏览器显示模式；原生 App 后续再开发。
 
 ## 本版新增
 
@@ -130,7 +131,7 @@ airlink-app/
 - Service Worker 新增 `push` 与 `notificationclick` 处理，可展示服务端发送的通知。
 - 「我」页新增地图服务配置，支持 Google Maps JavaScript API 或高德 Web JS API；未配置时保留模拟地图。
 - 新增 Vite 配置：`npm run dev` 本地开发，`npm run build` 输出 `dist/`，构建时自动复制 PWA 静态资源和 Supabase 函数目录。
-- 构建号与 Service Worker 缓存版本已更新为 `202605042135`。
+- 构建号与 Service Worker 缓存版本已更新为 `202605042145`。
 - 应用品牌名已更新为 LinkNest，并替换为 LinkNest PNG 图标。
 
 ---
@@ -222,4 +223,4 @@ npm run preview
 - [x] 添加 Supabase Edge Function 实际发送 Web Push
 - [x] 接入真实地图 API（高德/Google Maps）
 - [x] 用 Vite 打包优化加载速度
-- [ ] 提交 App Store / Google Play（Capacitor 封装）
+- [ ] 后续开发原生 App / 添加到主屏幕体验 / App Store 与 Google Play 发布

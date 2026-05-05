@@ -4,14 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#20b86f">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="LinkNest">
   <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="linknest-white-icon-192.png">
   <link rel="icon" type="image/png" href="linknest-white-favicon.png">
-  <title>LinkNest · 邻里书架</title>
-  <meta name="build-id" content="202605042135">
+  <title>LinkNest · 手机网页版</title>
+  <meta name="build-id" content="202605042145">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;700&display=swap">
   <style>
@@ -44,7 +40,7 @@
   <div id="loading">
     <img class="loading-logo-img" src="linknest-white-icon-192.png" alt="LinkNest">
     <div class="loading-title">LinkNest</div>
-    <div class="loading-sub">邻里书架，正在加载…</div>
+    <div class="loading-sub">手机网页版，正在加载…</div>
   </div>
   <div id="root"></div>
   <script src="vendor/react.production.min.js"></script>
@@ -1166,8 +1162,8 @@ function CameraCapture({onCapture, onClose}){
             , React.createElement('div', { style: {color:"#fff",fontWeight:700,fontSize:15,marginBottom:8}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 753}}, "无法访问相机")
             , React.createElement('div', { style: {color:"rgba(255,255,255,0.6)",fontSize:13,lineHeight:1.6}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 754}}, error)
             , React.createElement('div', { style: {marginTop:20,background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:16,padding:"14px 16px",textAlign:"left"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 755}}
-              , React.createElement('div', { style: {color:"rgba(255,255,255,0.5)",fontSize:11,fontWeight:700,textTransform:"uppercase",letterSpacing:1,marginBottom:8}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 756}}, "沙盒环境提示")
-              , React.createElement('div', { style: {color:"rgba(255,255,255,0.6)",fontSize:12,lineHeight:1.7}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 757}}, "在浏览器预览环境中，相机访问受到限制。正式 App（iOS/Android）中此功能可完整运行，支持对准书籍背面或正面封面拍照识别。" )
+              , React.createElement('div', { style: {color:"rgba(255,255,255,0.5)",fontSize:11,fontWeight:700,textTransform:"uppercase",letterSpacing:1,marginBottom:8}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 756}}, "手机网页版提示")
+              , React.createElement('div', { style: {color:"rgba(255,255,255,0.6)",fontSize:12,lineHeight:1.7}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 757}}, "请在 HTTPS 环境下用 Safari 或 Chrome 打开，并允许相机权限。若当前浏览器限制相机访问，可以先手动输入 ISBN；原生 App 后续再开发。" )
             )
           )
         ) : captured ? (

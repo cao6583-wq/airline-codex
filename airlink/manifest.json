@@ -1,10 +1,10 @@
 {
-  "name": "LinkNest · 邻里书架",
+  "name": "LinkNest · 手机网页版",
   "short_name": "LinkNest",
   "description": "与附近邻居共享书籍，发现好书，传递阅读的快乐",
   "start_url": ".",
   "scope": ".",
-  "display": "standalone",
+  "display": "browser",
   "background_color": "#ffffff",
   "theme_color": "#20b86f",
   "orientation": "portrait",

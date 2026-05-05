@@ -7,7 +7,7 @@ const dist = resolve(root, "dist");
 
 function copyStaticAssets() {
   mkdirSync(dist, { recursive: true });
-  for (const file of ["manifest.json", "sw.js", "favicon.png", "icon-192.png", "icon-512.png", "linknest-favicon.png", "linknest-icon-192.png", "linknest-icon-512.png", "README.md", "vercel.json", "netlify.toml"]) {
+  for (const file of ["manifest.json", "sw.js", "favicon.png", "icon-192.png", "icon-512.png", "linknest-favicon.png", "linknest-icon-192.png", "linknest-icon-512.png", "linknest-white-favicon.png", "linknest-white-icon-192.png", "linknest-white-icon-512.png", "README.md", "vercel.json", "netlify.toml"]) {
     const src = resolve(root, file);
     if (existsSync(src)) copyFileSync(src, resolve(dist, file));
   }
@@ -19,6 +19,8 @@ function copyStaticAssets() {
   if (existsSync(indexFile)) {
     const html = readFileSync(indexFile, "utf8")
       .replace(/href="\.?\/?assets\/manifest-[^"]+\.json"/, 'href="manifest.json"')
+      .replace(/href="\.?\/?assets\/linknest-white-icon-192-[^"]+\.png"/, 'href="linknest-white-icon-192.png"')
+      .replace(/href="\.?\/?assets\/linknest-white-favicon-[^"]+\.png"/, 'href="linknest-white-favicon.png"')
       .replace(/href="\.?\/?assets\/linknest-icon-192-[^"]+\.png"/, 'href="linknest-icon-192.png"')
       .replace(/href="\.?\/?assets\/linknest-favicon-[^"]+\.png"/, 'href="linknest-favicon.png"')
       .replace(/href="\.?\/?assets\/icon-192-[^"]+\.(svg|png)"/, 'href="linknest-icon-192.png"')

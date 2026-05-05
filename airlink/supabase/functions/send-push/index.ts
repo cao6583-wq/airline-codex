@@ -70,7 +70,7 @@ Deno.serve(async (req) => {
     if (error) throw error;
 
     const notification = JSON.stringify({
-      title: payload.title || "AirLink",
+      title: payload.title || "LinkNest",
       body: payload.body || "你有一条新的借阅消息",
       url: payload.url || "./",
       tag: payload.tag || "airlink-update",

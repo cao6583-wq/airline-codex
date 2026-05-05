@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#667eea">
+  <meta name="theme-color" content="#20b86f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="AirLink">
+  <meta name="apple-mobile-web-app-title" content="LinkNest">
   <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icon-192.svg">
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <title>AirLink · 邻里书架</title>
-  <meta name="build-id" content="202605031205">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <title>LinkNest · 邻里书架</title>
+  <meta name="build-id" content="202605042055">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;700&display=swap">
   <style>
@@ -34,6 +34,7 @@
     }
     #loading { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; font-family: 'DM Sans', sans-serif; z-index: 9999; }
     .loading-logo { font-size: 56px; margin-bottom: 16px; animation: pulse 1.5s ease-in-out infinite; }
+    .loading-logo-img { width: 128px; height: 128px; object-fit: contain; border-radius: 28px; margin-bottom: 16px; animation: pulse 1.5s ease-in-out infinite; box-shadow: 0 16px 40px rgba(0,0,0,.18); background: #fff; }
     @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
     .loading-title { font-size: 26px; font-weight: 700; margin-bottom: 6px; font-family: 'Noto Serif SC', serif; }
     .loading-sub { font-size: 14px; opacity: 0.75; }
@@ -41,8 +42,8 @@
 </head>
 <body>
   <div id="loading">
-    <div class="loading-logo">📚</div>
-    <div class="loading-title">AirLink</div>
+    <img class="loading-logo-img" src="icon-192.png" alt="LinkNest">
+    <div class="loading-title">LinkNest</div>
     <div class="loading-sub">邻里书架，正在加载…</div>
   </div>
   <div id="root"></div>
@@ -114,7 +115,7 @@
     }
     componentDidCatch(error, info) {
       try {
-        console.error('AirLink crashed:', error, info);
+        console.error('LinkNest crashed:', error, info);
         // Save crash info to localStorage for debugging
         localStorage.setItem('airlink:v1:lastCrash', JSON.stringify({
           message: String(error?.message || error),
@@ -1745,7 +1746,7 @@ function MapRadiusSheet({radius, onChangeRadius, savedRadii, onSaveRadius, onRem
 
 // ── Main App ─────────────────────────────────────────────────────────────────
 
-function AirLink(){
+function LinkNest(){
   const [registered,setRegistered]=usePersistedState("registered", false); // false = show onboarding
   const [showRegistrationGate,setShowRegistrationGate]=useState(false);
   const [regStep,setRegStep]=useState(0); // 0=welcome, 1=form, 2=done
@@ -1886,7 +1887,7 @@ function AirLink(){
   const exportBackup = () => {
     try {
       const payload = {
-        app: "AirLink",
+        app: "LinkNest",
         schema: "airlink-local-v1",
         build: document.querySelector('meta[name="build-id"]')?.content || "unknown",
         exportedAt: new Date().toISOString(),
@@ -1897,7 +1898,7 @@ function AirLink(){
       const a = document.createElement("a");
       const stamp = new Date().toISOString().slice(0, 10).replaceAll("-", "");
       a.href = url;
-      a.download = `airlink-backup-${stamp}.json`;
+      a.download = `linknest-backup-${stamp}.json`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -1925,7 +1926,7 @@ function AirLink(){
         setUpdateState("备份已导入，正在重新加载…");
         setTimeout(() => window.location.reload(), 350);
       } catch(_) {
-        setUpdateState("导入失败：请选择 AirLink 备份文件");
+        setUpdateState("导入失败：请选择 LinkNest 备份文件");
       } finally {
         if (importInputRef.current) importInputRef.current.value = "";
       }
@@ -1947,7 +1948,7 @@ function AirLink(){
       setCloudUser(user);
       if(user){
         setRegistered(true);
-        setRegName(user.user_metadata?.display_name || regName || user.email?.split("@")[0] || "AirLink 用户");
+        setRegName(user.user_metadata?.display_name || regName || user.email?.split("@")[0] || "LinkNest 用户");
         setCloudStatus(`已登录：${user.email || user.id}`);
       }
     }).catch(()=>{});
@@ -1956,7 +1957,7 @@ function AirLink(){
       setCloudUser(user);
       if(user){
         setRegistered(true);
-        setRegName(user.user_metadata?.display_name || regName || user.email?.split("@")[0] || "AirLink 用户");
+        setRegName(user.user_metadata?.display_name || regName || user.email?.split("@")[0] || "LinkNest 用户");
         setCloudStatus(`已登录：${user.email || user.id}`);
         runPendingAfterAuth();
       }
@@ -2108,7 +2109,7 @@ function AirLink(){
     try{
       const { data, error } = await client.functions.invoke("send-push", {
         body: {
-          title: "AirLink 测试通知",
+          title: "LinkNest 测试通知",
           body: "如果你看到这条通知，Web Push 已经打通。",
           url: "./",
           tag: "airlink-test"
@@ -2340,8 +2341,8 @@ function AirLink(){
 
           , regStep===0 && (
             React.createElement('div', { style: {flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"32px 28px",textAlign:"center",gap:0}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1416}}
-              , React.createElement('div', { style: {fontSize:72,marginBottom:20,filter:"drop-shadow(0 8px 24px rgba(102,126,234,0.6))",animation:"pulse 2s ease-in-out infinite"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1417}}, "📚")
-              , React.createElement('div', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:28,fontWeight:700,color:"#fff",marginBottom:10,letterSpacing:.5}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1418}}, "AirLink")
+              , React.createElement('img', { src: "icon-192.png", alt: "LinkNest", style: {width:112,height:112,objectFit:"contain",borderRadius:24,background:"#fff",marginBottom:20,boxShadow:"0 14px 38px rgba(0,0,0,0.22)",animation:"pulse 2s ease-in-out infinite"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1417}})
+              , React.createElement('div', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:28,fontWeight:700,color:"#fff",marginBottom:10,letterSpacing:.5}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1418}}, "LinkNest")
               , React.createElement('div', { style: {fontSize:14,color:"rgba(255,255,255,0.6)",marginBottom:40,lineHeight:1.7}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1419}}, "连接邻里，共享阅读", React.createElement('br', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1419}}), "让好书在社区之间流转")
               , React.createElement('div', { style: {width:"100%",marginBottom:16}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1420}}
                 , React.createElement('button', { onClick: ()=>setRegStep(1), style: {width:"100%",padding:"16px",borderRadius:18,border:"none",background:"linear-gradient(135deg,#667eea,#764ba2)",color:"#fff",fontSize:16,fontWeight:700,cursor:"pointer",boxShadow:"0 8px 28px rgba(102,126,234,0.5)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1421}}, "免费注册"
@@ -2379,7 +2380,7 @@ function AirLink(){
                 , React.createElement('div', { style: {flexShrink:0,width:22,height:22,borderRadius:7,border:regAgree?"none":"2px solid rgba(255,255,255,0.3)",background:regAgree?"linear-gradient(135deg,#667eea,#764ba2)":"transparent",display:"flex",alignItems:"center",justifyContent:"center",marginTop:1,transition:"all .15s"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1453}}
                   , regAgree && React.createElement('svg', { viewBox: "0 0 10 8"   , width: "11", height: "9", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1454}}, React.createElement('path', { d: "M1 4L3.5 6.5L9 1"   , stroke: "#fff", strokeWidth: "1.8", strokeLinecap: "round", strokeLinejoin: "round", fill: "none", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1454}}))
                 )
-                , React.createElement('div', { style: {fontSize:12,color:"rgba(255,255,255,0.55)",lineHeight:1.7}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1456}}, "我已阅读并同意 AirLink 的"
+                , React.createElement('div', { style: {fontSize:12,color:"rgba(255,255,255,0.55)",lineHeight:1.7}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1456}}, "我已阅读并同意 LinkNest 的"
                     , React.createElement('span', { style: {color:"#a78bfa"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1457}}, " 用户服务协议 "  ), "和", React.createElement('span', { style: {color:"#a78bfa"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1457}}, " 隐私政策" ), "，包括借阅规范、信用评分及争议处理条款。"
                 )
               )
@@ -2402,7 +2403,7 @@ function AirLink(){
               , React.createElement('div', { style: {fontSize:64,animation:"pop .6s cubic-bezier(.22,1.36,.58,1) both"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1476}}, "🎉")
               , React.createElement('div', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:22,fontWeight:700,color:"#fff"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1477}}, "欢迎加入，", regName, "！")
               , React.createElement('div', { style: {fontSize:14,color:"rgba(255,255,255,0.6)",lineHeight:1.7}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1478}}, "你的账号已创建成功", React.createElement('br', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1478}}), "初始信用分 100 分，可立即借书"  )
-              , React.createElement('div', { style: {marginTop:8,background:"rgba(255,255,255,0.1)",borderRadius:16,padding:"12px 20px",fontSize:12,color:"rgba(255,255,255,0.7)",lineHeight:1.6}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1479}}, "正在进入 AirLink…"
+              , React.createElement('div', { style: {marginTop:8,background:"rgba(255,255,255,0.1)",borderRadius:16,padding:"12px 20px",fontSize:12,color:"rgba(255,255,255,0.7)",lineHeight:1.6}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1479}}, "正在进入 LinkNest…"
 
               )
             )
@@ -2612,7 +2613,7 @@ function AirLink(){
           React.createElement('div', { style: {padding:"16px 20px 0"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1647}}
             , React.createElement('div', { style: {background:"linear-gradient(135deg,#667eea,#764ba2)",borderRadius:24,padding:"28px 24px",marginBottom:16,textAlign:"center"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1648}}
               , React.createElement('div', { style: {width:72,height:72,background:"rgba(255,255,255,0.2)",borderRadius:22,display:"flex",alignItems:"center",justifyContent:"center",fontSize:36,margin:"0 auto 14px"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1649}}, "🧑")
-              , React.createElement('div', { style: {color:"#fff",fontFamily:"'Noto Serif SC',serif",fontSize:20,fontWeight:700}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1650}}, regName || "AirLink 用户")
+              , React.createElement('div', { style: {color:"#fff",fontFamily:"'Noto Serif SC',serif",fontSize:20,fontWeight:700}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1650}}, regName || "LinkNest 用户")
               , React.createElement('div', { style: {color:"rgba(255,255,255,0.7)",fontSize:13,marginTop:4}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1651}}, cloudUser ? "云端账号已连接" : "本地模式" )
               , React.createElement('div', { style: {display:"flex",justifyContent:"center",gap:28,marginTop:20}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1652}}
                 , [[String(myBooks.length),"共享书"],["5","借阅书"],[rating>0?`${rating}★`:"4.9★","评分"]].map(([v,l])=>(
@@ -2874,7 +2875,7 @@ function AirLink(){
 
   const container = document.getElementById('root');
   const root = ReactDOM.createRoot(container);
-  root.render(React.createElement(ErrorBoundary, null, React.createElement(AirLink)));
+  root.render(React.createElement(ErrorBoundary, null, React.createElement(LinkNest)));
   requestAnimationFrame(function hide() {
     if (container.firstChild) {
       const l = document.getElementById('loading');

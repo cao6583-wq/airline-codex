@@ -1,13 +1,13 @@
-// AirLink Service Worker — auto-versioned
-const BUILD_ID = '202605031205';
-const CACHE_NAME = 'airlink-' + BUILD_ID;
+// LinkNest Service Worker — auto-versioned
+const BUILD_ID = '202605042055';
+const CACHE_NAME = 'linknest-' + BUILD_ID;
 const CORE_ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './favicon.svg',
-  './icon-192.svg',
-  './icon-512.svg',
+  './favicon.png',
+  './icon-192.png',
+  './icon-512.png',
   './vendor/react.production.min.js',
   './vendor/react-dom.production.min.js'
 ];
@@ -68,11 +68,11 @@ self.addEventListener('push', event => {
   let data = {};
   try { data = event.data ? event.data.json() : {}; }
   catch (_) { data = { body: event.data ? event.data.text() : '' }; }
-  const title = data.title || 'AirLink';
+  const title = data.title || 'LinkNest';
   const options = {
     body: data.body || '你有一条新的借阅消息',
-    icon: './icon-192.svg',
-    badge: './icon-192.svg',
+    icon: './icon-192.png',
+    badge: './icon-192.png',
     data: { url: data.url || './' },
     tag: data.tag || 'airlink-update'
   };

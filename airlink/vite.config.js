@@ -7,7 +7,7 @@ const dist = resolve(root, "dist");
 
 function copyStaticAssets() {
   mkdirSync(dist, { recursive: true });
-  for (const file of ["manifest.json", "sw.js", "favicon.svg", "icon-192.svg", "icon-512.svg", "README.md", "vercel.json", "netlify.toml"]) {
+  for (const file of ["manifest.json", "sw.js", "favicon.png", "icon-192.png", "icon-512.png", "README.md", "vercel.json", "netlify.toml"]) {
     const src = resolve(root, file);
     if (existsSync(src)) copyFileSync(src, resolve(dist, file));
   }
@@ -19,8 +19,8 @@ function copyStaticAssets() {
   if (existsSync(indexFile)) {
     const html = readFileSync(indexFile, "utf8")
       .replace(/href="\.?\/?assets\/manifest-[^"]+\.json"/, 'href="manifest.json"')
-      .replace(/href="\.?\/?assets\/icon-192-[^"]+\.svg"/, 'href="icon-192.svg"')
-      .replace(/href="\.?\/?assets\/favicon-[^"]+\.svg"/, 'href="favicon.svg"');
+      .replace(/href="\.?\/?assets\/icon-192-[^"]+\.(svg|png)"/, 'href="icon-192.png"')
+      .replace(/href="\.?\/?assets\/favicon-[^"]+\.(svg|png)"/, 'href="favicon.png"');
     writeFileSync(indexFile, html);
   }
 }

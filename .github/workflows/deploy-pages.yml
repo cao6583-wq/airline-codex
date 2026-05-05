@@ -1,4 +1,4 @@
-name: Deploy AirLink to GitHub Pages
+name: Deploy LinkNest to GitHub Pages
 
 on:
   push:
@@ -35,7 +35,7 @@ jobs:
         working-directory: airlink
         run: npm ci
 
-      - name: Build AirLink
+      - name: Build LinkNest
         working-directory: airlink
         run: npm run build
 

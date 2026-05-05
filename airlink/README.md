@@ -1,4 +1,4 @@
-# AirLink · 邻里书架
+# LinkNest · 邻里书架
 
 邻里图书共享 App — PWA 版本
 
@@ -12,9 +12,9 @@ airlink-app/
 ├── README.md
 ├── manifest.json       # PWA 清单
 ├── sw.js               # Service Worker（离线支持）
-├── favicon.svg
-├── icon-192.svg        # App 图标
-├── icon-512.svg        # App 图标（大）
+├── favicon.png
+├── icon-192.png        # App 图标
+├── icon-512.png        # App 图标（大）
 └── vendor/
     ├── react.production.min.js
     └── react-dom.production.min.js
@@ -34,7 +34,7 @@ airlink-app/
 6. Framework Preset 选 **Other**
 7. 点击 Deploy — 约 30 秒上线 ✓
 
-部署后获得：`https://airlink-xxx.vercel.app`
+部署后获得：`https://linknest-xxx.vercel.app`
 
 ---
 
@@ -53,7 +53,7 @@ airlink-app/
 1. 创建 GitHub 仓库
 2. 把 `airlink-app` 文件夹内容推送到 `main` 分支
 3. Settings → Pages → Source 选 `main` 分支根目录
-4. 等待约 1 分钟 → 获得 `https://username.github.io/airlink`
+4. 等待约 1 分钟 → 获得 `https://username.github.io/linknest`
 
 注意：GitHub Pages 需要在 `index.html` 中把 `sw.js` 注册路径改为相对路径。
 
@@ -96,8 +96,8 @@ airlink-app/
 
 ## 本版新增
 
-- 「我」页面新增数据备份卡片，可导出全部本地 AirLink 数据为 JSON 文件。
-- 支持从 AirLink 备份 JSON 导入并覆盖恢复书架、借阅、消息、积分、徽章、搜索半径等本地数据。
+- 「我」页面新增数据备份卡片，可导出全部本地 LinkNest 数据为 JSON 文件。
+- 支持从 LinkNest 备份 JSON 导入并覆盖恢复书架、借阅、消息、积分、徽章、搜索半径等本地数据。
 - 构建号与 Service Worker 缓存版本会随每版更新，便于部署后触发新版缓存。
 
 ## 扫码识别增强
@@ -124,13 +124,14 @@ airlink-app/
 - Service Worker 新增 `push` 与 `notificationclick` 处理，可展示服务端发送的通知。
 - 「我」页新增地图服务配置，支持 Google Maps JavaScript API 或高德 Web JS API；未配置时保留模拟地图。
 - 新增 Vite 配置：`npm run dev` 本地开发，`npm run build` 输出 `dist/`，构建时自动复制 PWA 静态资源和 Supabase 函数目录。
-- 构建号与 Service Worker 缓存版本已更新为 `202605031030`。
+- 构建号与 Service Worker 缓存版本已更新为 `202605042055`。
+- 应用品牌名已更新为 LinkNest，并替换为 LinkNest PNG 图标。
 
 ---
 
 ## Supabase 配置
 
-在 Supabase SQL Editor 中执行以下 SQL，然后到 AirLink「我」页填入 Project URL、anon public key 和 VAPID public key。
+在 Supabase SQL Editor 中执行以下 SQL，然后到 LinkNest「我」页填入 Project URL、anon public key 和 VAPID public key。
 
 ```sql
 create table if not exists public.airlink_user_data (
@@ -151,7 +152,7 @@ create table if not exists public.airlink_push_subscriptions (
 alter table public.airlink_user_data enable row level security;
 alter table public.airlink_push_subscriptions enable row level security;
 
-create policy "Users manage own AirLink data"
+create policy "Users manage own LinkNest data"
 on public.airlink_user_data
 for all
 using (auth.uid() = user_id)
@@ -177,7 +178,7 @@ supabase secrets set VAPID_PRIVATE_KEY=你的_PRIVATE_KEY
 supabase functions deploy send-push
 ```
 
-部署后在 AirLink「我」页：
+部署后在 LinkNest「我」页：
 
 1. 填 Supabase URL / anon key 并登录
 2. 填 VAPID public key

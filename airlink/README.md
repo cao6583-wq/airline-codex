@@ -124,7 +124,7 @@ airlink-app/
 - Service Worker 新增 `push` 与 `notificationclick` 处理，可展示服务端发送的通知。
 - 「我」页新增地图服务配置，支持 Google Maps JavaScript API 或高德 Web JS API；未配置时保留模拟地图。
 - 新增 Vite 配置：`npm run dev` 本地开发，`npm run build` 输出 `dist/`，构建时自动复制 PWA 静态资源和 Supabase 函数目录。
-- 构建号与 Service Worker 缓存版本已更新为 `202605042102`。
+- 构建号与 Service Worker 缓存版本已更新为 `202605042115`。
 - 应用品牌名已更新为 LinkNest，并替换为 LinkNest PNG 图标。
 
 ---

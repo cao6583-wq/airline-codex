@@ -132,7 +132,8 @@ airlink-app/
 - 「我」页新增地图服务配置，支持 Google Maps JavaScript API 或高德 Web JS API；未配置时保留模拟地图。
 - 新增 Vite 配置：`npm run dev` 本地开发，`npm run build` 输出 `dist/`，构建时自动复制 PWA 静态资源和 Supabase 函数目录。
 - 重新优化「我」页面：顶部个人概览、账号同步、网页工具、信用徽章、备份和诊断按移动端使用场景重新分组。
-- 构建号与 Service Worker 缓存版本已更新为 `202605122126`。
+- 「我」页新增 Supabase 连接测试；项目 ID 会自动补全为 `https://项目ID.supabase.co`，并提示 URL、网络或 anon key 的具体问题。
+- 构建号与 Service Worker 缓存版本已更新为 `202605131942`。
 - 应用品牌名已更新为 LinkNest，并替换为 LinkNest PNG 图标。
 
 ---

@@ -7,7 +7,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="linknest-white-favicon.png">
   <title>LinkNest · 手机网页版</title>
-  <meta name="build-id" content="202605122126">
+  <meta name="build-id" content="202605131942">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;700&display=swap">
   <style>
@@ -1806,8 +1806,23 @@ function LinkNest(){
   const pendingActionRef = useRef(null);
 
   const push = (msg) => setMsgs(p=>[msg,...p]);
+  const normalizeSupabaseUrl = (value) => {
+    let url = String(value || "").trim().replace(/\/+$/, "");
+    if(!url) return "";
+    if(!/^https?:\/\//i.test(url)){
+      url = url.includes(".") ? `https://${url}` : `https://${url}.supabase.co`;
+    }
+    return url;
+  };
+  const explainCloudError = (e) => {
+    const msg = String(e?.message || e || "");
+    if(/Failed to fetch|NetworkError|Load failed/i.test(msg)) return "连接失败：请检查 Supabase URL 是否正确，或当前网络是否能访问 Supabase";
+    if(/Invalid API key|JWT|apikey|401|403/i.test(msg)) return "连接失败：anon public key 不正确，请确认没有填成 service_role/secret key";
+    if(/not found|404/i.test(msg)) return "连接失败：项目 URL 不存在，请检查项目 ID";
+    return msg || "连接失败：未知错误";
+  };
   const getSupabaseClient = (silent=false) => {
-    const url = supabaseUrl.trim();
+    const url = normalizeSupabaseUrl(supabaseUrl);
     const key = supabaseAnonKey.trim();
     if(!url || !key){
       if(!silent) setCloudStatus("请先填写 Supabase URL 和 anon public key");
@@ -1823,6 +1838,40 @@ function LinkNest(){
     const client = window.supabase.createClient(url, key);
     supabaseRef.current = {url, key, client};
     return client;
+  };
+  const testSupabaseConnection = async () => {
+    const url = normalizeSupabaseUrl(supabaseUrl);
+    const key = supabaseAnonKey.trim();
+    if(!url || !key){
+      setCloudStatus("请先填写 Supabase URL 和 anon public key");
+      return;
+    }
+    if(!window.supabase || !window.supabase.createClient){
+      setCloudStatus("Supabase SDK 未加载，请检查网络后刷新");
+      return;
+    }
+    try {
+      new URL(url);
+    } catch(e) {
+      setCloudStatus("Supabase URL 格式不正确，应类似 https://项目ID.supabase.co");
+      return;
+    }
+    setCloudBusy(true);
+    setCloudStatus("正在测试 Supabase 连接…");
+    try {
+      if(url !== supabaseUrl.trim()) setSupabaseUrl(url);
+      const authRes = await fetch(`${url}/auth/v1/settings`, { headers: { apikey: key } });
+      if(authRes.status === 401 || authRes.status === 403) throw new Error("Invalid API key");
+      if(authRes.status === 404) throw new Error("Project not found");
+      if(!authRes.ok) throw new Error(`Auth 服务返回 ${authRes.status}`);
+      const client = window.supabase.createClient(url, key);
+      supabaseRef.current = {url, key, client};
+      setCloudStatus("Supabase 连接正常，可以注册或登录");
+    } catch(e) {
+      setCloudStatus(explainCloudError(e));
+    } finally {
+      setCloudBusy(false);
+    }
   };
   const collectCloudData = () => ({
     registered, regName, radius, savedRadii, mapProvider, googleMapsApiKey, amapApiKey, myBooks, borrowed, bookReviews,
@@ -2669,6 +2718,7 @@ function LinkNest(){
                 , cloudUser && React.createElement('button', { disabled: cloudBusy, onClick: saveToCloud, style: {...primarySmallButton,opacity:cloudBusy?0.65:1}}, "同步到云端")
                 , cloudUser && React.createElement('button', { disabled: cloudBusy, onClick: loadFromCloud, style: {...secondarySmallButton,opacity:cloudBusy?0.65:1}}, "从云端恢复")
               )
+              , React.createElement('button', { disabled: cloudBusy, onClick: testSupabaseConnection, style: {width:"100%",padding:"10px 8px",borderRadius:12,border:"1.5px solid #e8ecf4",background:"#f8fafc",color:"#168f65",fontSize:12,fontWeight:800,cursor:cloudBusy?"default":"pointer",opacity:cloudBusy?0.65:1,marginBottom:8}}, "测试 Supabase 连接")
               , cloudUser && React.createElement('button', { disabled: cloudBusy, onClick: signOutCloud, style: {width:"100%",padding:"10px 8px",borderRadius:12,border:"1.5px solid #e8ecf4",background:"#fff",color:"#8b95a8",fontSize:12,fontWeight:800,cursor:cloudBusy?"default":"pointer",opacity:cloudBusy?0.65:1}}, "退出云端账号")
               , React.createElement('details', { style: {marginTop:10}}
                 , React.createElement('summary', { style: {fontSize:12,color:"#667085",fontWeight:800,cursor:"pointer",padding:"4px 0"}}, "Supabase 高级配置")

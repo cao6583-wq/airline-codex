@@ -7,7 +7,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="linknest-white-favicon.png">
   <title>LinkNest · 手机网页版</title>
-  <meta name="build-id" content="202605042145">
+  <meta name="build-id" content="202605122126">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;700&display=swap">
   <style>
@@ -2314,6 +2314,26 @@ function LinkNest(){
       storageItems
     };
   })();
+  const borrowerReviewItems = Object.entries(borrowerReviews)
+    .flatMap(([name,items]) => (items||[]).map((r,i)=>({...r,borrower:name,key:name+i})))
+    .slice(0,3);
+  const totalSharedBooks = myBooks.length;
+  const activeBorrowedCount = borrowed.length;
+  const lentOutCount = myBooks.filter(b=>!b.available).length;
+  const nextBadgeTarget = points < 150 ? 150 : points < 200 ? 200 : 300;
+  const prevBadgeTarget = points < 150 ? 0 : points < 200 ? 150 : 200;
+  const badgeProgress = Math.min(100, Math.round(((points - prevBadgeTarget) / (nextBadgeTarget - prevBadgeTarget)) * 100));
+  const profileCardStyle = {background:"#fff",borderRadius:18,padding:"16px",marginBottom:12,boxShadow:"0 2px 12px rgba(22,29,45,0.06)",border:"1px solid rgba(232,236,244,0.7)"};
+  const profileSectionTitle = (title, hint, right) => React.createElement('div', { style: {display:"flex",justifyContent:"space-between",alignItems:"center",gap:12,marginBottom:12}},
+    React.createElement('div', { style: {minWidth:0}},
+      React.createElement('div', { style: {fontSize:15,fontWeight:800,color:"#162033",letterSpacing:0}}, title),
+      hint && React.createElement('div', { style: {fontSize:11,color:"#8b95a8",lineHeight:1.45,marginTop:3}}, hint)
+    ),
+    right || null
+  );
+  const profileInputStyle = {width:"100%",padding:"11px 12px",borderRadius:12,border:"1.5px solid #e8ecf4",fontSize:12,outline:"none",background:"#fff",color:"#162033"};
+  const primarySmallButton = {padding:"10px 8px",borderRadius:12,border:"none",background:"linear-gradient(135deg,#14b8a6,#82c91e)",color:"#fff",fontSize:12,fontWeight:800,cursor:"pointer"};
+  const secondarySmallButton = {padding:"10px 8px",borderRadius:12,border:"1.5px solid #e8ecf4",background:"#fff",color:"#168f65",fontSize:12,fontWeight:800,cursor:"pointer"};
 
   const TabIcon = ({i,active}) => {
     const icons=[
@@ -2604,8 +2624,161 @@ function LinkNest(){
           )
         )
 
-        /* PROFILE */
+        /* PROFILE REDESIGN */
         , tab===3 && (
+          React.createElement('div', { style: {padding:"14px 16px 20px"}}
+            , React.createElement('div', { style: {background:"linear-gradient(145deg,#ffffff 0%,#f2fff8 45%,#eef7ff 100%)",borderRadius:24,padding:"18px 16px",marginBottom:12,boxShadow:"0 10px 30px rgba(24,139,101,0.13)",border:"1px solid rgba(255,255,255,0.85)",position:"relative",overflow:"hidden"}}
+              , React.createElement('div', { style: {position:"absolute",right:-36,top:-46,width:140,height:140,borderRadius:"50%",background:"rgba(32,184,111,0.12)"}})
+              , React.createElement('div', { style: {display:"flex",alignItems:"center",gap:13,position:"relative"}}
+                , React.createElement('img', { src: "linknest-white-icon-192.png", alt: "LinkNest", style: {width:62,height:62,borderRadius:17,objectFit:"contain",background:"#fff",boxShadow:"0 8px 22px rgba(20,184,166,0.18)",flexShrink:0}})
+                , React.createElement('div', { style: {flex:1,minWidth:0}}
+                  , React.createElement('div', { style: {fontSize:21,fontWeight:900,color:"#132033",fontFamily:"'Noto Serif SC',serif",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, regName || "LinkNest 用户")
+                  , React.createElement('div', { style: {display:"flex",gap:6,flexWrap:"wrap",marginTop:7}}
+                    , React.createElement('span', { style: {fontSize:11,fontWeight:800,color:cloudUser?"#168f65":"#7c8798",background:cloudUser?"#dcfce7":"#eef2f7",borderRadius:99,padding:"4px 9px"}}, cloudUser ? "云端已连接" : "本地模式")
+                    , React.createElement('span', { style: {fontSize:11,fontWeight:800,color:appDiagnostics.online?"#168f65":"#dc2626",background:appDiagnostics.online?"#dcfce7":"#fee2e2",borderRadius:99,padding:"4px 9px"}}, appDiagnostics.online ? "在线" : "离线")
+                  )
+                )
+              )
+              , React.createElement('div', { style: {display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginTop:16,position:"relative"}}
+                , [
+                  [String(totalSharedBooks),"共享"],
+                  [String(activeBorrowedCount),"借入"],
+                  [String(lentOutCount),"借出"],
+                  [`${points}`,"积分"]
+                ].map(([value,label])=>(
+                  React.createElement('div', { key: label, style: {background:"rgba(255,255,255,0.82)",border:"1px solid rgba(232,236,244,0.8)",borderRadius:14,padding:"9px 4px",textAlign:"center"}}
+                    , React.createElement('div', { style: {fontSize:17,fontWeight:900,color:"#132033"}}, value)
+                    , React.createElement('div', { style: {fontSize:10,color:"#8b95a8",fontWeight:800,marginTop:2}}, label)
+                  )
+                ))
+              )
+            )
+
+            , React.createElement('div', { style: profileCardStyle}
+              , profileSectionTitle("账号与同步", cloudUser ? `已连接 ${cloudUser.email || "Supabase 用户"}` : "手机网页版可先本地使用，需要借书/同步时再登录",
+                React.createElement('span', { style: {fontSize:11,fontWeight:800,color:cloudUser?"#168f65":"#d97706",background:cloudUser?"#dcfce7":"#fffbeb",borderRadius:99,padding:"5px 10px",whiteSpace:"nowrap"}}, cloudUser ? "已登录" : "未登录")
+              )
+              , React.createElement('div', { style: {display:"flex",gap:8,marginBottom:8}}
+                , React.createElement('input', { value: authEmail, onChange: e=>setAuthEmail(e.target.value.trim()), placeholder: "邮箱", inputMode: "email", style: {...profileInputStyle,flex:1,minWidth:0}})
+                , React.createElement('input', { value: authPassword, onChange: e=>setAuthPassword(e.target.value), placeholder: "密码", type: "password", style: {...profileInputStyle,flex:1,minWidth:0}})
+              )
+              , cloudStatus && React.createElement('div', { style: {fontSize:11,color:"#168f65",background:"#ecfdf5",borderRadius:12,padding:"8px 10px",marginBottom:8,lineHeight:1.5}}, cloudStatus)
+              , React.createElement('div', { style: {display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:8}}
+                , !cloudUser && React.createElement('button', { disabled: cloudBusy, onClick: ()=>signInWithCloud("signin"), style: {...primarySmallButton,opacity:cloudBusy?0.65:1}}, "登录")
+                , !cloudUser && React.createElement('button', { disabled: cloudBusy, onClick: ()=>signInWithCloud("signup"), style: {...secondarySmallButton,opacity:cloudBusy?0.65:1}}, "注册")
+                , cloudUser && React.createElement('button', { disabled: cloudBusy, onClick: saveToCloud, style: {...primarySmallButton,opacity:cloudBusy?0.65:1}}, "同步到云端")
+                , cloudUser && React.createElement('button', { disabled: cloudBusy, onClick: loadFromCloud, style: {...secondarySmallButton,opacity:cloudBusy?0.65:1}}, "从云端恢复")
+              )
+              , cloudUser && React.createElement('button', { disabled: cloudBusy, onClick: signOutCloud, style: {width:"100%",padding:"10px 8px",borderRadius:12,border:"1.5px solid #e8ecf4",background:"#fff",color:"#8b95a8",fontSize:12,fontWeight:800,cursor:cloudBusy?"default":"pointer",opacity:cloudBusy?0.65:1}}, "退出云端账号")
+              , React.createElement('details', { style: {marginTop:10}}
+                , React.createElement('summary', { style: {fontSize:12,color:"#667085",fontWeight:800,cursor:"pointer",padding:"4px 0"}}, "Supabase 高级配置")
+                , React.createElement('div', { style: {display:"flex",flexDirection:"column",gap:8,marginTop:8}}
+                  , React.createElement('input', { value: supabaseUrl, onChange: e=>setSupabaseUrl(e.target.value.trim()), placeholder: "Supabase Project URL", style: profileInputStyle})
+                  , React.createElement('input', { value: supabaseAnonKey, onChange: e=>setSupabaseAnonKey(e.target.value.trim()), placeholder: "Supabase anon public key", style: profileInputStyle})
+                )
+              )
+            )
+
+            , React.createElement('div', { style: profileCardStyle}
+              , profileSectionTitle("网页工具", "推送通知、地图服务和测试 API 都放在这里")
+              , React.createElement('details', { open: false, style: {borderBottom:"1px solid #f0f2f8",paddingBottom:12,marginBottom:12}}
+                , React.createElement('summary', { style: {fontSize:13,fontWeight:900,color:"#162033",cursor:"pointer"}}, "Web Push")
+                , React.createElement('input', { value: vapidPublicKey, onChange: e=>setVapidPublicKey(e.target.value.trim()), placeholder: "VAPID public key", style: {...profileInputStyle,marginTop:10,marginBottom:8}})
+                , pushStatus && React.createElement('div', { style: {fontSize:11,color:"#168f65",background:"#ecfdf5",borderRadius:12,padding:"8px 10px",marginBottom:8,lineHeight:1.5}}, pushStatus)
+                , React.createElement('div', { style: {display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}
+                  , React.createElement('button', { onClick: enableWebPush, style: primarySmallButton}, "开启推送")
+                  , React.createElement('button', { onClick: sendTestPush, style: secondarySmallButton}, "测试推送")
+                  , React.createElement('button', { onClick: disableWebPush, style: {...secondarySmallButton,gridColumn:"1 / -1",color:"#7c8798"}}, "关闭本机推送")
+                )
+              )
+              , React.createElement('details', { open: false}
+                , React.createElement('summary', { style: {fontSize:13,fontWeight:900,color:"#162033",cursor:"pointer"}}, "地图服务 · ", mapProvider==="google"?"Google":mapProvider==="amap"?"高德":"模拟")
+                , React.createElement('div', { style: {display:"flex",gap:8,margin:"10px 0"}}
+                  , [{k:"mock",l:"模拟"},{k:"google",l:"Google"},{k:"amap",l:"高德"}].map(p=>React.createElement('button', { key: p.k, onClick: ()=>setMapProvider(p.k), style: {flex:1,padding:"9px 8px",borderRadius:12,border:"none",background:mapProvider===p.k?"linear-gradient(135deg,#14b8a6,#82c91e)":"#f4f6fb",color:mapProvider===p.k?"#fff":"#5a6272",fontSize:12,fontWeight:800,cursor:"pointer"}}, p.l))
+                )
+                , React.createElement('input', { value: googleMapsApiKey, onChange: e=>setGoogleMapsApiKey(e.target.value.trim()), placeholder: "Google Maps JavaScript API key", style: {...profileInputStyle,marginBottom:8}})
+                , React.createElement('input', { value: amapApiKey, onChange: e=>setAmapApiKey(e.target.value.trim()), placeholder: "高德地图 Web JS API key", style: profileInputStyle})
+              )
+            )
+
+            , React.createElement('div', { style: profileCardStyle}
+              , profileSectionTitle("信用与徽章", `距离下一个徽章还差 ${Math.max(0,nextBadgeTarget-points)} pts`)
+              , React.createElement('div', { style: {height:9,background:"#eef2f7",borderRadius:99,overflow:"hidden",marginBottom:12}}
+                , React.createElement('div', { style: {height:"100%",width:`${badgeProgress}%`,background:"linear-gradient(90deg,#14b8a6,#82c91e)",borderRadius:99,transition:"width .5s"}})
+              )
+              , React.createElement('div', { style: {display:"flex",flexWrap:"wrap",gap:8}}
+                , badges.map(b=>(
+                  React.createElement('div', { key: b, style: {background:"#f0fdf4",border:"1.5px solid #dcfce7",borderRadius:13,padding:"9px 11px",display:"flex",alignItems:"center",gap:7}}
+                    , React.createElement('span', { style: {fontSize:17}}, b.split(" ")[0])
+                    , React.createElement('span', { style: {fontSize:12,fontWeight:800,color:"#168f65"}}, b.split(" ").slice(1).join(" "))
+                  )
+                ))
+              )
+            )
+
+            , borrowerReviewItems.length > 0 && React.createElement('div', { style: profileCardStyle}
+              , profileSectionTitle("借书者评价", "最近收到的借阅反馈")
+              , borrowerReviewItems.map(r=>(
+                React.createElement('div', { key: r.key, style: {background:"#f8fafc",borderRadius:14,padding:"11px 12px",marginBottom:8}}
+                  , React.createElement('div', { style: {display:"flex",justifyContent:"space-between",gap:8,marginBottom:4}}
+                    , React.createElement('span', { style: {fontSize:12,fontWeight:800,color:"#162033"}}, r.borrower, " · 《", r.bookTitle, "》")
+                    , React.createElement('span', { style: {fontSize:11,color:"#f59e0b",whiteSpace:"nowrap"}}, "★".repeat(r.stars))
+                  )
+                  , React.createElement('div', { style: {fontSize:12,color:"#5a6272",lineHeight:1.5}}, r.text)
+                )
+              ))
+            )
+
+            , React.createElement('div', { style: profileCardStyle}
+              , profileSectionTitle("数据备份", "导出本地数据，或从备份恢复")
+              , React.createElement('input', { ref: importInputRef, type: "file", accept: "application/json,.json", onChange: e=>importBackupFile(e.target.files && e.target.files[0]), style: {display:"none"}})
+              , React.createElement('div', { style: {display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}
+                , React.createElement('button', { onClick: exportBackup, style: primarySmallButton}, "导出备份")
+                , React.createElement('button', { onClick: ()=>importInputRef.current?.click(), style: secondarySmallButton}, "导入备份")
+              )
+            )
+
+            , React.createElement('div', { style: profileCardStyle}
+              , profileSectionTitle("应用诊断", null,
+                React.createElement('span', { style: {fontSize:11,fontWeight:800,color:appDiagnostics.online?"#168f65":"#dc2626",background:appDiagnostics.online?"#dcfce7":"#fee2e2",borderRadius:99,padding:"5px 10px"}}, appDiagnostics.online ? "在线" : "离线")
+              )
+              , React.createElement('div', { style: {display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}}
+                , [
+                  ["构建号", appDiagnostics.build.slice(-8)],
+                  ["网页缓存", appDiagnostics.swControlled ? "已接管" : "待激活"],
+                  ["本地数据", `${appDiagnostics.storageItems} 项`],
+                  ["错误日志", `${appDiagnostics.errors.length}${appDiagnostics.lastCrash ? " + 崩溃" : ""}`]
+                ].map(([label,value])=>(
+                  React.createElement('div', { key: label, style: {background:"#f8fafc",borderRadius:13,padding:"9px 10px"}}
+                    , React.createElement('div', { style: {fontSize:10,color:"#8b95a8",fontWeight:800,marginBottom:4}}, label)
+                    , React.createElement('div', { style: {fontSize:13,fontWeight:900,color:"#162033",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, value)
+                  )
+                ))
+              )
+              , appDiagnostics.lastCrash && React.createElement('div', { style: {background:"#fff7ed",border:"1px solid #fed7aa",borderRadius:13,padding:"9px 10px",fontSize:11,color:"#9a3412",lineHeight:1.5,marginBottom:10}}, "最近崩溃：", String(appDiagnostics.lastCrash.message || "未知错误").slice(0, 70))
+              , updateState && React.createElement('div', { style: {fontSize:11,color:"#168f65",background:"#ecfdf5",borderRadius:12,padding:"8px 10px",marginBottom:10,lineHeight:1.5}}, updateState)
+              , React.createElement('div', { style: {display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}
+                , React.createElement('button', { onClick: refreshAppShell, style: primarySmallButton}, "检查更新")
+                , React.createElement('button', { onClick: ()=>window.location.reload(), style: secondarySmallButton}, "重新加载")
+                , React.createElement('button', { onClick: ()=>{localStorage.removeItem("airlink:v1:errors");localStorage.removeItem("airlink:v1:lastCrash");setDiagVersion(v=>v+1);setUpdateState("错误日志已清除");}, style: {...secondarySmallButton,color:"#7c8798"}}, "清除日志")
+              )
+            )
+
+            , React.createElement('button', {
+                onClick: () => {
+                  if(confirm('确定要重置所有数据吗？\n\n这将清除：\n• 你的账号信息\n• 所有书籍和借阅记录\n• 消息历史\n• 积分和徽章\n\n此操作无法撤销。')) {
+                    clearAllLS();
+                    window.location.reload();
+                  }
+                },
+                style: {width:"100%",background:"transparent",border:"none",color:"#b0b8cc",fontSize:12,cursor:"pointer",padding:"8px 12px 18px",textDecoration:"underline"}
+              }, "重置所有数据"
+            )
+          )
+        )
+
+        /* PROFILE LEGACY */
+        , false && tab===3 && (
           React.createElement('div', { style: {padding:"16px 20px 0"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1647}}
             , React.createElement('div', { style: {background:"linear-gradient(135deg,#667eea,#764ba2)",borderRadius:24,padding:"28px 24px",marginBottom:16,textAlign:"center"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1648}}
               , React.createElement('div', { style: {width:72,height:72,background:"rgba(255,255,255,0.2)",borderRadius:22,display:"flex",alignItems:"center",justifyContent:"center",fontSize:36,margin:"0 auto 14px"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1649}}, "🧑")

@@ -7,7 +7,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="linknest-white-favicon.png">
   <title>LinkNest · 手机网页版</title>
-  <meta name="build-id" content="202605131942">
+  <meta name="build-id" content="202605131948">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;700&display=swap">
   <style>
@@ -1742,6 +1742,12 @@ function MapRadiusSheet({radius, onChangeRadius, savedRadii, onSaveRadius, onRem
 
 // ── Main App ─────────────────────────────────────────────────────────────────
 
+const LINKNEST_CLOUD_CONFIG = {
+  supabaseUrl: "",
+  supabaseAnonKey: "",
+  showDeveloperSettings: false
+};
+
 function LinkNest(){
   const [registered,setRegistered]=usePersistedState("registered", false); // false = show onboarding
   const [showRegistrationGate,setShowRegistrationGate]=useState(false);
@@ -1804,6 +1810,9 @@ function LinkNest(){
   const [updateState,setUpdateState]=useState("");
   const importInputRef = useRef(null);
   const pendingActionRef = useRef(null);
+  const cloudDeveloperSettingsVisible = LINKNEST_CLOUD_CONFIG.showDeveloperSettings || loadLS("showCloudDeveloperSettings", false);
+  const effectiveSupabaseUrl = LINKNEST_CLOUD_CONFIG.supabaseUrl || supabaseUrl;
+  const effectiveSupabaseAnonKey = LINKNEST_CLOUD_CONFIG.supabaseAnonKey || supabaseAnonKey;
 
   const push = (msg) => setMsgs(p=>[msg,...p]);
   const normalizeSupabaseUrl = (value) => {
@@ -1822,10 +1831,10 @@ function LinkNest(){
     return msg || "连接失败：未知错误";
   };
   const getSupabaseClient = (silent=false) => {
-    const url = normalizeSupabaseUrl(supabaseUrl);
-    const key = supabaseAnonKey.trim();
+    const url = normalizeSupabaseUrl(effectiveSupabaseUrl);
+    const key = effectiveSupabaseAnonKey.trim();
     if(!url || !key){
-      if(!silent) setCloudStatus("请先填写 Supabase URL 和 anon public key");
+      if(!silent) setCloudStatus("云端服务暂未配置，当前可继续使用本地模式");
       return null;
     }
     if(!window.supabase || !window.supabase.createClient){
@@ -1840,10 +1849,10 @@ function LinkNest(){
     return client;
   };
   const testSupabaseConnection = async () => {
-    const url = normalizeSupabaseUrl(supabaseUrl);
-    const key = supabaseAnonKey.trim();
+    const url = normalizeSupabaseUrl(effectiveSupabaseUrl);
+    const key = effectiveSupabaseAnonKey.trim();
     if(!url || !key){
-      setCloudStatus("请先填写 Supabase URL 和 anon public key");
+      setCloudStatus("云端服务暂未配置，当前可继续使用本地模式");
       return;
     }
     if(!window.supabase || !window.supabase.createClient){
@@ -1859,7 +1868,7 @@ function LinkNest(){
     setCloudBusy(true);
     setCloudStatus("正在测试 Supabase 连接…");
     try {
-      if(url !== supabaseUrl.trim()) setSupabaseUrl(url);
+      if(cloudDeveloperSettingsVisible && url !== supabaseUrl.trim()) setSupabaseUrl(url);
       const authRes = await fetch(`${url}/auth/v1/settings`, { headers: { apikey: key } });
       if(authRes.status === 401 || authRes.status === 403) throw new Error("Invalid API key");
       if(authRes.status === 404) throw new Error("Project not found");
@@ -2704,7 +2713,7 @@ function LinkNest(){
             )
 
             , React.createElement('div', { style: profileCardStyle}
-              , profileSectionTitle("账号与同步", cloudUser ? `已连接 ${cloudUser.email || "Supabase 用户"}` : "手机网页版可先本地使用，需要借书/同步时再登录",
+              , profileSectionTitle("账号与同步", cloudUser ? `已连接 ${cloudUser.email || "云端账号"}` : "手机网页版可先本地使用，需要借书/同步时再登录",
                 React.createElement('span', { style: {fontSize:11,fontWeight:800,color:cloudUser?"#168f65":"#d97706",background:cloudUser?"#dcfce7":"#fffbeb",borderRadius:99,padding:"5px 10px",whiteSpace:"nowrap"}}, cloudUser ? "已登录" : "未登录")
               )
               , React.createElement('div', { style: {display:"flex",gap:8,marginBottom:8}}
@@ -2718,13 +2727,13 @@ function LinkNest(){
                 , cloudUser && React.createElement('button', { disabled: cloudBusy, onClick: saveToCloud, style: {...primarySmallButton,opacity:cloudBusy?0.65:1}}, "同步到云端")
                 , cloudUser && React.createElement('button', { disabled: cloudBusy, onClick: loadFromCloud, style: {...secondarySmallButton,opacity:cloudBusy?0.65:1}}, "从云端恢复")
               )
-              , React.createElement('button', { disabled: cloudBusy, onClick: testSupabaseConnection, style: {width:"100%",padding:"10px 8px",borderRadius:12,border:"1.5px solid #e8ecf4",background:"#f8fafc",color:"#168f65",fontSize:12,fontWeight:800,cursor:cloudBusy?"default":"pointer",opacity:cloudBusy?0.65:1,marginBottom:8}}, "测试 Supabase 连接")
+              , cloudDeveloperSettingsVisible && React.createElement('button', { disabled: cloudBusy, onClick: testSupabaseConnection, style: {width:"100%",padding:"10px 8px",borderRadius:12,border:"1.5px solid #e8ecf4",background:"#f8fafc",color:"#168f65",fontSize:12,fontWeight:800,cursor:cloudBusy?"default":"pointer",opacity:cloudBusy?0.65:1,marginBottom:8}}, "测试云端连接")
               , cloudUser && React.createElement('button', { disabled: cloudBusy, onClick: signOutCloud, style: {width:"100%",padding:"10px 8px",borderRadius:12,border:"1.5px solid #e8ecf4",background:"#fff",color:"#8b95a8",fontSize:12,fontWeight:800,cursor:cloudBusy?"default":"pointer",opacity:cloudBusy?0.65:1}}, "退出云端账号")
-              , React.createElement('details', { style: {marginTop:10}}
-                , React.createElement('summary', { style: {fontSize:12,color:"#667085",fontWeight:800,cursor:"pointer",padding:"4px 0"}}, "Supabase 高级配置")
+              , cloudDeveloperSettingsVisible && React.createElement('details', { style: {marginTop:10}}
+                , React.createElement('summary', { style: {fontSize:12,color:"#667085",fontWeight:800,cursor:"pointer",padding:"4px 0"}}, "开发云端配置")
                 , React.createElement('div', { style: {display:"flex",flexDirection:"column",gap:8,marginTop:8}}
-                  , React.createElement('input', { value: supabaseUrl, onChange: e=>setSupabaseUrl(e.target.value.trim()), placeholder: "Supabase Project URL", style: profileInputStyle})
-                  , React.createElement('input', { value: supabaseAnonKey, onChange: e=>setSupabaseAnonKey(e.target.value.trim()), placeholder: "Supabase anon public key", style: profileInputStyle})
+                  , React.createElement('input', { value: supabaseUrl, onChange: e=>setSupabaseUrl(e.target.value.trim()), placeholder: "Project URL", style: profileInputStyle})
+                  , React.createElement('input', { value: supabaseAnonKey, onChange: e=>setSupabaseAnonKey(e.target.value.trim()), placeholder: "Public key", style: profileInputStyle})
                 )
               )
             )

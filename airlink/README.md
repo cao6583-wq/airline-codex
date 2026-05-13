@@ -125,22 +125,22 @@ airlink-app/
 - 已取消互换相关入口和流程，借阅申请消息中只保留“同意借阅”操作。
 - 消息页改为会话列表：每个联系人只显示最新一条消息，未读联系人头像显示蓝点，点击后进入完整历史交流。
 - 消息详情页支持点击借书者头像查看对方资料，并可继续打开 TA 的书架；测试借书者也提供示例书架，方便验证借阅流程。
-- 「我」页新增「云端账号」卡片：填写 Supabase URL / anon key 后可注册、登录、上传本地数据到云端、从云端恢复。
+- 「我」页新增「云端账号」卡片：普通用户只需邮箱和密码即可注册、登录、上传本地数据到云端、从云端恢复。
 - 新增 Web Push 订阅：填写 VAPID public key 后可在浏览器生成推送订阅，并保存到 Supabase。
 - 新增 Supabase Edge Function `send-push`，可使用 VAPID private key 实际发送 Web Push；「我」页支持发送测试推送。
 - Service Worker 新增 `push` 与 `notificationclick` 处理，可展示服务端发送的通知。
 - 「我」页新增地图服务配置，支持 Google Maps JavaScript API 或高德 Web JS API；未配置时保留模拟地图。
 - 新增 Vite 配置：`npm run dev` 本地开发，`npm run build` 输出 `dist/`，构建时自动复制 PWA 静态资源和 Supabase 函数目录。
 - 重新优化「我」页面：顶部个人概览、账号同步、网页工具、信用徽章、备份和诊断按移动端使用场景重新分组。
-- 「我」页新增 Supabase 连接测试；项目 ID 会自动补全为 `https://项目ID.supabase.co`，并提示 URL、网络或 anon key 的具体问题。
-- 构建号与 Service Worker 缓存版本已更新为 `202605131942`。
+- Supabase URL / public key 改为内部云端配置，不再要求普通用户填写数据库链接；未配置时会提示继续使用本地模式。
+- 构建号与 Service Worker 缓存版本已更新为 `202605131948`。
 - 应用品牌名已更新为 LinkNest，并替换为 LinkNest PNG 图标。
 
 ---
 
 ## Supabase 配置
 
-在 Supabase SQL Editor 中执行以下 SQL，然后到 LinkNest「我」页填入 Project URL、anon public key 和 VAPID public key。
+在 Supabase SQL Editor 中执行以下 SQL，然后把 Project URL 和 publishable/anon public key 配置到 `LINKNEST_CLOUD_CONFIG`。普通用户不会在 LinkNest 页面里看到这些数据库配置。
 
 ```sql
 create table if not exists public.airlink_user_data (
@@ -189,7 +189,7 @@ supabase functions deploy send-push
 
 部署后在 LinkNest「我」页：
 
-1. 填 Supabase URL / anon key 并登录
+1. 确认 `LINKNEST_CLOUD_CONFIG` 已配置，并用邮箱密码登录
 2. 填 VAPID public key
 3. 点「开启推送」保存订阅
 4. 点「发送测试推送」调用 Edge Function 验证通知

@@ -7,7 +7,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="linknest-white-favicon.png">
   <title>LinkNest · 手机网页版</title>
-  <meta name="build-id" content="202605132024">
+  <meta name="build-id" content="202605132040">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;700&display=swap">
   <style>
@@ -246,6 +246,8 @@ const CATEGORIES = ["全部","小说","文学","历史","科技","儿童","心�
 const TABS = ["发现","我的书架","消息","好友","我"];
 const BOOK_CONDITIONS = ["全新","九成新","轻微使用","有笔记","折痕/磨损"];
 const REQUIRE_REGISTRATION_FOR_ACTIONS = true; // 借书/添加书籍时触发登录；未配置云端时仍可用本地演示账号
+const normalizeReviewPart = (value) => String(value || "").toLowerCase().normalize("NFKC").replace(/[^\p{L}\p{N}]+/gu, "");
+const bookReviewKey = (book) => `book:${normalizeReviewPart(book?.title)}:${normalizeReviewPart(book?.author)}`;
 
 const CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=DM+Sans:wght@400;600;700&display=swap');
@@ -679,7 +681,7 @@ function OwnerProfileSheet({ownerName,onClose}){
   );
 }
 
-function BookCard({book,onPress,delay=0}){
+function BookCard({book,onPress,onOwnerPress,delay=0}){
   const [vis,setVis]=useState(false);
   useEffect(()=>{const t=setTimeout(()=>setVis(true),delay);return()=>clearTimeout(t);},[delay]);
   const p = OWNER_PROFILES[book.owner];
@@ -696,9 +698,12 @@ function BookCard({book,onPress,delay=0}){
           , book.condition && React.createElement('span', { style: {background:"#f0f2ff",color:"#667eea",borderRadius:20,padding:"3px 9px",fontSize:11,fontWeight:600}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 386}}, "📖 " , book.condition)
           , book.category && React.createElement('span', { style: {background:"#f8f4ff",color:"#9c6fea",borderRadius:20,padding:"3px 9px",fontSize:11,fontWeight:600}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 387}}, book.category)
         )
-        , React.createElement('div', { style: {display:"flex",justifyContent:"space-between",alignItems:"center"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 389}}
+        , React.createElement('div', { style: {display:"flex",justifyContent:"space-between",alignItems:"center",gap:8}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 389}}
           , React.createElement('span', { style: {fontSize:12,color:"#8892a4"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 390}}, "📍 " , book.distance, " km" )
-          , React.createElement('span', { style: {fontSize:12,fontWeight:700,color:"#3d5a99"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 391}}, book.owner, p?` ★${p.rating}`:"")
+          , React.createElement('button', { onClick: e=>{e.stopPropagation();onOwnerPress&&onOwnerPress(book.owner);}, style: {display:"flex",alignItems:"center",gap:5,border:"none",background:"#f8f9ff",borderRadius:999,padding:"3px 8px 3px 4px",fontSize:12,fontWeight:700,color:"#3d5a99",cursor:"pointer",maxWidth:"60%"}}
+            , React.createElement('span', { style: {width:22,height:22,borderRadius:8,background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,flexShrink:0}}, p?.avatar || "👤")
+            , React.createElement('span', { style: {whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, book.owner, p?` ★${p.rating}`:"")
+          )
         )
       )
     )
@@ -714,12 +719,12 @@ function BookDetail({book,onClose,onBorrow,onBorrowBatch,extraReviews=[],onAddRe
   const [reviewText,setReviewText]=useState("");
   const [reviewDone,setReviewDone]=useState(false);
   const p = OWNER_PROFILES[book.owner];
-  const bookReviews = [...(book.reviews||[]), ...(extraReviews||[])];
+  const bookReviews = extraReviews.length ? extraReviews : [...(book.reviews||[])];
   const avgBookRating = bookReviews.length ? (bookReviews.reduce((sum,r)=>sum+(Number(r.stars)||0),0)/bookReviews.length).toFixed(1) : null;
   const submitReview = () => {
     if(!reviewText.trim()) return;
     const review = {from:"我",stars:reviewStars,text:reviewText.trim(),time:"刚刚"};
-    if(onAddReview) onAddReview(book.id, review);
+    if(onAddReview) onAddReview(book, review);
     setReviewText("");
     setReviewDone(true);
     setTimeout(()=>{setShowReview(false);setReviewDone(false);},900);
@@ -1242,6 +1247,7 @@ function AddBookModal({onClose,onAdd,onSuccess}){
   const [imgError,setImgError]=useState(false);
   const [photoImg,setPhotoImg]=useState(null);
   const [showCamera,setShowCamera]=useState(false);
+  const [description,setDescription]=useState("");
   const [dur,setDur]=useState("1 month");
   const [condition,setCondition]=useState("九成新");
   const [category,setCategory]=useState("");
@@ -1263,6 +1269,10 @@ function AddBookModal({onClose,onAdd,onSuccess}){
         const subjects=(b.subjects||[]).map(s=>typeof s==="string"?s:s.name||"");
         setTitle(t); setAuthor(a);
         if(b.cover){ setCoverImg(b.cover.large||b.cover.medium||imgUrl); }
+        const desc = typeof b.description==="string" ? b.description : (b.description?.value || "");
+        const notes = typeof b.notes==="string" ? b.notes : (b.notes?.value || "");
+        const excerpt = (b.excerpts||[]).map(x=>x.text).filter(Boolean)[0] || "";
+        setDescription((desc || notes || excerpt || "").slice(0, 420));
         const guess=guessCategory(t,a,subjects);
         if(guess){ setCategory(guess); setAutoGuessed(true); }
         else { setAutoGuessed(false); }
@@ -1275,7 +1285,7 @@ function AddBookModal({onClose,onAdd,onSuccess}){
 
   const confirm=()=>{
     if(!title.trim()) return;
-    const book={id:Date.now(),title:title.trim(),author:author.trim(),available:true,duration:dur,cover:activeCover,category:category||"其他",status:"AVAILABLE",owner:"我",distance:0.1,lat:40.714,lng:-74.003,condition,visibility,description:"",reviews:[]};
+    const book={id:Date.now(),title:title.trim(),author:author.trim(),available:true,duration:dur,cover:activeCover,category:category||"其他",status:"AVAILABLE",owner:"我",distance:0.1,lat:40.714,lng:-74.003,condition,visibility,description:description.trim(),reviews:[]};
     onAdd(book); setAdded(book); setStep("success");
     setTimeout(()=>{onClose();if(onSuccess)onSuccess();},2000);
   };
@@ -1417,6 +1427,11 @@ function AddBookModal({onClose,onAdd,onSuccess}){
                       )
                     ))
                   )
+                )
+                , React.createElement('div', { style: {marginBottom:20}}
+                  , React.createElement('label', { style: {fontSize:12,fontWeight:700,color:"#8892a4",display:"block",marginBottom:8,textTransform:"uppercase"}}, "书籍简介")
+                  , React.createElement('textarea', { value: description, onChange: e=>setDescription(e.target.value.slice(0,600)), rows: 4, placeholder: "扫码后会自动带入图书库简介，也可以自己编辑介绍内容…", style: {width:"100%",padding:"12px 14px",borderRadius:12,border:"1.5px solid #e8ecf4",fontSize:13,lineHeight:1.55,outline:"none",resize:"none",fontFamily:"inherit"} })
+                  , React.createElement('div', { style: {fontSize:10,color:"#b0b8cc",marginTop:6,textAlign:"right"}}, description.length, "/600")
                 )
                 , React.createElement('div', { style: {marginBottom:20}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 984}}
                   , React.createElement('label', { style: {fontSize:12,fontWeight:700,color:"#8892a4",display:"block",marginBottom:8,textTransform:"uppercase"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 985}}, "可借期")
@@ -1926,9 +1941,9 @@ function LinkNest(){
     }
     action();
   };
-  const addBookReview = (bookId, review) => {
+  const addBookReview = (book, review) => {
     setBookReviews(prev => {
-      const key = String(bookId);
+      const key = typeof book === "object" ? bookReviewKey(book) : String(book);
       return {...prev, [key]: [review, ...(_optionalChain([prev, 'access', _20 => _20[key]]) || [])].slice(0,20)};
     });
   };
@@ -2336,6 +2351,21 @@ function LinkNest(){
     ...BOOKS,
     ...myBooks.filter(b=>b.owner==="我"&&b.available&&b.distance!=null&&b.visibility!=="friends")
   ];
+  const allKnownBooks = [...BOOKS, ...myBooks, ...borrowed];
+  const getSharedBookReviews = (book) => {
+    const key = bookReviewKey(book);
+    const stored = [...(bookReviews[key] || []), ...(bookReviews[String(book.id)] || [])];
+    const seeded = allKnownBooks
+      .filter(b => bookReviewKey(b) === key)
+      .flatMap(b => (b.reviews || []).map(r => ({...r, sourceOwner: b.owner})));
+    const seen = new Set();
+    return [...stored, ...seeded].filter(r => {
+      const sig = `${r.from||""}|${r.stars||""}|${r.text||""}|${r.time||""}`;
+      if(seen.has(sig)) return false;
+      seen.add(sig);
+      return true;
+    }).slice(0, 30);
+  };
   const filtered = allDiscoverBooks.filter(b=>
     b.distance<=radius &&
     (search===""||b.title.toLowerCase().includes(search.toLowerCase())||b.author.toLowerCase().includes(search.toLowerCase())) &&
@@ -2575,7 +2605,7 @@ function LinkNest(){
 
             , filtered.length===0
                 ? React.createElement('div', { style: {textAlign:"center",padding:"40px 0"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1529}}, React.createElement('div', { style: {fontSize:48,marginBottom:12}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1529}}, "📭"), React.createElement('div', { style: {fontSize:15,fontWeight:700,color:"#1a1a2e"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1529}}, "附近没有找到书籍"))
-: [...filtered].sort((a,b)=>a.distance-b.distance).map((b,i)=>React.createElement(BookCard_memo, { key: b.id, book: b, onPress: setSelBook, delay: i*60, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1530}}))
+: [...filtered].sort((a,b)=>a.distance-b.distance).map((b,i)=>React.createElement(BookCard_memo, { key: b.id, book: b, onPress: setSelBook, onOwnerPress: setChatProfileName, delay: i*60, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1530}}))
             
           )
         )
@@ -3123,8 +3153,8 @@ function LinkNest(){
 
       /* Overlays */
       , showMapSheet&&React.createElement(MapRadiusSheet, { radius: radius, onChangeRadius: setRadius, savedRadii: savedRadii, onSaveRadius: r=>setSavedRadii(p=>[...p,r].sort((a,b)=>a-b)), onRemoveSaved: r=>setSavedRadii(p=>p.filter(x=>x!==r)), books: BOOKS.filter(b=>b.distance<=20), geoLabel: geoLabel, mapProvider: mapProvider, googleMapsApiKey: googleMapsApiKey, amapApiKey: amapApiKey, onClose: ()=>setShowMapSheet(false), __self: this, __source: {fileName: _jsxFileName, lineNumber: 1714}})
-      , selShelfBook&&React.createElement(BookDetail, { book: {...selShelfBook,available:false,distance:0,owner:selShelfBook.owner||"我"}, onClose: ()=>setSelShelfBook(null), onBorrow: ()=>{}, extraReviews: bookReviews[String(selShelfBook.id)]||[], onAddReview: addBookReview, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1715}})
-      , selBook&&React.createElement(BookDetail, { book: selBook, onClose: ()=>setSelBook(null), onBorrow: handleBorrow, onBorrowBatch: handleBorrowBatch, extraReviews: bookReviews[String(selBook.id)]||[], onAddReview: addBookReview, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1716}})
+      , selShelfBook&&React.createElement(BookDetail, { book: {...selShelfBook,available:false,distance:0,owner:selShelfBook.owner||"我"}, onClose: ()=>setSelShelfBook(null), onBorrow: ()=>{}, extraReviews: getSharedBookReviews(selShelfBook), onAddReview: addBookReview, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1715}})
+      , selBook&&React.createElement(BookDetail, { book: selBook, onClose: ()=>setSelBook(null), onBorrow: handleBorrow, onBorrowBatch: handleBorrowBatch, extraReviews: getSharedBookReviews(selBook), onAddReview: addBookReview, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1716}})
       , showAdd&&React.createElement(AddBookModal, { onClose: ()=>setShowAdd(false), onAdd: b=>setMyBooks(p=>[b,...p]), onSuccess: ()=>setTab(1), __self: this, __source: {fileName: _jsxFileName, lineNumber: 1717}})
       , returnReviewBook&&React.createElement(BorrowerReviewModal, { book: returnReviewBook, onClose: ()=>setReturnReviewBook(null), onSubmit: submitBorrowerReview })
       , chatProfileName&&React.createElement(ChatProfileSheet, {

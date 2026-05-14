@@ -7,7 +7,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="linknest-white-favicon.png">
   <title>LinkNest · 手机网页版</title>
-  <meta name="build-id" content="202605131948">
+  <meta name="build-id" content="202605131958">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;700&display=swap">
   <style>
@@ -1830,6 +1830,7 @@ function LinkNest(){
     if(/not found|404/i.test(msg)) return "连接失败：项目 URL 不存在，请检查项目 ID";
     return msg || "连接失败：未知错误";
   };
+  const isCloudConfigured = () => !!normalizeSupabaseUrl(effectiveSupabaseUrl) && !!effectiveSupabaseAnonKey.trim();
   const getSupabaseClient = (silent=false) => {
     const url = normalizeSupabaseUrl(effectiveSupabaseUrl);
     const key = effectiveSupabaseAnonKey.trim();
@@ -1901,8 +1902,9 @@ function LinkNest(){
   const runProtectedAction = (action) => {
     if(REQUIRE_REGISTRATION_FOR_ACTIONS && !registered && !cloudUser){
       pendingActionRef.current = action;
-      setTab(3);
-      setCloudStatus("请先在“云端账号”登录或注册，登录后会继续刚才的操作");
+      setRegStep(1);
+      setShowRegistrationGate(true);
+      setCloudStatus("请先创建本地测试账号，完成后会继续刚才的操作");
       return;
     }
     action();
@@ -2020,13 +2022,27 @@ function LinkNest(){
   }, [supabaseUrl, supabaseAnonKey]);
 
   const signInWithCloud = async (mode) => {
-    const client = getSupabaseClient();
-    if(!client) return;
     const email = authEmail.trim();
     if(!email || authPassword.length < 6){
       setCloudStatus("请输入邮箱和至少 6 位密码");
       return;
     }
+    if(!isCloudConfigured()){
+      if(mode === "signin" && !registered){
+        setCloudStatus("云端服务暂未配置。请先点“注册”创建本地测试账号");
+        setAuthPassword("");
+        return;
+      }
+      setRegistered(true);
+      setRegName(regName || email.split("@")[0] || "LinkNest 用户");
+      setCloudUser(null);
+      setCloudStatus(mode==="signup" ? "已创建本地测试账号，可继续添加书籍和借书" : `已使用本地账号：${email}`);
+      setAuthPassword("");
+      runPendingAfterAuth();
+      return;
+    }
+    const client = getSupabaseClient();
+    if(!client) return;
     setCloudBusy(true);
     setCloudStatus(mode==="signup" ? "正在注册…" : "正在登录…");
     try {

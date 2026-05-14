@@ -7,7 +7,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="linknest-white-favicon.png">
   <title>LinkNest · 手机网页版</title>
-  <meta name="build-id" content="202605132040">
+  <meta name="build-id" content="202605132103">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;700&display=swap">
   <style>
@@ -245,6 +245,8 @@ const MEETING_POINTS = [
 const CATEGORIES = ["全部","小说","文学","历史","科技","儿童","心理","商业","艺术","教育","健康","其他"];
 const TABS = ["发现","我的书架","消息","好友","我"];
 const BOOK_CONDITIONS = ["全新","九成新","轻微使用","有笔记","折痕/磨损"];
+const MAX_GENERAL_BORROW = 5;
+const MAX_FRIEND_BORROW = 10;
 const REQUIRE_REGISTRATION_FOR_ACTIONS = true; // 借书/添加书籍时触发登录；未配置云端时仍可用本地演示账号
 const normalizeReviewPart = (value) => String(value || "").toLowerCase().normalize("NFKC").replace(/[^\p{L}\p{N}]+/gu, "");
 const bookReviewKey = (book) => `book:${normalizeReviewPart(book?.title)}:${normalizeReviewPart(book?.author)}`;
@@ -325,12 +327,11 @@ function Dot({i=0}){ return React.createElement('div', { className: "dot", style
 
 
 // ── Lender's full bookshelf sheet ─────────────────────────────────────────────
-function LenderShelf({ownerName, books, onClose, onBorrow, onBorrowBatch, currentBorrowedCount=0}){
+function LenderShelf({ownerName, books, onClose, onBorrow, onBorrowBatch, currentBorrowedCount=0, maxBorrow=MAX_GENERAL_BORROW, isFriendOwner=false}){
   const p = OWNER_PROFILES[ownerName];
   const [cat, setCat] = useState("全部");
   const [selected, setSelected] = useState([]); // IDs of selected books
-  const MAX_BORROW = 5;
-  const remainSlots = Math.max(0, MAX_BORROW - currentBorrowedCount);
+  const remainSlots = Math.max(0, maxBorrow - currentBorrowedCount);
   const isFirstTimer = currentBorrowedCount === 0;
 
   const cats = ["全部", ...new Set(books.map(b=>b.category).filter(Boolean))];
@@ -371,7 +372,7 @@ function LenderShelf({ownerName, books, onClose, onBorrow, onBorrowBatch, curren
         /* First-timer hint */
         , isFirstTimer && availableCount > 0 && (
           React.createElement('div', { style: {marginTop:14,background:"rgba(255,255,255,0.15)",borderRadius:12,padding:"8px 12px",fontSize:12,color:"rgba(255,255,255,0.9)",lineHeight:1.5}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 175}}, "💡 首次借阅最多可同时借 "
-              , React.createElement('strong', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 176}}, MAX_BORROW), " 本，勾选后一起发送请求"
+              , React.createElement('strong', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 176}}, maxBorrow), " 本", isFriendOwner ? "（好友上限）" : "", "，勾选后一起发送请求"
           )
         )
       )
@@ -604,7 +605,7 @@ function MapView({books, radius, mapProvider="mock", googleMapsApiKey="", amapAp
   );
 }
 
-function ChatProfileSheet({personName, avatar, profile, books, reviews=[], isFriend=false, onAddFriend, onRemoveFriend, onClose, onOpenShelf}){
+function ChatProfileSheet({personName, avatar, profile, books, reviews=[], isFriend=false, friendPending=false, onAddFriend, onRemoveFriend, onClose, onOpenShelf}){
   const rating = profile ? profile.rating : (reviews.length ? Math.round((reviews.reduce((s,r)=>s+(r.stars||0),0)/reviews.length)*10)/10 : 4.7);
   const totalLends = profile ? profile.totalLends : books.length;
   const onTimeRate = profile ? profile.onTimeRate : 96;
@@ -629,7 +630,7 @@ function ChatProfileSheet({personName, avatar, profile, books, reviews=[], isFri
       )
       , React.createElement('div', { style: {display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:18}}
         , React.createElement('button', { onClick: onOpenShelf, style: {padding:"13px 10px",borderRadius:14,border:"none",background:"linear-gradient(135deg,#667eea,#764ba2)",color:"#fff",fontWeight:700,fontSize:13,cursor:"pointer",boxShadow:"0 4px 14px rgba(102,126,234,0.28)"}}, "📚 查看书架")
-        , React.createElement('button', { onClick: ()=>isFriend ? onRemoveFriend&&onRemoveFriend(personName) : onAddFriend&&onAddFriend(personName, avatar || (profile&&profile.avatar) || "👤"), style: {padding:"13px 10px",borderRadius:14,border:isFriend?"1.5px solid #dcfce7":"none",background:isFriend?"#f0fdf4":"linear-gradient(135deg,#14b8a6,#82c91e)",color:isFriend?"#168f65":"#fff",fontWeight:700,fontSize:13,cursor:"pointer",boxShadow:isFriend?"none":"0 4px 14px rgba(20,184,166,0.24)"}}, isFriend ? "✓ 已是好友" : "＋ 添加好友")
+        , React.createElement('button', { disabled: friendPending, onClick: ()=>isFriend ? onRemoveFriend&&onRemoveFriend(personName) : (!friendPending&&onAddFriend&&onAddFriend(personName, avatar || (profile&&profile.avatar) || "👤")), style: {padding:"13px 10px",borderRadius:14,border:isFriend?"1.5px solid #dcfce7":friendPending?"1.5px solid #e8ecf4":"none",background:isFriend?"#f0fdf4":friendPending?"#f4f6fb":"linear-gradient(135deg,#14b8a6,#82c91e)",color:isFriend?"#168f65":friendPending?"#8892a4":"#fff",fontWeight:700,fontSize:13,cursor:friendPending?"default":"pointer",boxShadow:(isFriend||friendPending)?"none":"0 4px 14px rgba(20,184,166,0.24)"}}, isFriend ? "✓ 已是好友" : friendPending ? "申请已发送" : "＋ 添加好友")
       )
       , React.createElement('div', { style: {fontSize:13,fontWeight:700,color:"#1a1a2e",marginBottom:12}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 352}}, "最近评价")
       , shownReviews.length===0
@@ -710,7 +711,7 @@ function BookCard({book,onPress,onOwnerPress,delay=0}){
   );
 }
 
-function BookDetail({book,onClose,onBorrow,onBorrowBatch,extraReviews=[],onAddReview}){
+function BookDetail({book,onClose,onBorrow,onBorrowBatch,extraReviews=[],onAddReview,currentBorrowedCount=0,maxBorrow=MAX_GENERAL_BORROW,isFriendOwner=false}){
   const [done,setDone]=useState(false);
   const [showProfile,setShowProfile]=useState(false);
   const [showShelf,setShowShelf]=useState(false);
@@ -795,7 +796,7 @@ function BookDetail({book,onClose,onBorrow,onBorrowBatch,extraReviews=[],onAddRe
         )
       )
       , showProfile && React.createElement(OwnerProfileSheet, { ownerName: book.owner, onClose: ()=>setShowProfile(false)})
-      , showShelf && React.createElement(LenderShelf, { ownerName: book.owner, books: BOOKS.filter(b=>b.owner===book.owner), onClose: ()=>setShowShelf(false), onBorrowBatch: bs=>{setShowShelf(false);if(onBorrowBatch)onBorrowBatch(bs);else bs.forEach(b=>onBorrow(b));}, currentBorrowedCount: 0})
+      , showShelf && React.createElement(LenderShelf, { ownerName: book.owner, books: BOOKS.filter(b=>b.owner===book.owner), onClose: ()=>setShowShelf(false), onBorrowBatch: bs=>{setShowShelf(false);if(onBorrowBatch)onBorrowBatch(bs);else bs.forEach(b=>onBorrow(b));}, currentBorrowedCount: currentBorrowedCount, maxBorrow: maxBorrow, isFriendOwner: isFriendOwner})
       , showReview && React.createElement(OverlayCenter, { onClose: ()=>setShowReview(false)}
         , reviewDone ? React.createElement(React.Fragment, null
           , React.createElement('div', { style: {fontSize:44,marginBottom:12}}, "✅")
@@ -1825,6 +1826,7 @@ function LinkNest(){
   const [selectedChat,setSelectedChat]=useState(null);
   const [chatProfileName,setChatProfileName]=useState(null);
   const [chatShelfName,setChatShelfName]=useState(null);
+  const [pendingFriend,setPendingFriend]=useState(null);
   const [curBook,setCurBook]=useState(null);
   const [showMeet,setShowMeet]=useState(false);
   const [showExt,setShowExt]=useState(false);
@@ -2275,7 +2277,8 @@ function LinkNest(){
     }
     const od = myBooks.find(b=>b.status==="BORROWED"&&checkOverdue(b.borrowedAt,b.duration));
     if(od){push({id:Date.now(),name:"系统",msg:`⚠️ 你有《${od.title}》逾期未还，请先处理。`,time:"刚刚",avatar:"🤖",isSystem:true});setTab(1);setSelBook(null);return;}
-    if(borrowed.length>=5){push({id:Date.now(),name:"系统",msg:"📚 测试期间最多同时借 5 本，请先归还一些再借阅新书。",time:"刚刚",avatar:"🤖",isSystem:true});setTab(2);setSelBook(null);return;}
+    const borrowLimit = isFriend(book.owner) ? MAX_FRIEND_BORROW : MAX_GENERAL_BORROW;
+    if(borrowed.length>=borrowLimit){push({id:Date.now(),name:"系统",msg:`📚 ${isFriend(book.owner)?"好友最多可同时借 10 本":"测试期间最多同时借 5 本"}，请先归还一些再借阅新书。`,time:"刚刚",avatar:"🤖",isSystem:true});setTab(2);setSelBook(null);return;}
     setCurBook(book);setTxState("negotiating");
     push({id:Date.now(),name:"我",peer:book.owner,msg:`你好 ${book.owner}，我想借阅你的《${book.title}》。`,time:"刚刚",avatar:"🧑",sentByUser:true});
     setSelBook(null);setSelectedChat(book.owner);setTab(2);
@@ -2294,13 +2297,13 @@ function LinkNest(){
     }
     const od = myBooks.find(b=>b.status==="BORROWED"&&checkOverdue(b.borrowedAt,b.duration));
     if(od){push({id:Date.now(),name:"系统",msg:`⚠️ 你有《${od.title}》逾期未还，请先处理。`,time:"刚刚",avatar:"🤖",isSystem:true});setTab(1);setSelBook(null);return;}
-    // Check combined limit: current borrowed + new selected ≤ 2
-    if(borrowed.length + selectedBooks.length > 5){
-      push({id:Date.now(),name:"系统",msg:`📚 测试期间最多同时借 5 本（你已借 ${borrowed.length} 本），请减少本次借阅数量。`,time:"刚刚",avatar:"🤖",isSystem:true});
+    const owner = selectedBooks[0].owner;
+    const borrowLimit = isFriend(owner) ? MAX_FRIEND_BORROW : MAX_GENERAL_BORROW;
+    if(borrowed.length + selectedBooks.length > borrowLimit){
+      push({id:Date.now(),name:"系统",msg:`📚 ${isFriend(owner)?"好友最多可同时借 10 本":"测试期间最多同时借 5 本"}（你已借 ${borrowed.length} 本），请减少本次借阅数量。`,time:"刚刚",avatar:"🤖",isSystem:true});
       setTab(2);setSelBook(null);return;
     }
     // Build combined message
-    const owner = selectedBooks[0].owner;
     const titles = selectedBooks.map(b=>`《${b.title}》`);
     let titleStr;
     if(titles.length===2) titleStr = titles.join("和");
@@ -2413,15 +2416,40 @@ function LinkNest(){
     return (chat&&chat.avatar) || (profile&&profile.avatar) || "👤";
   };
   const isFriend = (name) => friends.some(f=>f.name===name);
-  const addFriend = (name, avatar) => {
+  const hasPendingFriendRequest = (name) => msgs.some(m=>m.type==="friend_request"&&m.name===name&&m.status==="pending");
+  const addFriendDirect = (name, avatar) => {
     if(!name || name==="我" || isFriend(name)) return;
     const profile = OWNER_PROFILES[name];
     setFriends(prev => [{name, avatar: avatar || profile?.avatar || getChatAvatar(name), addedAt: new Date().toISOString()}, ...prev].slice(0,100));
-    setUpdateState(`已添加 ${name} 为好友`);
+  };
+  const addFriend = (name, avatar) => {
+    if(!name || name==="我" || isFriend(name) || hasPendingFriendRequest(name)) return;
+    setPendingFriend({name, avatar: avatar || getChatAvatar(name)});
   };
   const removeFriend = (name) => {
     setFriends(prev => prev.filter(f=>f.name!==name));
     setUpdateState(`已移除 ${name}`);
+  };
+  const confirmFriendRequest = () => {
+    if(!pendingFriend) return;
+    const {name, avatar} = pendingFriend;
+    push({id:Date.now(),name,msg:`好友申请：${name} 想和你成为好友。好友可以看到你所有书柜里的书，请确认是否同意。`,time:"刚刚",avatar:avatar||getChatAvatar(name),sentByUser:false,unread:1,type:"friend_request",status:"pending"});
+    setPendingFriend(null);
+    setChatProfileName(null);
+    setSelectedChat(null);
+    setTab(2);
+    setUpdateState(`已向 ${name} 发送好友申请`);
+  };
+  const handleAcceptFriendRequest = (msg) => {
+    addFriendDirect(msg.name, msg.avatar);
+    setMsgs(prev => prev.map(m => m.id===msg.id ? {...m,status:"accepted",unread:0,msg:`已同意 ${msg.name} 的好友申请。好友可见书籍将对 TA 开放。`} : m));
+    push({id:Date.now(),name:"我",peer:msg.name,msg:"我已同意好友申请。",time:"刚刚",avatar:"🧑",sentByUser:true});
+    setUpdateState(`已添加 ${msg.name} 为好友`);
+  };
+  const handleDeclineFriendRequest = (msg) => {
+    setMsgs(prev => prev.map(m => m.id===msg.id ? {...m,status:"declined",unread:0,msg:`已暂不同意 ${msg.name} 的好友申请。`} : m));
+    push({id:Date.now(),name:"我",peer:msg.name,msg:"我暂时不同意好友申请。",time:"刚刚",avatar:"🧑",sentByUser:true});
+    setUpdateState(`已忽略 ${msg.name} 的好友申请`);
   };
   const friendItems = friends.map(f => {
     const profile = OWNER_PROFILES[f.name];
@@ -2739,7 +2767,8 @@ function LinkNest(){
 
             , selectedChat && activeChatMessages.map(msg=>{
               const mine=msg.sentByUser===true;
-              const incomingBorrowRequest = !mine && !msg.isSystem && /借|借阅/.test(msg.msg || "");
+              const pendingFriendMsg = msg.type==="friend_request" && msg.status==="pending";
+              const incomingBorrowRequest = !mine && !msg.isSystem && msg.type!=="friend_request" && /借|借阅/.test(msg.msg || "");
               if(msg.isSystem&&!mine) return (
                 React.createElement('div', { key: msg.id, style: {textAlign:"center",marginBottom:10}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1626}}
                   , React.createElement('span', { style: {fontSize:12,color:"#8892a4",background:"#f0f2f8",borderRadius:10,padding:"4px 12px"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1627}}, msg.msg)
@@ -2753,6 +2782,10 @@ function LinkNest(){
                     , React.createElement('div', { style: {background:mine?"linear-gradient(135deg,#667eea,#764ba2)":"#fff",color:mine?"#fff":"#1a1a2e",borderRadius:mine?"18px 18px 4px 18px":"18px 18px 18px 4px",padding:"10px 14px",fontSize:13,lineHeight:1.5,boxShadow:mine?"0 4px 14px rgba(102,126,234,0.3)":"0 2px 8px rgba(0,0,0,0.06)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1635}}, msg.msg)
                     , incomingBorrowRequest && React.createElement('div', { style: {display:"flex",gap:6,marginTop:7,flexWrap:"wrap"}}
                       , React.createElement('button', { onClick: ()=>handleAcceptBorrowRequest(msg), style: {padding:"7px 10px",borderRadius:10,border:"none",background:"linear-gradient(135deg,#1a9c5b,#34d399)",color:"#fff",fontSize:11,fontWeight:700,cursor:"pointer"}}, "同意借阅")
+                    )
+                    , pendingFriendMsg && React.createElement('div', { style: {display:"flex",gap:6,marginTop:7,flexWrap:"wrap"}}
+                      , React.createElement('button', { onClick: ()=>handleAcceptFriendRequest(msg), style: {padding:"7px 10px",borderRadius:10,border:"none",background:"linear-gradient(135deg,#1a9c5b,#34d399)",color:"#fff",fontSize:11,fontWeight:700,cursor:"pointer"}}, "确认添加")
+                      , React.createElement('button', { onClick: ()=>handleDeclineFriendRequest(msg), style: {padding:"7px 10px",borderRadius:10,border:"1px solid #e8ecf4",background:"#fff",color:"#8892a4",fontSize:11,fontWeight:700,cursor:"pointer"}}, "不同意")
                     )
                   )
                   , mine&&React.createElement('div', { style: {width:36,height:36,background:"linear-gradient(135deg,#f0f2ff,#e8ecff)",borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1637}}, "🧑")
@@ -3154,9 +3187,20 @@ function LinkNest(){
       /* Overlays */
       , showMapSheet&&React.createElement(MapRadiusSheet, { radius: radius, onChangeRadius: setRadius, savedRadii: savedRadii, onSaveRadius: r=>setSavedRadii(p=>[...p,r].sort((a,b)=>a-b)), onRemoveSaved: r=>setSavedRadii(p=>p.filter(x=>x!==r)), books: BOOKS.filter(b=>b.distance<=20), geoLabel: geoLabel, mapProvider: mapProvider, googleMapsApiKey: googleMapsApiKey, amapApiKey: amapApiKey, onClose: ()=>setShowMapSheet(false), __self: this, __source: {fileName: _jsxFileName, lineNumber: 1714}})
       , selShelfBook&&React.createElement(BookDetail, { book: {...selShelfBook,available:false,distance:0,owner:selShelfBook.owner||"我"}, onClose: ()=>setSelShelfBook(null), onBorrow: ()=>{}, extraReviews: getSharedBookReviews(selShelfBook), onAddReview: addBookReview, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1715}})
-      , selBook&&React.createElement(BookDetail, { book: selBook, onClose: ()=>setSelBook(null), onBorrow: handleBorrow, onBorrowBatch: handleBorrowBatch, extraReviews: getSharedBookReviews(selBook), onAddReview: addBookReview, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1716}})
+      , selBook&&React.createElement(BookDetail, { book: selBook, onClose: ()=>setSelBook(null), onBorrow: handleBorrow, onBorrowBatch: handleBorrowBatch, extraReviews: getSharedBookReviews(selBook), onAddReview: addBookReview, currentBorrowedCount: borrowed.length, maxBorrow: isFriend(selBook.owner)?MAX_FRIEND_BORROW:MAX_GENERAL_BORROW, isFriendOwner: isFriend(selBook.owner), __self: this, __source: {fileName: _jsxFileName, lineNumber: 1716}})
       , showAdd&&React.createElement(AddBookModal, { onClose: ()=>setShowAdd(false), onAdd: b=>setMyBooks(p=>[b,...p]), onSuccess: ()=>setTab(1), __self: this, __source: {fileName: _jsxFileName, lineNumber: 1717}})
       , returnReviewBook&&React.createElement(BorrowerReviewModal, { book: returnReviewBook, onClose: ()=>setReturnReviewBook(null), onSubmit: submitBorrowerReview })
+      , pendingFriend&&React.createElement(OverlayCenter, { onClose: ()=>setPendingFriend(null)}
+        , React.createElement('div', { style: {fontSize:44,marginBottom:12}}, "👥")
+        , React.createElement('div', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:20,fontWeight:800,color:"#162033",marginBottom:8}}, "确认添加好友？")
+        , React.createElement('div', { style: {fontSize:13,color:"#5a6272",lineHeight:1.7,marginBottom:18,textAlign:"left",background:"#f8f9ff",borderRadius:16,padding:"14px 16px"}}
+          , "好友可以看到你所有书柜里的书，包括你设置为「仅对朋友」开放的书籍。请确认是否真的需要添加 ", React.createElement('strong', { style: {color:"#162033"}}, pendingFriend.name), " 为好友。"
+        )
+        , React.createElement('div', { style: {display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}
+          , React.createElement('button', { onClick: ()=>setPendingFriend(null), style: {padding:"13px 10px",borderRadius:14,border:"1.5px solid #e8ecf4",background:"#fff",color:"#8892a4",fontWeight:800,fontSize:13,cursor:"pointer"}}, "取消")
+          , React.createElement('button', { onClick: confirmFriendRequest, style: {padding:"13px 10px",borderRadius:14,border:"none",background:"linear-gradient(135deg,#14b8a6,#82c91e)",color:"#fff",fontWeight:800,fontSize:13,cursor:"pointer",boxShadow:"0 5px 18px rgba(20,184,166,0.24)"}}, "发送申请")
+        )
+      )
       , chatProfileName&&React.createElement(ChatProfileSheet, {
         personName: chatProfileName,
         avatar: getChatAvatar(chatProfileName),
@@ -3164,6 +3208,7 @@ function LinkNest(){
         books: getPersonShelfBooks(chatProfileName),
         reviews: borrowerReviews[chatProfileName] || [],
         isFriend: isFriend(chatProfileName),
+        friendPending: hasPendingFriendRequest(chatProfileName),
         onAddFriend: addFriend,
         onRemoveFriend: removeFriend,
         onClose: ()=>setChatProfileName(null),
@@ -3174,7 +3219,9 @@ function LinkNest(){
         books: getPersonShelfBooks(chatShelfName),
         onClose: ()=>setChatShelfName(null),
         onBorrowBatch: bs=>{setChatShelfName(null);handleBorrowBatch(bs);},
-        currentBorrowedCount: borrowed.length
+        currentBorrowedCount: borrowed.length,
+        maxBorrow: isFriend(chatShelfName)?MAX_FRIEND_BORROW:MAX_GENERAL_BORROW,
+        isFriendOwner: isFriend(chatShelfName)
       })
       , showExt&&React.createElement(ExtensionModal, { book: borrowed[0]||{title:"书籍",cover:"📚"}, onClose: ()=>setShowExt(false), onConfirm: days=>{
         setShowExt(false);

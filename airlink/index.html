@@ -7,7 +7,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="linknest-white-favicon.png">
   <title>LinkNest · 手机网页版</title>
-  <meta name="build-id" content="202605132103">
+  <meta name="build-id" content="202605152228">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;700&display=swap">
   <style>
@@ -245,6 +245,12 @@ const MEETING_POINTS = [
 const CATEGORIES = ["全部","小说","文学","历史","科技","儿童","心理","商业","艺术","教育","健康","其他"];
 const TABS = ["发现","我的书架","消息","好友","我"];
 const BOOK_CONDITIONS = ["全新","九成新","轻微使用","有笔记","折痕/磨损"];
+const BOOK_DURATIONS = ["1 week","2 weeks","1 month","2 months","3 months"];
+const VISIBILITY_OPTIONS = [
+  {k:"all",l:"所有人开放",s:"附近用户都可申请",chip:"所有人可见"},
+  {k:"friends",l:"仅对朋友",s:"只给好友可见",chip:"好友可见"},
+  {k:"private",l:"仅自己",s:"只在我的书架显示",chip:"仅自己"}
+];
 const MAX_GENERAL_BORROW = 5;
 const MAX_FRIEND_BORROW = 10;
 const REQUIRE_REGISTRATION_FOR_ACTIONS = true; // 借书/添加书籍时触发登录；未配置云端时仍可用本地演示账号
@@ -711,17 +717,51 @@ function BookCard({book,onPress,onOwnerPress,delay=0}){
   );
 }
 
-function BookDetail({book,onClose,onBorrow,onBorrowBatch,extraReviews=[],onAddReview,currentBorrowedCount=0,maxBorrow=MAX_GENERAL_BORROW,isFriendOwner=false}){
+function BookEditSheet({field, book, onClose, onSave}){
+  const [text,setText]=useState(field==="description" ? (book.description||"") : "");
+  const title = field==="duration" ? "编辑可借期" : field==="condition" ? "编辑品相" : field==="visibility" ? "编辑开放权限" : "编辑书籍简介";
+  const optionButton = (active, onClick, main, sub) => (
+    React.createElement('button', { onClick, style: {width:"100%",padding:"12px 14px",borderRadius:14,border:active?"2px solid #14b8a6":"1.5px solid #eef2f7",background:active?"#ecfdf5":"#fff",color:active?"#168f65":"#5a6272",textAlign:"left",cursor:"pointer",marginBottom:8}}
+      , React.createElement('div', { style: {fontSize:13,fontWeight:800,marginBottom:sub?3:0}}, main)
+      , sub && React.createElement('div', { style: {fontSize:11,color:active?"#168f65":"#98a2b3",lineHeight:1.4}}, sub)
+    )
+  );
+  return (
+    React.createElement(Sheet, { onClose: onClose}
+      , React.createElement('div', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:17,fontWeight:800,color:"#162033",marginBottom:14}}, title)
+      , field==="duration" && BOOK_DURATIONS.map(d=>optionButton(book.duration===d, ()=>onSave({duration:d}), d, null))
+      , field==="condition" && BOOK_CONDITIONS.map(c=>optionButton(book.condition===c, ()=>onSave({condition:c}), c, null))
+      , field==="visibility" && VISIBILITY_OPTIONS.map(v=>optionButton((book.visibility||"all")===v.k, ()=>onSave({visibility:v.k}), v.l, v.s))
+      , field==="description" && React.createElement(React.Fragment, null
+        , React.createElement('textarea', { value: text, onChange: e=>setText(e.target.value.slice(0,600)), rows: 6, placeholder: "编辑这本书的简介…", style: {width:"100%",padding:"13px 14px",borderRadius:14,border:"1.5px solid #e8ecf4",fontSize:14,lineHeight:1.65,outline:"none",resize:"none",fontFamily:"inherit",marginBottom:8}})
+        , React.createElement('div', { style: {fontSize:11,color:"#b0b8cc",textAlign:"right",marginBottom:14}}, text.length, "/600")
+        , React.createElement('div', { style: {display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}
+          , React.createElement('button', { onClick: onClose, style: {padding:"13px",borderRadius:14,border:"1.5px solid #e8ecf4",background:"#fff",color:"#5a6272",fontWeight:800,cursor:"pointer"}}, "取消")
+          , React.createElement('button', { onClick: ()=>onSave({description:text.trim()}), style: {padding:"13px",borderRadius:14,border:"none",background:"linear-gradient(135deg,#14b8a6,#82c91e)",color:"#fff",fontWeight:800,cursor:"pointer"}}, "保存简介")
+        )
+      )
+    )
+  );
+}
+
+function BookDetail({book,onClose,onBorrow,onBorrowBatch,extraReviews=[],onAddReview,currentBorrowedCount=0,maxBorrow=MAX_GENERAL_BORROW,isFriendOwner=false,editable=false,onUpdateBook,onToggleShare,onDeleteBook}){
   const [done,setDone]=useState(false);
   const [showProfile,setShowProfile]=useState(false);
   const [showShelf,setShowShelf]=useState(false);
   const [showReview,setShowReview]=useState(false);
+  const [editField,setEditField]=useState(null);
+  const [deleteConfirm,setDeleteConfirm]=useState(false);
   const [reviewStars,setReviewStars]=useState(5);
   const [reviewText,setReviewText]=useState("");
   const [reviewDone,setReviewDone]=useState(false);
   const p = OWNER_PROFILES[book.owner];
   const bookReviews = extraReviews.length ? extraReviews : [...(book.reviews||[])];
   const avgBookRating = bookReviews.length ? (bookReviews.reduce((sum,r)=>sum+(Number(r.stars)||0),0)/bookReviews.length).toFixed(1) : null;
+  const visibilityMeta = VISIBILITY_OPTIONS.find(v=>v.k===(book.visibility||"all")) || VISIBILITY_OPTIONS[0];
+  const saveBookPatch = (patch) => {
+    if(onUpdateBook) onUpdateBook(book.id, patch);
+    setEditField(null);
+  };
   const submitReview = () => {
     if(!reviewText.trim()) return;
     const review = {from:"我",stars:reviewStars,text:reviewText.trim(),time:"刚刚"};
@@ -742,17 +782,27 @@ function BookDetail({book,onClose,onBorrow,onBorrowBatch,extraReviews=[],onAddRe
       )
       , React.createElement('div', { style: {padding:"24px 28px"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 413}}
         , React.createElement('div', { style: {display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12,marginBottom:20}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 414}}
-          , [{l:"距离",v:`${book.distance} km`},{l:"可借期",v:book.duration||"借出中"},{l:"品相",v:book.condition||"未注明"}].map(({l,v})=>(
-            React.createElement('div', { key: l, style: {background:"#f8f9ff",borderRadius:14,padding:"14px 10px",textAlign:"center"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 416}}
+          , [{l:"距离",v:`${book.distance ?? 0} km`,f:null},{l:"可借期",v:book.duration||"借出中",f:"duration"},{l:"品相",v:book.condition||"未注明",f:"condition"}].map(({l,v,f})=>(
+            React.createElement('button', { key: l, onClick: ()=>editable&&f&&setEditField(f), disabled: !editable||!f, style: {background:"#f8f9ff",borderRadius:14,padding:"14px 10px",textAlign:"center",border:editable&&f?"1.5px solid #e8ecf4":"none",cursor:editable&&f?"pointer":"default"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 416}}
               , React.createElement('div', { style: {fontSize:15,fontWeight:700,color:"#1a1a2e"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 417}}, v)
-              , React.createElement('div', { style: {fontSize:11,color:"#8892a4",marginTop:4}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 418}}, l)
+              , React.createElement('div', { style: {fontSize:11,color:"#8892a4",marginTop:4}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 418}}, l, editable&&f?" · 点击编辑":"")
             )
           ))
         )
         , book.category && React.createElement('div', { style: {marginBottom:14}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 422}}, React.createElement('span', { style: {background:"#f0f2ff",color:"#667eea",borderRadius:20,padding:"5px 14px",fontSize:12,fontWeight:700}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 422}}, "#", book.category))
-        , React.createElement('div', { style: {marginBottom:20}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 423}}
-          , React.createElement('h3', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:15,color:"#1a1a2e",margin:"0 0 10px"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 424}}, "书籍简介")
+        , editable && React.createElement('div', { style: {marginBottom:16}}
+          , React.createElement('button', { onClick: ()=>setEditField("visibility"), style: {width:"100%",padding:"12px 14px",borderRadius:14,border:"1.5px solid #e8ecf4",background:"#fff",display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer"}}
+            , React.createElement('span', { style: {fontSize:13,fontWeight:800,color:"#162033"}}, "开放权限")
+            , React.createElement('span', { style: {fontSize:12,fontWeight:800,color:book.visibility==="private"?"#7c3aed":book.visibility==="friends"?"#2563eb":"#168f65"}}, visibilityMeta.chip, " ›")
+          )
+        )
+        , React.createElement('div', { onClick: ()=>editable&&setEditField("description"), style: {marginBottom:20,cursor:editable?"pointer":"default",border:editable?"1.5px solid #e8ecf4":"none",borderRadius:16,padding:editable?"12px 14px":0}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 423}}
+          , React.createElement('h3', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:15,color:"#1a1a2e",margin:"0 0 10px"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 424}}, "书籍简介", editable&&React.createElement('span', { style: {fontFamily:"'DM Sans',sans-serif",fontSize:11,color:"#8892a4",marginLeft:8,fontWeight:600}}, "点击编辑"))
           , React.createElement('p', { style: {fontSize:14,color:"#5a6272",lineHeight:1.8,margin:0}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 425}}, book.description||"这是一本广受好评的书籍，通过邻里图书共享让更多人享受到优质阅读资源。")
+        )
+        , editable && React.createElement('div', { style: {display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:20}}
+          , React.createElement('button', { onClick: ()=>onToggleShare&&onToggleShare(book.id), style: {padding:"13px 10px",borderRadius:14,border:"1.5px solid #f3e8ff",background:book.status==="PAUSED"?"#f0fdf4":"#fff7ed",color:book.status==="PAUSED"?"#168f65":"#d97706",fontWeight:800,fontSize:13,cursor:"pointer"}}, book.status==="PAUSED" ? "▶ 恢复共享" : "⏸ 暂停共享")
+          , React.createElement('button', { onClick: ()=>setDeleteConfirm(true), style: {padding:"13px 10px",borderRadius:14,border:"1.5px solid #fecaca",background:"#fff5f5",color:"#dc2626",fontWeight:800,fontSize:13,cursor:"pointer"}}, "🗑 删除")
         )
         , React.createElement('div', { style: {background:"#fff",border:"1.5px solid #f0f2ff",borderRadius:18,padding:"16px",marginBottom:20,boxShadow:"0 2px 10px rgba(0,0,0,0.04)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 426}}
           , React.createElement('div', { style: {display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,marginBottom:12}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 427}}
@@ -787,7 +837,7 @@ function BookDetail({book,onClose,onBorrow,onBorrowBatch,extraReviews=[],onAddRe
             )
           )
         )
-        , book.available && (
+        , book.available && !editable && (
           React.createElement('div', { style: {display:"flex",flexDirection:"column",gap:10} }
             , React.createElement('button', { onClick: ()=>{setDone(true);onBorrow(book);}, style: {width:"100%",padding:"16px",borderRadius:16,border:"none",background:done?"#e6f9f0":"linear-gradient(135deg,#667eea,#764ba2)",color:done?"#1a9c5b":"#fff",fontSize:16,fontWeight:700,cursor:"pointer",transition:"all .3s",boxShadow:done?"none":"0 8px 24px rgba(102,126,234,0.4)"}}
               , done?"✓ 借阅请求已发送":`📨 向 ${book.owner} 申请借阅`
@@ -797,6 +847,16 @@ function BookDetail({book,onClose,onBorrow,onBorrowBatch,extraReviews=[],onAddRe
       )
       , showProfile && React.createElement(OwnerProfileSheet, { ownerName: book.owner, onClose: ()=>setShowProfile(false)})
       , showShelf && React.createElement(LenderShelf, { ownerName: book.owner, books: BOOKS.filter(b=>b.owner===book.owner), onClose: ()=>setShowShelf(false), onBorrowBatch: bs=>{setShowShelf(false);if(onBorrowBatch)onBorrowBatch(bs);else bs.forEach(b=>onBorrow(b));}, currentBorrowedCount: currentBorrowedCount, maxBorrow: maxBorrow, isFriendOwner: isFriendOwner})
+      , editField && React.createElement(BookEditSheet, { field: editField, book: book, onClose: ()=>setEditField(null), onSave: saveBookPatch })
+      , deleteConfirm && React.createElement(OverlayCenter, { onClose: ()=>setDeleteConfirm(false)}
+        , React.createElement('div', { style: {fontSize:44,marginBottom:12}}, "⚠️")
+        , React.createElement('h3', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:20,color:"#1a1a2e",margin:"0 0 8px"}}, "删除《", book.title, "》？")
+        , React.createElement('p', { style: {fontSize:13,color:"#8892a4",lineHeight:1.7,margin:"0 0 22px"}}, "删除后将从我的书架移除，此操作无法撤销。")
+        , React.createElement('div', { style: {display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}
+          , React.createElement('button', { onClick: ()=>setDeleteConfirm(false), style: {padding:"13px",borderRadius:14,border:"1.5px solid #e8ecf4",background:"#fff",color:"#5a6272",fontWeight:800,cursor:"pointer"}}, "取消")
+          , React.createElement('button', { onClick: ()=>{setDeleteConfirm(false);onDeleteBook&&onDeleteBook(book.id);}, style: {padding:"13px",borderRadius:14,border:"none",background:"linear-gradient(135deg,#ef4444,#dc2626)",color:"#fff",fontWeight:800,cursor:"pointer"}}, "确认删除")
+        )
+      )
       , showReview && React.createElement(OverlayCenter, { onClose: ()=>setShowReview(false)}
         , reviewDone ? React.createElement(React.Fragment, null
           , React.createElement('div', { style: {fontSize:44,marginBottom:12}}, "✅")
@@ -1420,8 +1480,8 @@ function AddBookModal({onClose,onAdd,onSuccess}){
                 )
                 , React.createElement('div', { style: {marginBottom:20}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 984}}
                   , React.createElement('label', { style: {fontSize:12,fontWeight:700,color:"#8892a4",display:"block",marginBottom:8,textTransform:"uppercase"}}, "开放权限")
-                  , React.createElement('div', { style: {display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}
-                    , [{k:"all",l:"所有人开放",s:"附近用户都可申请"},{k:"friends",l:"仅对朋友",s:"只给好友可见"}].map(v=>(
+                  , React.createElement('div', { style: {display:"grid",gridTemplateColumns:"1fr",gap:8}}
+                    , VISIBILITY_OPTIONS.map(v=>(
                       React.createElement('button', { key: v.k, onClick: ()=>setVisibility(v.k), style: {padding:"11px 9px",borderRadius:13,border:visibility===v.k?"2px solid #14b8a6":"2px solid #eef2f7",background:visibility===v.k?"#ecfdf5":"#fff",color:visibility===v.k?"#168f65":"#5a6272",cursor:"pointer",textAlign:"left"}}
                         , React.createElement('div', { style: {fontSize:12,fontWeight:800,marginBottom:3}}, v.l)
                         , React.createElement('div', { style: {fontSize:10,color:visibility===v.k?"#168f65":"#98a2b3",lineHeight:1.35}}, v.s)
@@ -1437,7 +1497,7 @@ function AddBookModal({onClose,onAdd,onSuccess}){
                 , React.createElement('div', { style: {marginBottom:20}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 984}}
                   , React.createElement('label', { style: {fontSize:12,fontWeight:700,color:"#8892a4",display:"block",marginBottom:8,textTransform:"uppercase"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 985}}, "可借期")
                   , React.createElement('div', { style: {display:"flex",gap:8}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 986}}
-                    , ["1 week","1 month","2 months","3 months"].map(d=>React.createElement('button', { key: d, onClick: ()=>setDur(d), style: {flex:1,padding:"9px 4px",borderRadius:11,border:dur===d?"2px solid #667eea":"2px solid #f0f2f8",background:dur===d?"#f0f2ff":"#fff",fontSize:11,fontWeight:700,color:dur===d?"#667eea":"#8892a4",cursor:"pointer"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 987}}, d))
+                    , BOOK_DURATIONS.map(d=>React.createElement('button', { key: d, onClick: ()=>setDur(d), style: {flex:1,padding:"9px 4px",borderRadius:11,border:dur===d?"2px solid #667eea":"2px solid #f0f2f8",background:dur===d?"#f0f2ff":"#fff",fontSize:11,fontWeight:700,color:dur===d?"#667eea":"#8892a4",cursor:"pointer"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 987}}, d))
                   )
                 )
                 , React.createElement('button', { onClick: confirm, disabled: !title.trim(), style: {width:"100%",padding:"16px",borderRadius:16,border:"none",background:title.trim()?"linear-gradient(135deg,#667eea,#764ba2)":"#e8ecf4",color:title.trim()?"#fff":"#b0b8cc",fontSize:16,fontWeight:700,cursor:title.trim()?"pointer":"not-allowed",boxShadow:title.trim()?"0 8px 24px rgba(102,126,234,0.4)":"none"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 990}}, "确认添加")
@@ -1450,14 +1510,16 @@ function AddBookModal({onClose,onAdd,onSuccess}){
   );
 }
 
-function ShelfBookCard({book,index,onToggle,onDelete,onSetReturn,onHandover,onReturnReceived,onPress}){
+function ShelfBookCard({book,index,onToggle,onDelete,onSetReturn,onHandover,onReturnReceived,onPress,onSetVisibility}){
   const [delSheet,setDelSheet]=useState(false);
   const [dateSheet,setDateSheet]=useState(false);
   const [handoverModal,setHandoverModal]=useState(false);
+  const [visSheet,setVisSheet]=useState(false);
   const [dying,setDying]=useState(false);
   const [selDate,setSelDate]=useState(book.returnDate||"");
   const isOver = book.status==="BORROWED" && checkOverdue(book.borrowedAt,book.duration);
   const isPend = book.status==="PENDING_HANDOVER";
+  const visibilityMeta = VISIBILITY_OPTIONS.find(v=>v.k===(book.visibility||"all")) || VISIBILITY_OPTIONS[0];
 
   return (
     React.createElement(React.Fragment, null
@@ -1471,7 +1533,7 @@ function ShelfBookCard({book,index,onToggle,onDelete,onSetReturn,onHandover,onRe
             , React.createElement('div', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:15,fontWeight:700,color:"#1a1a2e",lineHeight:1.3}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1018}}, book.title)
             , React.createElement('div', { style: {fontSize:12,color:"#8892a4",marginTop:2}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1019}}, book.author)
             , book.status==="AVAILABLE" && React.createElement('span', { style: {background:"#e6f9f0",color:"#1a9c5b",borderRadius:20,padding:"2px 8px",fontSize:11,fontWeight:600,marginTop:6,display:"inline-block"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1020}}, "✓ 共享中" )
-            , book.status==="AVAILABLE" && React.createElement('span', { style: {background:book.visibility==="friends"?"#eff6ff":"#f0fdf4",color:book.visibility==="friends"?"#2563eb":"#168f65",borderRadius:20,padding:"2px 8px",fontSize:11,fontWeight:600,marginTop:6,marginLeft:6,display:"inline-block"}}, book.visibility==="friends" ? "好友可见" : "所有人可见")
+            , (book.status==="AVAILABLE" || book.status==="PAUSED") && React.createElement('button', { onClick: e=>{e.stopPropagation();setVisSheet(true);}, style: {background:book.visibility==="private"?"#faf5ff":book.visibility==="friends"?"#eff6ff":"#f0fdf4",color:book.visibility==="private"?"#7c3aed":book.visibility==="friends"?"#2563eb":"#168f65",borderRadius:20,padding:"2px 8px",fontSize:11,fontWeight:700,marginTop:6,marginLeft:6,display:"inline-block",border:"none",cursor:"pointer"}}, visibilityMeta.chip, " ›")
             , book.status==="PAUSED" && React.createElement('span', { style: {background:"#fef3e2",color:"#d97706",borderRadius:20,padding:"2px 8px",fontSize:11,fontWeight:600,marginTop:6,display:"inline-block"}}, "⏸ 已暂停" )
             , book.status==="PROPOSED" && React.createElement('span', { style: {background:"#fef3e2",color:"#d97706",borderRadius:20,padding:"2px 8px",fontSize:11,fontWeight:600,marginTop:6,display:"inline-block"}}, "⏸ 已暂停" )
             , book.status==="EXCHANGED" && React.createElement('span', { style: {background:"#f0f2ff",color:"#667eea",borderRadius:20,padding:"2px 8px",fontSize:11,fontWeight:600,marginTop:6,display:"inline-block"}}, "📤 已借出" )
@@ -1483,23 +1545,31 @@ function ShelfBookCard({book,index,onToggle,onDelete,onSetReturn,onHandover,onRe
         )
         , React.createElement('div', { style: {display:"flex",borderTop:"1px solid #f4f6fb"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1027}}
           , isPend ? React.createElement(React.Fragment, null
-            , React.createElement('button', { onClick: ()=>setHandoverModal(true), style: {flex:2,padding:"11px",border:"none",background:"linear-gradient(135deg,#1a9c5b,#34d399)",cursor:"pointer",color:"#fff",fontSize:12,fontWeight:700,borderRight:"1px solid rgba(255,255,255,0.2)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1029}}, "🤝 确认交接" )
-            , React.createElement('button', { onClick: ()=>setDelSheet(true), style: {flex:1,padding:"11px",border:"none",background:"transparent",cursor:"pointer",color:"#8892a4",fontSize:12,fontWeight:700}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1030}}, "🗑 删除" )
+            , React.createElement('button', { onClick: ()=>setHandoverModal(true), style: {flex:1,padding:"11px",border:"none",background:"linear-gradient(135deg,#1a9c5b,#34d399)",cursor:"pointer",color:"#fff",fontSize:12,fontWeight:700}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1029}}, "🤝 确认交接" )
           ) : book.status==="EXCHANGED" ? React.createElement(React.Fragment, null
             , React.createElement('div', { style: {flex:1,padding:"11px",textAlign:"center",color:"#667eea",fontSize:12,fontWeight:700}}, "请在消息页处理归还" )
           ) : book.status==="PROPOSED" ? React.createElement(React.Fragment, null
-            , React.createElement('div', { style: {flex:2,padding:"11px",textAlign:"center",color:"#d97706",fontSize:12,fontWeight:700,borderRight:"1px solid #f4f6fb"}}, "已暂停共享" )
-            , React.createElement('button', { onClick: ()=>setDelSheet(true), style: {flex:1,padding:"11px",border:"none",background:"transparent",cursor:"pointer",color:"#8892a4",fontSize:12,fontWeight:700}}, "🗑 删除" )
+            , React.createElement('div', { style: {flex:1,padding:"11px",textAlign:"center",color:"#d97706",fontSize:12,fontWeight:700}}, "已暂停共享")
           ) : book.status==="BORROWED" ? React.createElement(React.Fragment, null
             , React.createElement('button', { onClick: ()=>setDateSheet(true), style: {flex:1,padding:"11px",border:"none",background:"transparent",cursor:"pointer",color:"#667eea",fontSize:12,fontWeight:700,borderRight:"1px solid #f4f6fb"}}, "📅 " , book.returnDate?"修改":"设置", "归还日期")
             , React.createElement('button', { onClick: ()=>onReturnReceived&&onReturnReceived(book), style: {flex:1,padding:"11px",border:"none",background:"transparent",cursor:"pointer",color:"#1a9c5b",fontSize:12,fontWeight:700}}, "✅ 确认收到归还")
           ) : book.status==="PAUSED" ? React.createElement(React.Fragment, null
-            , React.createElement('button', { onClick: ()=>onToggle(book.id), style: {flex:1,padding:"11px",border:"none",background:"transparent",cursor:"pointer",color:"#1a9c5b",fontSize:12,fontWeight:700,borderRight:"1px solid #f4f6fb"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1035}}, "▶ 恢复共享" )
-            , React.createElement('button', { onClick: ()=>setDelSheet(true), style: {flex:1,padding:"11px",border:"none",background:"transparent",cursor:"pointer",color:"#8892a4",fontSize:12,fontWeight:700}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1036}}, "🗑 删除" )
+            , React.createElement('div', { style: {flex:1,padding:"11px",textAlign:"center",color:"#d97706",fontSize:12,fontWeight:700}}, "进入图书页面恢复共享或删除")
           ) : React.createElement(React.Fragment, null
-            , React.createElement('button', { onClick: ()=>onToggle(book.id), style: {flex:1,padding:"11px",border:"none",background:"transparent",cursor:"pointer",color:"#d97706",fontSize:12,fontWeight:700,borderRight:"1px solid #f4f6fb"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1038}}, "⏸ 暂停共享" )
-            , React.createElement('button', { onClick: ()=>setDelSheet(true), style: {flex:1,padding:"11px",border:"none",background:"transparent",cursor:"pointer",color:"#8892a4",fontSize:12,fontWeight:700}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1039}}, "🗑 删除" )
+            , React.createElement('div', { style: {flex:1,padding:"11px",textAlign:"center",color:"#8892a4",fontSize:12,fontWeight:700}}, "点击图书进入编辑")
           )
+        )
+      )
+
+      , visSheet && (
+        React.createElement(Sheet, { onClose: ()=>setVisSheet(false)}
+          , React.createElement('div', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:17,fontWeight:800,color:"#162033",marginBottom:14}}, "设置开放权限")
+          , VISIBILITY_OPTIONS.map(v=>(
+            React.createElement('button', { key: v.k, onClick: ()=>{onSetVisibility&&onSetVisibility(book.id,v.k);setVisSheet(false);}, style: {width:"100%",padding:"12px 14px",borderRadius:14,border:(book.visibility||"all")===v.k?"2px solid #14b8a6":"1.5px solid #eef2f7",background:(book.visibility||"all")===v.k?"#ecfdf5":"#fff",color:(book.visibility||"all")===v.k?"#168f65":"#5a6272",textAlign:"left",cursor:"pointer",marginBottom:8}}
+              , React.createElement('div', { style: {fontSize:13,fontWeight:800,marginBottom:3}}, v.l)
+              , React.createElement('div', { style: {fontSize:11,color:(book.visibility||"all")===v.k?"#168f65":"#98a2b3",lineHeight:1.4}}, v.s)
+            )
+          ))
         )
       )
 
@@ -2269,6 +2339,17 @@ function LinkNest(){
     );
   },[]);
 
+  const isFriend = (name) => friends.some(f=>f.name===name);
+  const updateMyBook = (id, patch) => {
+    setMyBooks(prev => prev.map(b => b.id===id ? {...b, ...patch} : b));
+    setSelShelfBook(prev => prev && prev.id===id ? {...prev, ...patch} : prev);
+  };
+  const toggleMyBookShare = (id) => updateMyBook(id, myBooks.find(b=>b.id===id)?.status==="PAUSED" ? {available:true,status:"AVAILABLE"} : {available:false,status:"PAUSED"});
+  const deleteMyBook = (id) => {
+    setMyBooks(prev => prev.filter(b=>b.id!==id));
+    setSelShelfBook(null);
+  };
+
   const handleBorrow = (book) => {
     if(REQUIRE_REGISTRATION_FOR_ACTIONS && !registered){ runProtectedAction(()=>handleBorrow(book)); return; }
     if(points<100){
@@ -2349,11 +2430,42 @@ function LinkNest(){
     setTimeout(()=>{setTyping(false);push({id:Date.now()+1,name:who,msg:"好的，收到！",time:"刚刚",avatar:"👤",sentByUser:false,unread:1});},2400);
   };
 
-  // Merge community BOOKS + user's own available books for discover view
-  const allDiscoverBooks = [
-    ...BOOKS,
-    ...myBooks.filter(b=>b.owner==="我"&&b.available&&b.distance!=null&&b.visibility!=="friends")
-  ];
+  const fallbackShelves = {
+    Alex: [
+      { id:"alex-101", title:"小王子", author:"Antoine de Saint-Exupéry", available:true, duration:"1 month", distance:0.9, owner:"Alex", cover:"🌟", category:"儿童", condition:"九成新", description:"适合亲子共读的经典童话。" },
+      { id:"alex-102", title:"蛤蟆先生去看心理医生", author:"Robert de Board", available:true, duration:"2 weeks", distance:0.9, owner:"Alex", cover:"🛋️", category:"心理", condition:"轻微使用", description:"温和易读的心理成长入门书。" },
+      { id:"alex-103", title:"The Design of Everyday Things", author:"Don Norman", available:false, duration:"1 month", distance:0.9, owner:"Alex", cover:"🧩", category:"科技", condition:"有笔记", description:"产品与交互设计经典读物。" }
+    ],
+    Sarah: BOOKS.filter(b=>b.owner==="Sarah"),
+    Emma: BOOKS.filter(b=>b.owner==="Emma"),
+    Mike: BOOKS.filter(b=>b.owner==="Mike")
+  };
+  const getPersonShelfBooks = (name) => {
+    const owned = BOOKS.filter(b=>b.owner===name);
+    if(owned.length) return owned;
+    return fallbackShelves[name] || [];
+  };
+
+  const canShowInDiscover = (book) => {
+    if(!book.available) return false;
+    const visibility = book.visibility || "all";
+    if(visibility==="private") return false;
+    if(!registered) return visibility==="all";
+    if(visibility==="friends") return book.owner==="我" || isFriend(book.owner);
+    return true;
+  };
+
+  // Merge community books, friend shelves, and user's own visible books for discover view.
+  const friendDiscoverBooks = registered ? friends.flatMap(f=>getPersonShelfBooks(f.name)) : [];
+  const allDiscoverBooks = (() => {
+    const map = new Map();
+    [...BOOKS, ...friendDiscoverBooks, ...myBooks.filter(b=>b.owner==="我"&&b.distance!=null)].forEach(b => {
+      if(!canShowInDiscover(b)) return;
+      const key = `${b.owner||""}:${b.id||b.title}`;
+      if(!map.has(key)) map.set(key,b);
+    });
+    return [...map.values()];
+  })();
   const allKnownBooks = [...BOOKS, ...myBooks, ...borrowed];
   const getSharedBookReviews = (book) => {
     const key = bookReviewKey(book);
@@ -2395,27 +2507,11 @@ function LinkNest(){
   })();
   const activeChat = selectedChat ? chatPeople.find(c=>c.name===selectedChat) || {name:selectedChat, avatar:"👤", unread:0, messages:[]} : null;
   const activeChatMessages = selectedChat ? msgs.filter(m => !m.isSystem && ((m.sentByUser && m.peer===selectedChat) || (!m.sentByUser && m.name===selectedChat))).sort((a,b)=>Number(a.id||0)-Number(b.id||0)) : [];
-  const fallbackShelves = {
-    Alex: [
-      { id:"alex-101", title:"小王子", author:"Antoine de Saint-Exupéry", available:true, duration:"1 month", distance:0.9, owner:"Alex", cover:"🌟", category:"儿童", condition:"九成新", description:"适合亲子共读的经典童话。" },
-      { id:"alex-102", title:"蛤蟆先生去看心理医生", author:"Robert de Board", available:true, duration:"2 weeks", distance:0.9, owner:"Alex", cover:"🛋️", category:"心理", condition:"轻微使用", description:"温和易读的心理成长入门书。" },
-      { id:"alex-103", title:"The Design of Everyday Things", author:"Don Norman", available:false, duration:"1 month", distance:0.9, owner:"Alex", cover:"🧩", category:"科技", condition:"有笔记", description:"产品与交互设计经典读物。" }
-    ],
-    Sarah: BOOKS.filter(b=>b.owner==="Sarah"),
-    Emma: BOOKS.filter(b=>b.owner==="Emma"),
-    Mike: BOOKS.filter(b=>b.owner==="Mike")
-  };
-  const getPersonShelfBooks = (name) => {
-    const owned = BOOKS.filter(b=>b.owner===name);
-    if(owned.length) return owned;
-    return fallbackShelves[name] || [];
-  };
   const getChatAvatar = (name) => {
     const chat = chatPeople.find(c=>c.name===name);
     const profile = OWNER_PROFILES[name];
     return (chat&&chat.avatar) || (profile&&profile.avatar) || "👤";
   };
-  const isFriend = (name) => friends.some(f=>f.name===name);
   const hasPendingFriendRequest = (name) => msgs.some(m=>m.type==="friend_request"&&m.name===name&&m.status==="pending");
   const addFriendDirect = (name, avatar) => {
     if(!name || name==="我" || isFriend(name)) return;
@@ -2664,12 +2760,9 @@ function LinkNest(){
             , shelfTab==="lent" && (myBooks.length===0
               ? React.createElement('div', { style: {textAlign:"center",padding:"60px 0"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1559}}, React.createElement('div', { style: {fontSize:56,marginBottom:16}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1559}}, "📭"), React.createElement('div', { style: {fontSize:16,fontWeight:700,color:"#1a1a2e",marginBottom:8}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1559}}, "书架还是空的"), React.createElement('button', { onClick: ()=>runProtectedAction(()=>setShowAdd(true)), style: {padding:"12px 28px",borderRadius:14,border:"none",background:"linear-gradient(135deg,#667eea,#764ba2)",color:"#fff",fontWeight:700,fontSize:14,cursor:"pointer"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1559}}, "+ 添加第一本书" ))
               : myBooks.map((b,i)=>React.createElement(ShelfBookCard_memo, { key: b.id, book: b, index: i,
-                  onToggle: id=>setMyBooks(p=>p.map(bk=>bk.id===id&&bk.status==="AVAILABLE"?{...bk,available:false,status:"PAUSED"}:bk.id===id&&bk.status==="PAUSED"?{...bk,available:true,status:"AVAILABLE"}:bk)),
-                  onDelete: (id, isWithdraw)=>{
-                    const bk = myBooks.find(b=>b.id===id);
-                    if(!bk) return;
-                    setMyBooks(p=>p.filter(bk=>bk.id!==id));
-                  },
+                  onToggle: toggleMyBookShare,
+                  onDelete: deleteMyBook,
+                  onSetVisibility: (id,visibility)=>updateMyBook(id,{visibility}),
                   onSetReturn: (id,date)=>setMyBooks(p=>p.map(bk=>bk.id===id?{...bk,returnDate:date}:bk)),
                   onHandover: handleHandover,
                   onReturnReceived: book=>setReturnReviewBook(book),
@@ -3186,7 +3279,7 @@ function LinkNest(){
 
       /* Overlays */
       , showMapSheet&&React.createElement(MapRadiusSheet, { radius: radius, onChangeRadius: setRadius, savedRadii: savedRadii, onSaveRadius: r=>setSavedRadii(p=>[...p,r].sort((a,b)=>a-b)), onRemoveSaved: r=>setSavedRadii(p=>p.filter(x=>x!==r)), books: BOOKS.filter(b=>b.distance<=20), geoLabel: geoLabel, mapProvider: mapProvider, googleMapsApiKey: googleMapsApiKey, amapApiKey: amapApiKey, onClose: ()=>setShowMapSheet(false), __self: this, __source: {fileName: _jsxFileName, lineNumber: 1714}})
-      , selShelfBook&&React.createElement(BookDetail, { book: {...selShelfBook,available:false,distance:0,owner:selShelfBook.owner||"我"}, onClose: ()=>setSelShelfBook(null), onBorrow: ()=>{}, extraReviews: getSharedBookReviews(selShelfBook), onAddReview: addBookReview, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1715}})
+      , selShelfBook&&React.createElement(BookDetail, { book: {...selShelfBook,distance:selShelfBook.distance ?? 0,owner:selShelfBook.owner||"我"}, onClose: ()=>setSelShelfBook(null), onBorrow: ()=>{}, extraReviews: getSharedBookReviews(selShelfBook), onAddReview: addBookReview, editable: true, onUpdateBook: updateMyBook, onToggleShare: toggleMyBookShare, onDeleteBook: deleteMyBook, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1715}})
       , selBook&&React.createElement(BookDetail, { book: selBook, onClose: ()=>setSelBook(null), onBorrow: handleBorrow, onBorrowBatch: handleBorrowBatch, extraReviews: getSharedBookReviews(selBook), onAddReview: addBookReview, currentBorrowedCount: borrowed.length, maxBorrow: isFriend(selBook.owner)?MAX_FRIEND_BORROW:MAX_GENERAL_BORROW, isFriendOwner: isFriend(selBook.owner), __self: this, __source: {fileName: _jsxFileName, lineNumber: 1716}})
       , showAdd&&React.createElement(AddBookModal, { onClose: ()=>setShowAdd(false), onAdd: b=>setMyBooks(p=>[b,...p]), onSuccess: ()=>setTab(1), __self: this, __source: {fileName: _jsxFileName, lineNumber: 1717}})
       , returnReviewBook&&React.createElement(BorrowerReviewModal, { book: returnReviewBook, onClose: ()=>setReturnReviewBook(null), onSubmit: submitBorrowerReview })

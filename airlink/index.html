@@ -7,7 +7,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="linknest-white-favicon.png">
   <title>LinkNest · 手机网页版</title>
-  <meta name="build-id" content="202605162035">
+  <meta name="build-id" content="202605162115">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;700&display=swap">
   <style>
@@ -243,7 +243,7 @@ const MEETING_POINTS = [
 ];
 
 const CATEGORIES = ["全部","小说","文学","历史","科技","儿童","心理","商业","艺术","教育","健康","其他"];
-const TABS = ["发现","我的书架","消息","好友","我"];
+const TABS = ["发现","书架","消息","好友","我的"];
 const BOOK_CONDITIONS = ["全新","九成新","轻微使用","有笔记","折痕/磨损"];
 const BOOK_DURATIONS = ["1 week","2 weeks","1 month","2 months","3 months"];
 const VISIBILITY_OPTIONS = [
@@ -1921,7 +1921,7 @@ function LinkNest(){
   const [cloudBusy,setCloudBusy]=useState(false);
   const [pushStatus,setPushStatus]=useState("");
   const supabaseRef = useRef({url:"", key:"", client:null});
-  const [tab,setTab]=useState(0);
+  const [tab,setTab]=useState(1);
   const [radius,setRadius]=usePersistedState("radius", 10);
   const [showMapSheet,setShowMapSheet]=useState(false);
   const [savedRadii,setSavedRadii]=usePersistedState("savedRadii", [3,5,10]);
@@ -2824,7 +2824,7 @@ function LinkNest(){
 
         /* SHELF */
         , tab===1 && (
-          React.createElement('div', { style: {padding:"22px 18px 120px",height:"100%",overflowY:"auto",background:"linear-gradient(180deg,#f7f4ff 0%,#f7f8fc 42%,#f4f6fb 100%)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1537}}
+          React.createElement('div', { style: {padding:"22px 18px 170px",height:"100%",overflowY:"auto",background:"linear-gradient(180deg,#f7f4ff 0%,#f7f8fc 42%,#f4f6fb 100%)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1537}}
             , React.createElement('div', { style: {display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:14,marginBottom:18}}
               , React.createElement('div', { style: {minWidth:0,flex:1}}
                 , React.createElement('h2', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:25,lineHeight:1.15,color:"#18152c",margin:"0 0 7px",fontWeight:900}}, "我的书架")
@@ -3390,7 +3390,7 @@ function LinkNest(){
       )
 
       /* FAB */
-      , tab===0&&React.createElement('button', { onClick: ()=>runProtectedAction(()=>setShowAdd(true)), style: {position:"absolute",right:20,bottom:"calc(88px + env(safe-area-inset-bottom, 0px))",width:52,height:52,borderRadius:16,border:"none",background:"linear-gradient(135deg,#667eea,#764ba2)",color:"#fff",fontSize:26,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 8px 24px rgba(102,126,234,0.5)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1711}}, "+")
+      , (tab===0||tab===1)&&React.createElement('button', { onClick: ()=>runProtectedAction(()=>setShowAdd(true)), "aria-label": "添加书籍", title: "添加书籍", style: {position:"absolute",right:20,bottom:"calc(96px + env(safe-area-inset-bottom, 0px))",width:54,height:54,borderRadius:18,border:"none",background:"linear-gradient(135deg,#8b5cf6,#667eea)",color:"#fff",fontSize:28,fontWeight:800,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 14px 34px rgba(102,126,234,0.42)",zIndex:28}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1711}}, "+")
 
       /* Overlays */
       , showMapSheet&&React.createElement(MapRadiusSheet, { radius: radius, onChangeRadius: setRadius, savedRadii: savedRadii, onSaveRadius: r=>setSavedRadii(p=>[...p,r].sort((a,b)=>a-b)), onRemoveSaved: r=>setSavedRadii(p=>p.filter(x=>x!==r)), books: BOOKS.filter(b=>b.distance<=20), geoLabel: geoLabel, mapProvider: mapProvider, googleMapsApiKey: googleMapsApiKey, amapApiKey: amapApiKey, onClose: ()=>setShowMapSheet(false), __self: this, __source: {fileName: _jsxFileName, lineNumber: 1714}})

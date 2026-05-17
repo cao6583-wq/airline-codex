@@ -7,7 +7,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="linknest-white-favicon.png">
   <title>LinkNest · 手机网页版</title>
-  <meta name="build-id" content="202605171030">
+  <meta name="build-id" content="202605171140">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;700&display=swap">
   <style>
@@ -527,7 +527,7 @@ const shelfStatusMeta = (book) => {
   return {label:"可借出", bg:"#ecfdf5", color:"#168f65"};
 };
 const shelfActionLabel = (book, mode="shared") => {
-  if(mode==="borrowed") return book.pendingReturnDate ? "等待确认" : "申请归还";
+  if(mode==="borrowed") return book.pendingReturnDate ? "等待新的归还日期" : "申请归还";
   if(book.status==="BORROWED") return "提醒归还";
   if(book.status==="PENDING_HANDOVER") return "查看聊天";
   if(book.status==="PAUSED") return "恢复共享";
@@ -1714,9 +1714,11 @@ function BorrowedCard({item,index,onReturn}){
   );
 }
 
-function ReadingBookCard({book,index,mode,onPress,onPrimary,onMore}){
-  const meta = shelfStatusMeta(book);
+function ReadingBookCard({book,index,mode,onPress,onPrimary,onMore,onReturnRequest}){
   const isBorrowedMode = mode==="borrowed";
+  const [returnSheet,setReturnSheet]=useState(false);
+  const [returnDate,setReturnDate]=useState("");
+  const meta = isBorrowedMode ? {label:"借阅中", bg:"#f5f0ff", color:"#6d4ee8"} : shelfStatusMeta(book);
   const title = book.title || "未命名书籍";
   const author = book.author || "未知作者";
   const personName = isBorrowedMode ? (book.owner || "邻居") : (book.borrower || (book.status==="PENDING_HANDOVER" ? "Tom" : ""));
@@ -1724,7 +1726,7 @@ function ReadingBookCard({book,index,mode,onPress,onPrimary,onMore}){
   const interested = book.interested || (book.status==="AVAILABLE" ? ["Sarah","Tom"] : []);
   const primary = shelfActionLabel(book, mode);
   const line = isBorrowedMode
-    ? `借自 ${personName} · ${book.pendingReturnDate ? "待确认归还时间" : dueText({...book,borrowedAt:book.borrowedAt||new Date().toISOString()})}`
+    ? `借自 ${personName} · ${dueText({...book,borrowedAt:book.borrowedAt||new Date().toISOString()})}`
     : book.status==="BORROWED"
       ? `借给 ${book.borrower||"Sarah"} · 距离你 ${book.distance||0.8}km`
       : book.status==="PENDING_HANDOVER"
@@ -1733,39 +1735,62 @@ function ReadingBookCard({book,index,mode,onPress,onPrimary,onMore}){
           ? "仅自己可见"
           : `${book.visibility==="friends"?"好友可见":"距离你 "+(book.distance||0.6)+"km"}`;
   const detail = isBorrowedMode
-    ? (book.pendingReturnDate ? `准备 ${book.pendingReturnDate} 归还` : `${formatDueDate(book)} 归还`)
+    ? (book.pendingReturnDate ? `已申请 ${book.pendingReturnDate} 归还 · 等待对方同意` : `${formatDueDate(book)} 归还`)
     : book.status==="BORROWED"
       ? `${formatDueDate(book)} 归还 · ${dueText(book)}`
       : book.status==="PENDING_HANDOVER"
         ? "发起于 3 天前"
         : interested.length ? `${interested.length} 位邻里感兴趣` : "可分享给附近邻里";
 
+  const submitReturn = () => {
+    if(!returnDate) return;
+    onReturnRequest&&onReturnRequest(book,returnDate);
+    setReturnSheet(false);
+  };
+
   return (
-    React.createElement('div', { onClick: ()=>onPress&&onPress(book), style: {background:"rgba(255,255,255,0.92)",borderRadius:20,marginBottom:12,padding:"14px 12px",display:"grid",gridTemplateColumns:"86px minmax(0,1fr) 106px",gap:12,alignItems:"center",boxShadow:"0 12px 30px rgba(71,54,134,0.07)",border:"1px solid rgba(255,255,255,0.82)",animation:`fadeUp .36s ease ${index*45}ms both`,cursor:"pointer"}}
-      , React.createElement(CoverDisplay_memo, { value: book.cover, size: 78, radius: 10, style: {boxShadow:"0 10px 24px rgba(26,20,68,0.12)"} })
-      , React.createElement('div', { style: {minWidth:0}}
-        , React.createElement('div', { style: {display:"flex",alignItems:"center",gap:7,minWidth:0}}
-          , React.createElement('div', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:20,fontWeight:900,color:"#171633",lineHeight:1.2,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, title)
+    React.createElement(React.Fragment, null
+      , React.createElement('div', { onClick: ()=>onPress&&onPress(book), style: {background:"rgba(255,255,255,0.92)",borderRadius:20,marginBottom:12,padding:"14px 12px",display:"grid",gridTemplateColumns:"86px minmax(0,1fr) 106px",gap:12,alignItems:"center",boxShadow:"0 12px 30px rgba(71,54,134,0.07)",border:"1px solid rgba(255,255,255,0.82)",animation:`fadeUp .36s ease ${index*45}ms both`,cursor:"pointer"}}
+        , React.createElement(CoverDisplay_memo, { value: book.cover, size: 78, radius: 10, style: {boxShadow:"0 10px 24px rgba(26,20,68,0.12)"} })
+        , React.createElement('div', { style: {minWidth:0}}
+          , React.createElement('div', { style: {display:"flex",alignItems:"center",gap:7,minWidth:0}}
+            , React.createElement('div', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:20,fontWeight:900,color:"#171633",lineHeight:1.2,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, title)
+          )
+          , React.createElement('div', { style: {fontSize:12,color:"#7d8496",fontWeight:700,marginTop:6,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, author)
+          , React.createElement('div', { style: {marginTop:8,display:"flex",alignItems:"center",gap:7,flexWrap:"wrap"}}
+            , React.createElement('span', { style: {background:meta.bg,color:meta.color,borderRadius:999,padding:"3px 8px",fontSize:11,fontWeight:900,lineHeight:1.1}}, meta.label)
+          )
+          , React.createElement('div', { style: {display:"flex",alignItems:"center",gap:7,marginTop:8,minWidth:0}}
+            , personAvatar
+              ? React.createElement('span', { style: {width:22,height:22,borderRadius:9,background:"#f0f2ff",display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:13,flexShrink:0}}, personAvatar)
+              : interested.length
+                ? React.createElement('span', { style: {display:"inline-flex",alignItems:"center",flexShrink:0}}, interested.slice(0,3).map((n,i)=>React.createElement('span', { key:n, style: {width:22,height:22,marginLeft:i?-7:0,borderRadius:9,background:"#fff",boxShadow:"0 0 0 2px #fff",display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:12}}, OWNER_PROFILES[n]?.avatar || "👤")))
+                : null
+            , React.createElement('span', { style: {fontSize:12,color:"#7c8195",fontWeight:700,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, line)
+          )
+          , React.createElement('div', { style: {fontSize:12,color:detail.includes("逾期")?"#dc2626":"#8c92a4",fontWeight:800,marginTop:6,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, detail)
         )
-        , React.createElement('div', { style: {fontSize:12,color:"#7d8496",fontWeight:700,marginTop:6,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, author)
-        , React.createElement('div', { style: {marginTop:8,display:"flex",alignItems:"center",gap:7,flexWrap:"wrap"}}
-          , React.createElement('span', { style: {background:meta.bg,color:meta.color,borderRadius:999,padding:"3px 8px",fontSize:11,fontWeight:900,lineHeight:1.1}}, meta.label)
+        , React.createElement('div', { style: {alignSelf:"stretch",display:"flex",flexDirection:"column",alignItems:"flex-end",justifyContent:"space-between",gap:8}}
+          , React.createElement('button', { onClick: e=>{e.stopPropagation();onMore?onMore(book):onPress&&onPress(book);}, style: {width:30,height:24,border:"none",background:"transparent",color:"#7b728d",fontSize:20,fontWeight:900,lineHeight:1,cursor:"pointer"}}, "...")
+          , React.createElement('div', { style: {display:"flex",alignItems:"center",gap:8}}
+            , React.createElement('button', { onClick: e=>{e.stopPropagation();isBorrowedMode ? (!book.pendingReturnDate&&setReturnSheet(true)) : onPrimary&&onPrimary(book);}, disabled: isBorrowedMode&&!!book.pendingReturnDate, style: {border:"none",borderRadius:14,background:"rgba(124,92,255,0.1)",color:"#6d4ee8",fontSize:12,fontWeight:900,padding:"9px 10px",cursor:isBorrowedMode&&book.pendingReturnDate?"default":"pointer",whiteSpace:"nowrap",opacity:isBorrowedMode&&book.pendingReturnDate?0.82:1}}, primary)
+            , React.createElement('span', { style: {color:"#9aa1b6",fontSize:24,fontWeight:700,lineHeight:1}}, "›")
+          )
         )
-        , React.createElement('div', { style: {display:"flex",alignItems:"center",gap:7,marginTop:8,minWidth:0}}
-          , personAvatar
-            ? React.createElement('span', { style: {width:22,height:22,borderRadius:9,background:"#f0f2ff",display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:13,flexShrink:0}}, personAvatar)
-            : interested.length
-              ? React.createElement('span', { style: {display:"inline-flex",alignItems:"center",flexShrink:0}}, interested.slice(0,3).map((n,i)=>React.createElement('span', { key:n, style: {width:22,height:22,marginLeft:i?-7:0,borderRadius:9,background:"#fff",boxShadow:"0 0 0 2px #fff",display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:12}}, OWNER_PROFILES[n]?.avatar || "👤")))
-              : null
-          , React.createElement('span', { style: {fontSize:12,color:"#7c8195",fontWeight:700,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, line)
-        )
-        , React.createElement('div', { style: {fontSize:12,color:detail.includes("逾期")?"#dc2626":"#8c92a4",fontWeight:800,marginTop:6,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, detail)
       )
-      , React.createElement('div', { style: {alignSelf:"stretch",display:"flex",flexDirection:"column",alignItems:"flex-end",justifyContent:"space-between",gap:8}}
-        , React.createElement('button', { onClick: e=>{e.stopPropagation();onMore?onMore(book):onPress&&onPress(book);}, style: {width:30,height:24,border:"none",background:"transparent",color:"#7b728d",fontSize:20,fontWeight:900,lineHeight:1,cursor:"pointer"}}, "...")
-        , React.createElement('div', { style: {display:"flex",alignItems:"center",gap:8}}
-          , React.createElement('button', { onClick: e=>{e.stopPropagation();onPrimary&&onPrimary(book);}, style: {border:"none",borderRadius:14,background:"rgba(124,92,255,0.1)",color:"#6d4ee8",fontSize:12,fontWeight:900,padding:"9px 10px",cursor:"pointer",whiteSpace:"nowrap"}}, primary)
-          , React.createElement('span', { style: {color:"#9aa1b6",fontSize:24,fontWeight:700,lineHeight:1}}, "›")
+      , returnSheet && React.createElement(Sheet, { onClose: ()=>setReturnSheet(false)}
+        , React.createElement('div', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:18,fontWeight:900,color:"#171633",marginBottom:8}}, "申请归还《", title, "》")
+        , React.createElement('div', { style: {fontSize:13,color:"#7d8496",lineHeight:1.6,marginBottom:14}}, "请选择你准备归还的日期。发送后需要等待出借者同意，未同意前仍按原归还日期计算剩余天数。")
+        , React.createElement('div', { style: {display:"flex",gap:8,marginBottom:14,flexWrap:"wrap"}}
+          , [{l:"明天",d:1},{l:"2天后",d:2},{l:"1周后",d:7},{l:"2周后",d:14}].map(({l,d})=>{
+            const dt=new Date();dt.setDate(dt.getDate()+d);const v=dt.toISOString().split("T")[0];
+            return React.createElement('button', { key: l, onClick: ()=>setReturnDate(v), style: {padding:"8px 12px",borderRadius:18,border:"none",background:returnDate===v?"linear-gradient(135deg,#8b5cf6,#5f3fd4)":"#f3f0ff",color:returnDate===v?"#fff":"#6d4ee8",fontWeight:900,fontSize:12,cursor:"pointer"}}, l);
+          })
+        )
+        , React.createElement('input', { type: "date", value: returnDate, onChange: e=>setReturnDate(e.target.value), style: {width:"100%",padding:"12px 14px",borderRadius:14,border:"1.5px solid #eee9ff",fontSize:14,marginBottom:16,outline:"none"} })
+        , React.createElement('div', { style: {display:"grid",gridTemplateColumns:"1fr 1.5fr",gap:10}}
+          , React.createElement('button', { onClick: ()=>setReturnSheet(false), style: {padding:"13px",borderRadius:14,border:"1.5px solid #eee9ff",background:"#fff",color:"#7d8496",fontWeight:900,cursor:"pointer"}}, "取消")
+          , React.createElement('button', { onClick: submitReturn, disabled: !returnDate, style: {padding:"13px",borderRadius:14,border:"none",background:returnDate?"linear-gradient(135deg,#8b5cf6,#5f3fd4)":"#e8e2f8",color:returnDate?"#fff":"#aaa1c4",fontWeight:900,cursor:returnDate?"pointer":"not-allowed"}}, "发送申请")
         )
       )
     )
@@ -2569,9 +2594,7 @@ function LinkNest(){
   const requestReturn = (item, date) => {
     setBorrowed(prev => prev.map(b => b.id===item.id ? {...b, pendingReturnDate:date} : b));
     push({id:Date.now(),name:"我",peer:item.owner,msg:`📬 我准备在 ${date} 归还《${item.title}》，请确认这个时间是否方便。`,time:"刚刚",avatar:"🧑",sentByUser:true});
-    setSelectedChat(item.owner);
-    setTab(2);
-    setTimeout(()=>{push({id:Date.now()+1,name:item.owner,msg:`可以，${date} 归还没问题。`,time:"刚刚",avatar:"👤",sentByUser:false,unread:1});setBorrowed(prev=>prev.map(b=>b.id===item.id?{...b,returnDate:date,pendingReturnDate:null}:b));},2800);
+    setUpdateState(`已申请 ${date} 归还，等待 ${item.owner||"出借者"} 同意`);
   };
   const remindReturn = (book) => {
     const who = book.borrower || "借书人";
@@ -2581,8 +2604,6 @@ function LinkNest(){
   };
   const handleShelfPrimary = (book) => {
     if(shelfMode==="borrowed"){
-      const dt = new Date(); dt.setDate(dt.getDate()+1);
-      requestReturn(book, dt.toISOString().split("T")[0]);
       return;
     }
     if(book.status==="BORROWED"){ remindReturn(book); return; }
@@ -2940,19 +2961,19 @@ function LinkNest(){
 
             , React.createElement('div', { style: {background:"rgba(255,255,255,0.84)",border:"1px solid rgba(255,255,255,0.9)",borderRadius:18,padding:0,display:"grid",gridTemplateColumns:"1fr 1fr 1fr",boxShadow:"0 10px 26px rgba(88,70,143,0.07)",backdropFilter:"blur(16px)",marginBottom:18,overflow:"hidden"}}
               , [
-                {k:"shared",icon:"shared",title:"我的共享",count:sharedShelfBooks.length,sub:"分享给邻里的书"},
-                {k:"borrowed",icon:"borrowed",title:"我的借阅",count:borrowed.length,sub:"我借来的书"},
-                {k:"private",icon:"private",title:"我的收藏",count:privateBooks.length,sub:"仅自己可见"}
+                {k:"shared",icon:"shared",title:"共享",count:sharedShelfBooks.length,sub:"邻里可借"},
+                {k:"borrowed",icon:"borrowed",title:"借阅",count:borrowed.length,sub:"我借来的"},
+                {k:"private",icon:"private",title:"收藏",count:privateBooks.length,sub:"仅自己"}
               ].map((m,i)=>(
-                React.createElement('button', { key:m.k, onClick:()=>{setShelfMode(m.k);setShelfFilter("all");}, style: {padding:"10px 8px",border:"none",borderLeft:i?"1px solid #f0eef8":"none",background:shelfMode===m.k?"linear-gradient(180deg,rgba(139,92,246,0.12),rgba(255,255,255,0.94))":"transparent",color:shelfMode===m.k?"#6045d8":"#575d72",cursor:"pointer",boxShadow:shelfMode===m.k?"inset 0 0 0 1.25px rgba(139,92,246,0.2)":"none",textAlign:"center"}}
+                React.createElement('button', { key:m.k, onClick:()=>{setShelfMode(m.k);setShelfFilter("all");}, style: {padding:"8px 7px",border:"none",borderLeft:i?"1px solid #f0eef8":"none",background:shelfMode===m.k?"linear-gradient(180deg,rgba(139,92,246,0.12),rgba(255,255,255,0.94))":"transparent",color:shelfMode===m.k?"#6045d8":"#575d72",cursor:"pointer",boxShadow:shelfMode===m.k?"inset 0 0 0 1.25px rgba(139,92,246,0.2)":"none",textAlign:"center"}}
                   , React.createElement(ReadingModeIcon, { type: m.icon, active: shelfMode===m.k })
-                  , React.createElement('div', { style: {fontSize:13,fontWeight:900,marginTop:6,whiteSpace:"nowrap"}}, m.title, " ", m.count)
-                  , React.createElement('div', { style: {fontSize:10,fontWeight:700,color:shelfMode===m.k?"#7661db":"#8d93a5",lineHeight:1.25,marginTop:3}}, m.sub)
+                  , React.createElement('div', { style: {fontSize:13,fontWeight:900,marginTop:4,whiteSpace:"nowrap"}}, m.title, " ", m.count)
+                  , React.createElement('div', { style: {fontSize:10,fontWeight:700,color:shelfMode===m.k?"#7661db":"#8d93a5",lineHeight:1.2,marginTop:2}}, m.sub)
                 )
               ))
             )
 
-            , React.createElement('div', { style: {display:"flex",alignItems:"center",gap:8,marginBottom:14,overflowX:"auto",WebkitOverflowScrolling:"touch",padding:"1px 0 4px"}}
+            , shelfMode!=="borrowed" && React.createElement('div', { style: {display:"flex",alignItems:"center",gap:8,marginBottom:14,overflowX:"auto",WebkitOverflowScrolling:"touch",padding:"1px 0 4px"}}
                 , [
                   {k:"all",l:"全部",n:modeBooks.length},
                   {k:"borrowed",l:"借出中",n:modeBooks.filter(b=>b.status==="BORROWED").length},
@@ -2966,6 +2987,7 @@ function LinkNest(){
               : visibleShelfBooks.map((b,i)=>React.createElement(ReadingBookCard, { key: b.id, book: b, index: i, mode: shelfMode,
                   onPress: shelfMode==="borrowed" ? item=>{setSelectedChat(item.owner);setTab(2);} : setSelShelfBook,
                   onMore: shelfMode==="borrowed" ? item=>{setSelectedChat(item.owner);setTab(2);} : setSelShelfBook,
+                  onReturnRequest: requestReturn,
                   onPrimary: handleShelfPrimary}
                 ))
           )

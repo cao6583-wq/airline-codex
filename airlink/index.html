@@ -7,7 +7,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="linknest-white-favicon.png">
   <title>LinkNest · 手机网页版</title>
-  <meta name="build-id" content="202605171140">
+  <meta name="build-id" content="202605171205">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;700&display=swap">
   <style>
@@ -2961,14 +2961,13 @@ function LinkNest(){
 
             , React.createElement('div', { style: {background:"rgba(255,255,255,0.84)",border:"1px solid rgba(255,255,255,0.9)",borderRadius:18,padding:0,display:"grid",gridTemplateColumns:"1fr 1fr 1fr",boxShadow:"0 10px 26px rgba(88,70,143,0.07)",backdropFilter:"blur(16px)",marginBottom:18,overflow:"hidden"}}
               , [
-                {k:"shared",icon:"shared",title:"共享",count:sharedShelfBooks.length,sub:"邻里可借"},
-                {k:"borrowed",icon:"borrowed",title:"借阅",count:borrowed.length,sub:"我借来的"},
-                {k:"private",icon:"private",title:"收藏",count:privateBooks.length,sub:"仅自己"}
+                {k:"shared",icon:"shared",title:"共享",count:sharedShelfBooks.length},
+                {k:"borrowed",icon:"borrowed",title:"借阅",count:borrowed.length},
+                {k:"private",icon:"private",title:"收藏",count:privateBooks.length}
               ].map((m,i)=>(
-                React.createElement('button', { key:m.k, onClick:()=>{setShelfMode(m.k);setShelfFilter("all");}, style: {padding:"8px 7px",border:"none",borderLeft:i?"1px solid #f0eef8":"none",background:shelfMode===m.k?"linear-gradient(180deg,rgba(139,92,246,0.12),rgba(255,255,255,0.94))":"transparent",color:shelfMode===m.k?"#6045d8":"#575d72",cursor:"pointer",boxShadow:shelfMode===m.k?"inset 0 0 0 1.25px rgba(139,92,246,0.2)":"none",textAlign:"center"}}
+                React.createElement('button', { key:m.k, onClick:()=>{setShelfMode(m.k);setShelfFilter("all");}, style: {padding:"9px 7px",border:"none",borderLeft:i?"1px solid #f0eef8":"none",background:shelfMode===m.k?"linear-gradient(180deg,rgba(139,92,246,0.12),rgba(255,255,255,0.94))":"transparent",color:shelfMode===m.k?"#6045d8":"#575d72",cursor:"pointer",boxShadow:shelfMode===m.k?"inset 0 0 0 1.25px rgba(139,92,246,0.2)":"none",display:"flex",alignItems:"center",justifyContent:"center",gap:6,textAlign:"center"}}
                   , React.createElement(ReadingModeIcon, { type: m.icon, active: shelfMode===m.k })
-                  , React.createElement('div', { style: {fontSize:13,fontWeight:900,marginTop:4,whiteSpace:"nowrap"}}, m.title, " ", m.count)
-                  , React.createElement('div', { style: {fontSize:10,fontWeight:700,color:shelfMode===m.k?"#7661db":"#8d93a5",lineHeight:1.2,marginTop:2}}, m.sub)
+                  , React.createElement('div', { style: {fontSize:13,fontWeight:900,whiteSpace:"nowrap",lineHeight:1.1}}, m.title, " ", m.count)
                 )
               ))
             )

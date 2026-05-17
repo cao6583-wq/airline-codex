@@ -7,7 +7,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="linknest-white-favicon.png">
   <title>LinkNest · 手机网页版</title>
-  <meta name="build-id" content="202605162245">
+  <meta name="build-id" content="202605171030">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;700&display=swap">
   <style>
@@ -1772,6 +1772,29 @@ function ReadingBookCard({book,index,mode,onPress,onPrimary,onMore}){
   );
 }
 
+function ReadingModeIcon({type,active}){
+  const stroke = active ? "#6d4ee8" : "#7b728d";
+  const common = {viewBox:"0 0 24 24",fill:"none",stroke,strokeWidth:"2",strokeLinecap:"round",strokeLinejoin:"round",width:"20",height:"20"};
+  const icon = type==="shared"
+    ? React.createElement('svg', common,
+        React.createElement('path', { d: "M16 21v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2" }),
+        React.createElement('circle', { cx: "9.5", cy: "7", r: "4" }),
+        React.createElement('path', { d: "M21 21v-2.2a3.4 3.4 0 00-2.4-3.25" }),
+        React.createElement('path', { d: "M16.8 3.4a3.6 3.6 0 010 7.2" })
+      )
+    : type==="borrowed"
+      ? React.createElement('svg', common,
+          React.createElement('path', { d: "M7 4h10a2 2 0 012 2v14H8a3 3 0 01-3-3V6a2 2 0 012-2z" }),
+          React.createElement('path', { d: "M8 17h11" }),
+          React.createElement('path', { d: "M9 8h6" })
+        )
+      : React.createElement('svg', common,
+          React.createElement('path', { d: "M6 4a2 2 0 012-2h8a2 2 0 012 2v18l-6-3.5L6 22V4z" }),
+          React.createElement('path', { d: "M10 7h4" })
+        );
+  return React.createElement('span', { style: {width:30,height:30,borderRadius:12,background:active?"rgba(139,92,246,0.13)":"#f7f5ff",display:"inline-flex",alignItems:"center",justifyContent:"center",boxShadow:active?"inset 0 0 0 1px rgba(139,92,246,0.18)":"none"}}, icon);
+}
+
 function BorrowerReviewModal({book,onClose,onSubmit}){
   const [stars,setStars]=useState(5);
   const [text,setText]=useState("");
@@ -2008,6 +2031,7 @@ function LinkNest(){
   const [lentFilter,setLentFilter]=useState("all");
   const [shelfMode,setShelfMode]=useState("shared");
   const [shelfFilter,setShelfFilter]=useState("all");
+  const [shareVisibilityBook,setShareVisibilityBook]=useState(null);
 
   const [msgs,setMsgs]=usePersistedState("msgs", INIT_MESSAGES);
   const [friends,setFriends]=usePersistedState("friends", []);
@@ -2568,7 +2592,7 @@ function LinkNest(){
       return;
     }
     if(book.status==="PAUSED"){ toggleMyBookShare(book.id); return; }
-    if(book.visibility==="private"){ updateMyBook(book.id,{visibility:"all",available:true,status:"AVAILABLE"}); return; }
+    if(shelfMode==="private" || book.visibility==="private"){ setShareVisibilityBook(book); return; }
     toggleMyBookShare(book.id);
   };
 
@@ -2907,38 +2931,34 @@ function LinkNest(){
         /* SHELF */
         , tab===1 && (
           React.createElement('div', { style: {padding:"24px 18px 170px",height:"100%",overflowY:"auto",background:"linear-gradient(180deg,#fbf9ff 0%,#f7f4ff 44%,#f7f8fc 100%)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1537}}
-            , React.createElement('div', { style: {display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:14,marginBottom:24}}
+            , React.createElement('div', { style: {display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:14,marginBottom:18}}
               , React.createElement('div', { style: {minWidth:0,flex:1}}
-                , React.createElement('h2', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:27,lineHeight:1.12,color:"#171633",margin:"0 0 9px",fontWeight:900}}, "我的阅读 📖")
-                , React.createElement('div', { style: {fontSize:14,color:"#7d8496",lineHeight:1.55,fontWeight:700}}, "与邻里分享好书，让阅读连接彼此 💜")
+                , React.createElement('h2', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:27,lineHeight:1.12,color:"#171633",margin:"0",fontWeight:900}}, "我的书架")
               )
               , React.createElement('button', { onClick: ()=>runProtectedAction(()=>setShowAdd(true)), style: {border:"none",borderRadius:17,padding:"13px 16px",background:"linear-gradient(135deg,#9b63ff,#5f3fd4)",color:"#fff",fontWeight:900,fontSize:14,cursor:"pointer",boxShadow:"0 12px 28px rgba(101,73,214,0.36)",whiteSpace:"nowrap",display:"flex",alignItems:"center",gap:8}}, React.createElement('span', { style: {fontSize:22,lineHeight:1}}, "+"), "添加书籍")
             )
 
-            , React.createElement('div', { style: {background:"rgba(255,255,255,0.82)",border:"1px solid rgba(255,255,255,0.9)",borderRadius:20,padding:0,display:"grid",gridTemplateColumns:"1fr 1fr 1fr",boxShadow:"0 14px 36px rgba(88,70,143,0.08)",backdropFilter:"blur(16px)",marginBottom:22,overflow:"hidden"}}
+            , React.createElement('div', { style: {background:"rgba(255,255,255,0.84)",border:"1px solid rgba(255,255,255,0.9)",borderRadius:18,padding:0,display:"grid",gridTemplateColumns:"1fr 1fr 1fr",boxShadow:"0 10px 26px rgba(88,70,143,0.07)",backdropFilter:"blur(16px)",marginBottom:18,overflow:"hidden"}}
               , [
-                {k:"shared",icon:"👥",title:"我的共享",count:sharedShelfBooks.length,sub:"分享给邻里的书"},
-                {k:"private",icon:"🔖",title:"我的收藏",count:privateBooks.length,sub:"仅自己可见"},
-                {k:"borrowed",icon:"♡",title:"我的借阅",count:borrowed.length,sub:"我借来的书"}
+                {k:"shared",icon:"shared",title:"我的共享",count:sharedShelfBooks.length,sub:"分享给邻里的书"},
+                {k:"borrowed",icon:"borrowed",title:"我的借阅",count:borrowed.length,sub:"我借来的书"},
+                {k:"private",icon:"private",title:"我的收藏",count:privateBooks.length,sub:"仅自己可见"}
               ].map((m,i)=>(
-                React.createElement('button', { key:m.k, onClick:()=>{setShelfMode(m.k);setShelfFilter("all");}, style: {padding:"16px 10px",border:"none",borderLeft:i?"1px solid #f0eef8":"none",background:shelfMode===m.k?"linear-gradient(180deg,rgba(139,92,246,0.13),rgba(255,255,255,0.94))":"transparent",color:shelfMode===m.k?"#6045d8":"#575d72",cursor:"pointer",boxShadow:shelfMode===m.k?"inset 0 0 0 1.5px rgba(139,92,246,0.22)":"none",textAlign:"center"}}
-                  , React.createElement('div', { style: {fontSize:22,marginBottom:7}}, m.icon)
-                  , React.createElement('div', { style: {fontSize:14,fontWeight:900,marginBottom:5,whiteSpace:"nowrap"}}, m.title, " ", m.count)
-                  , React.createElement('div', { style: {fontSize:11,fontWeight:700,color:shelfMode===m.k?"#7661db":"#8d93a5",lineHeight:1.25}}, m.sub)
+                React.createElement('button', { key:m.k, onClick:()=>{setShelfMode(m.k);setShelfFilter("all");}, style: {padding:"10px 8px",border:"none",borderLeft:i?"1px solid #f0eef8":"none",background:shelfMode===m.k?"linear-gradient(180deg,rgba(139,92,246,0.12),rgba(255,255,255,0.94))":"transparent",color:shelfMode===m.k?"#6045d8":"#575d72",cursor:"pointer",boxShadow:shelfMode===m.k?"inset 0 0 0 1.25px rgba(139,92,246,0.2)":"none",textAlign:"center"}}
+                  , React.createElement(ReadingModeIcon, { type: m.icon, active: shelfMode===m.k })
+                  , React.createElement('div', { style: {fontSize:13,fontWeight:900,marginTop:6,whiteSpace:"nowrap"}}, m.title, " ", m.count)
+                  , React.createElement('div', { style: {fontSize:10,fontWeight:700,color:shelfMode===m.k?"#7661db":"#8d93a5",lineHeight:1.25,marginTop:3}}, m.sub)
                 )
               ))
             )
 
-            , React.createElement('div', { style: {display:"flex",alignItems:"center",justifyContent:"space-between",gap:10,marginBottom:16}}
-              , React.createElement('div', { style: {display:"flex",gap:10,overflowX:"auto",WebkitOverflowScrolling:"touch",padding:"1px 0 4px"}}
+            , React.createElement('div', { style: {display:"flex",alignItems:"center",gap:8,marginBottom:14,overflowX:"auto",WebkitOverflowScrolling:"touch",padding:"1px 0 4px"}}
                 , [
                   {k:"all",l:"全部",n:modeBooks.length},
                   {k:"borrowed",l:"借出中",n:modeBooks.filter(b=>b.status==="BORROWED").length},
                   {k:"negotiating",l:"协商中",n:modeBooks.filter(b=>b.status==="PENDING_HANDOVER").length},
                   {k:"available",l:"可借出",n:modeBooks.filter(b=>b.status==="AVAILABLE").length}
-                ].map(f=>React.createElement('button', { key:f.k, onClick:()=>setShelfFilter(f.k), style: {flexShrink:0,padding:"11px 18px",borderRadius:18,border:"none",background:shelfFilter===f.k?"linear-gradient(135deg,#8b5cf6,#5f3fd4)":"rgba(255,255,255,0.86)",color:shelfFilter===f.k?"#fff":"#596073",fontWeight:900,fontSize:13,cursor:"pointer",boxShadow:shelfFilter===f.k?"0 10px 24px rgba(101,73,214,0.28)":"0 4px 14px rgba(71,54,134,0.04)"}}, f.l, " ", f.n))
-              )
-              , React.createElement('button', { style: {border:"none",borderRadius:16,background:"rgba(255,255,255,0.86)",padding:"10px 11px",fontSize:13,color:"#6a6380",fontWeight:900,boxShadow:"0 4px 14px rgba(71,54,134,0.04)",whiteSpace:"nowrap",display:"flex",alignItems:"center",gap:5}}, "⌘", "筛选")
+                ].map(f=>React.createElement('button', { key:f.k, onClick:()=>setShelfFilter(f.k), style: {flexShrink:0,padding:"8px 13px",borderRadius:15,border:"none",background:shelfFilter===f.k?"linear-gradient(135deg,#8b5cf6,#5f3fd4)":"rgba(255,255,255,0.86)",color:shelfFilter===f.k?"#fff":"#596073",fontWeight:900,fontSize:12,cursor:"pointer",boxShadow:shelfFilter===f.k?"0 8px 18px rgba(101,73,214,0.22)":"0 3px 10px rgba(71,54,134,0.04)"}}, f.l, " ", f.n))
             )
 
             , visibleShelfBooks.length===0
@@ -3452,6 +3472,21 @@ function LinkNest(){
       , selBook&&React.createElement(BookDetail, { book: selBook, onClose: ()=>setSelBook(null), onBorrow: handleBorrow, onBorrowBatch: handleBorrowBatch, extraReviews: getSharedBookReviews(selBook), onAddReview: addBookReview, currentBorrowedCount: borrowed.length, maxBorrow: isFriend(selBook.owner)?MAX_FRIEND_BORROW:MAX_GENERAL_BORROW, isFriendOwner: isFriend(selBook.owner), __self: this, __source: {fileName: _jsxFileName, lineNumber: 1716}})
       , showAdd&&React.createElement(AddBookModal, { onClose: ()=>setShowAdd(false), onAdd: b=>setMyBooks(p=>[b,...p]), onSuccess: ()=>setTab(1), __self: this, __source: {fileName: _jsxFileName, lineNumber: 1717}})
       , returnReviewBook&&React.createElement(BorrowerReviewModal, { book: returnReviewBook, onClose: ()=>setReturnReviewBook(null), onSubmit: submitBorrowerReview })
+      , shareVisibilityBook&&React.createElement(Sheet, { onClose: ()=>setShareVisibilityBook(null)}
+        , React.createElement('div', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:19,fontWeight:900,color:"#171633",marginBottom:8}}, "分享《", shareVisibilityBook.title, "》")
+        , React.createElement('div', { style: {fontSize:13,color:"#7d8496",lineHeight:1.6,marginBottom:16}}, "这本书目前仅自己可见。选择分享范围后，邻里或好友就可以在发现页看到并申请借阅。")
+        , [
+          {k:"all",title:"所有人可见",sub:"附近邻里都可以看到并申请借阅",icon:"🌍"},
+          {k:"friends",title:"仅对朋友可见",sub:"只有已成为好友的人可以看到",icon:"👥"}
+        ].map(v=>React.createElement('button', { key: v.k, onClick: ()=>{updateMyBook(shareVisibilityBook.id,{visibility:v.k,available:true,status:"AVAILABLE"});setShareVisibilityBook(null);setShelfMode("shared");setShelfFilter("all");}, style: {width:"100%",display:"flex",alignItems:"center",gap:12,padding:"14px",borderRadius:16,border:"1.5px solid #eee9ff",background:"#fff",marginBottom:10,cursor:"pointer",textAlign:"left"}}
+          , React.createElement('span', { style: {width:38,height:38,borderRadius:14,background:"#f7f5ff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}, v.icon)
+          , React.createElement('span', { style: {flex:1,minWidth:0}}
+            , React.createElement('span', { style: {display:"block",fontSize:14,fontWeight:900,color:"#171633",marginBottom:3}}, v.title)
+            , React.createElement('span', { style: {display:"block",fontSize:12,fontWeight:700,color:"#8b90a3",lineHeight:1.45}}, v.sub)
+          )
+          , React.createElement('span', { style: {fontSize:22,color:"#a8acc0"}}, "›")
+        ))
+      )
       , pendingFriend&&React.createElement(OverlayCenter, { onClose: ()=>setPendingFriend(null)}
         , React.createElement('div', { style: {fontSize:44,marginBottom:12}}, "👥")
         , React.createElement('div', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:20,fontWeight:800,color:"#162033",marginBottom:8}}, "确认添加好友？")

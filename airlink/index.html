@@ -7,7 +7,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="linknest-white-favicon.png">
   <title>LinkNest · 手机网页版</title>
-  <meta name="build-id" content="202605162115">
+  <meta name="build-id" content="202605162245">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;700&display=swap">
   <style>
@@ -525,6 +525,14 @@ const shelfStatusMeta = (book) => {
   if(book.status==="PAUSED") return {label:"已暂停", bg:"#fef3e2", color:"#d97706"};
   if(book.visibility==="private") return {label:"仅自己", bg:"#faf5ff", color:"#7c3aed"};
   return {label:"可借出", bg:"#ecfdf5", color:"#168f65"};
+};
+const shelfActionLabel = (book, mode="shared") => {
+  if(mode==="borrowed") return book.pendingReturnDate ? "等待确认" : "申请归还";
+  if(book.status==="BORROWED") return "提醒归还";
+  if(book.status==="PENDING_HANDOVER") return "查看聊天";
+  if(book.status==="PAUSED") return "恢复共享";
+  if(book.visibility==="private") return "分享给邻里";
+  return "设置不可借";
 };
 
 // ── Feature components ───────────────────────────────────────────────────────
@@ -1706,6 +1714,64 @@ function BorrowedCard({item,index,onReturn}){
   );
 }
 
+function ReadingBookCard({book,index,mode,onPress,onPrimary,onMore}){
+  const meta = shelfStatusMeta(book);
+  const isBorrowedMode = mode==="borrowed";
+  const title = book.title || "未命名书籍";
+  const author = book.author || "未知作者";
+  const personName = isBorrowedMode ? (book.owner || "邻居") : (book.borrower || (book.status==="PENDING_HANDOVER" ? "Tom" : ""));
+  const personAvatar = personName ? (OWNER_PROFILES[personName]?.avatar || "👤") : null;
+  const interested = book.interested || (book.status==="AVAILABLE" ? ["Sarah","Tom"] : []);
+  const primary = shelfActionLabel(book, mode);
+  const line = isBorrowedMode
+    ? `借自 ${personName} · ${book.pendingReturnDate ? "待确认归还时间" : dueText({...book,borrowedAt:book.borrowedAt||new Date().toISOString()})}`
+    : book.status==="BORROWED"
+      ? `借给 ${book.borrower||"Sarah"} · 距离你 ${book.distance||0.8}km`
+      : book.status==="PENDING_HANDOVER"
+        ? `与 ${book.borrower||"Tom"} 协商借阅《${book.title}》`
+        : book.visibility==="private"
+          ? "仅自己可见"
+          : `${book.visibility==="friends"?"好友可见":"距离你 "+(book.distance||0.6)+"km"}`;
+  const detail = isBorrowedMode
+    ? (book.pendingReturnDate ? `准备 ${book.pendingReturnDate} 归还` : `${formatDueDate(book)} 归还`)
+    : book.status==="BORROWED"
+      ? `${formatDueDate(book)} 归还 · ${dueText(book)}`
+      : book.status==="PENDING_HANDOVER"
+        ? "发起于 3 天前"
+        : interested.length ? `${interested.length} 位邻里感兴趣` : "可分享给附近邻里";
+
+  return (
+    React.createElement('div', { onClick: ()=>onPress&&onPress(book), style: {background:"rgba(255,255,255,0.92)",borderRadius:20,marginBottom:12,padding:"14px 12px",display:"grid",gridTemplateColumns:"86px minmax(0,1fr) 106px",gap:12,alignItems:"center",boxShadow:"0 12px 30px rgba(71,54,134,0.07)",border:"1px solid rgba(255,255,255,0.82)",animation:`fadeUp .36s ease ${index*45}ms both`,cursor:"pointer"}}
+      , React.createElement(CoverDisplay_memo, { value: book.cover, size: 78, radius: 10, style: {boxShadow:"0 10px 24px rgba(26,20,68,0.12)"} })
+      , React.createElement('div', { style: {minWidth:0}}
+        , React.createElement('div', { style: {display:"flex",alignItems:"center",gap:7,minWidth:0}}
+          , React.createElement('div', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:20,fontWeight:900,color:"#171633",lineHeight:1.2,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, title)
+        )
+        , React.createElement('div', { style: {fontSize:12,color:"#7d8496",fontWeight:700,marginTop:6,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, author)
+        , React.createElement('div', { style: {marginTop:8,display:"flex",alignItems:"center",gap:7,flexWrap:"wrap"}}
+          , React.createElement('span', { style: {background:meta.bg,color:meta.color,borderRadius:999,padding:"3px 8px",fontSize:11,fontWeight:900,lineHeight:1.1}}, meta.label)
+        )
+        , React.createElement('div', { style: {display:"flex",alignItems:"center",gap:7,marginTop:8,minWidth:0}}
+          , personAvatar
+            ? React.createElement('span', { style: {width:22,height:22,borderRadius:9,background:"#f0f2ff",display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:13,flexShrink:0}}, personAvatar)
+            : interested.length
+              ? React.createElement('span', { style: {display:"inline-flex",alignItems:"center",flexShrink:0}}, interested.slice(0,3).map((n,i)=>React.createElement('span', { key:n, style: {width:22,height:22,marginLeft:i?-7:0,borderRadius:9,background:"#fff",boxShadow:"0 0 0 2px #fff",display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:12}}, OWNER_PROFILES[n]?.avatar || "👤")))
+              : null
+          , React.createElement('span', { style: {fontSize:12,color:"#7c8195",fontWeight:700,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, line)
+        )
+        , React.createElement('div', { style: {fontSize:12,color:detail.includes("逾期")?"#dc2626":"#8c92a4",fontWeight:800,marginTop:6,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, detail)
+      )
+      , React.createElement('div', { style: {alignSelf:"stretch",display:"flex",flexDirection:"column",alignItems:"flex-end",justifyContent:"space-between",gap:8}}
+        , React.createElement('button', { onClick: e=>{e.stopPropagation();onMore?onMore(book):onPress&&onPress(book);}, style: {width:30,height:24,border:"none",background:"transparent",color:"#7b728d",fontSize:20,fontWeight:900,lineHeight:1,cursor:"pointer"}}, "...")
+        , React.createElement('div', { style: {display:"flex",alignItems:"center",gap:8}}
+          , React.createElement('button', { onClick: e=>{e.stopPropagation();onPrimary&&onPrimary(book);}, style: {border:"none",borderRadius:14,background:"rgba(124,92,255,0.1)",color:"#6d4ee8",fontSize:12,fontWeight:900,padding:"9px 10px",cursor:"pointer",whiteSpace:"nowrap"}}, primary)
+          , React.createElement('span', { style: {color:"#9aa1b6",fontSize:24,fontWeight:700,lineHeight:1}}, "›")
+        )
+      )
+    )
+  );
+}
+
 function BorrowerReviewModal({book,onClose,onSubmit}){
   const [stars,setStars]=useState(5);
   const [text,setText]=useState("");
@@ -2489,6 +2555,22 @@ function LinkNest(){
     setSelectedChat(who);
     setTab(2);
   };
+  const handleShelfPrimary = (book) => {
+    if(shelfMode==="borrowed"){
+      const dt = new Date(); dt.setDate(dt.getDate()+1);
+      requestReturn(book, dt.toISOString().split("T")[0]);
+      return;
+    }
+    if(book.status==="BORROWED"){ remindReturn(book); return; }
+    if(book.status==="PENDING_HANDOVER"){
+      setSelectedChat(book.borrower || "Tom");
+      setTab(2);
+      return;
+    }
+    if(book.status==="PAUSED"){ toggleMyBookShare(book.id); return; }
+    if(book.visibility==="private"){ updateMyBook(book.id,{visibility:"all",available:true,status:"AVAILABLE"}); return; }
+    toggleMyBookShare(book.id);
+  };
 
   const sendMsg = () => {
     const text=input.trim();
@@ -2659,9 +2741,9 @@ function LinkNest(){
   });
   const negotiatingBooks = myBooks.filter(b=>b.status==="PENDING_HANDOVER");
   const privateBooks = myBooks.filter(b=>b.visibility==="private");
-  const modeBooks = shelfMode==="private" ? privateBooks : sharedShelfBooks;
+  const modeBooks = shelfMode==="private" ? privateBooks : shelfMode==="borrowed" ? borrowed : sharedShelfBooks;
   const visibleShelfBooks = shelfFilter==="borrowed" ? modeBooks.filter(b=>b.status==="BORROWED")
-    : shelfFilter==="due" ? modeBooks.filter(b=>b.status==="BORROWED" && dueReturnBooks.some(x=>x.id===b.id))
+    : shelfFilter==="available" ? modeBooks.filter(b=>b.status==="AVAILABLE")
     : shelfFilter==="negotiating" ? modeBooks.filter(b=>b.status==="PENDING_HANDOVER")
     : modeBooks;
   const attentionRows = [
@@ -2824,75 +2906,47 @@ function LinkNest(){
 
         /* SHELF */
         , tab===1 && (
-          React.createElement('div', { style: {padding:"22px 18px 170px",height:"100%",overflowY:"auto",background:"linear-gradient(180deg,#f7f4ff 0%,#f7f8fc 42%,#f4f6fb 100%)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1537}}
-            , React.createElement('div', { style: {display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:14,marginBottom:18}}
+          React.createElement('div', { style: {padding:"24px 18px 170px",height:"100%",overflowY:"auto",background:"linear-gradient(180deg,#fbf9ff 0%,#f7f4ff 44%,#f7f8fc 100%)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1537}}
+            , React.createElement('div', { style: {display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:14,marginBottom:24}}
               , React.createElement('div', { style: {minWidth:0,flex:1}}
-                , React.createElement('h2', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:25,lineHeight:1.15,color:"#18152c",margin:"0 0 7px",fontWeight:900}}, "我的书架")
-                , React.createElement('div', { style: {fontSize:13,color:"#7d8496",lineHeight:1.55}}, "与邻里分享好书，让阅读连接彼此 💜")
+                , React.createElement('h2', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:27,lineHeight:1.12,color:"#171633",margin:"0 0 9px",fontWeight:900}}, "我的阅读 📖")
+                , React.createElement('div', { style: {fontSize:14,color:"#7d8496",lineHeight:1.55,fontWeight:700}}, "与邻里分享好书，让阅读连接彼此 💜")
               )
-              , React.createElement('button', { onClick: ()=>runProtectedAction(()=>setShowAdd(true)), style: {border:"none",borderRadius:18,padding:"12px 14px",background:"linear-gradient(135deg,#8b5cf6,#667eea)",color:"#fff",fontWeight:900,fontSize:13,cursor:"pointer",boxShadow:"0 10px 26px rgba(102,126,234,0.34)",whiteSpace:"nowrap"}}, "+ 添加书籍")
+              , React.createElement('button', { onClick: ()=>runProtectedAction(()=>setShowAdd(true)), style: {border:"none",borderRadius:17,padding:"13px 16px",background:"linear-gradient(135deg,#9b63ff,#5f3fd4)",color:"#fff",fontWeight:900,fontSize:14,cursor:"pointer",boxShadow:"0 12px 28px rgba(101,73,214,0.36)",whiteSpace:"nowrap",display:"flex",alignItems:"center",gap:8}}, React.createElement('span', { style: {fontSize:22,lineHeight:1}}, "+"), "添加书籍")
             )
 
-            , React.createElement('div', { style: {background:"rgba(255,255,255,0.74)",border:"1px solid rgba(255,255,255,0.78)",borderRadius:26,padding:6,display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,boxShadow:"0 16px 36px rgba(74,58,130,0.08)",backdropFilter:"blur(14px)",marginBottom:14}}
-              , [{k:"shared",title:"共享书架",sub:`${sharedShelfBooks.length} 本共享中`},{k:"private",title:"我的收藏",sub:`${privateBooks.length} 本仅自己可见`}].map(m=>(
-                React.createElement('button', { key:m.k, onClick:()=>{setShelfMode(m.k);setShelfFilter("all");}, style: {padding:"15px 10px",borderRadius:21,border:"none",background:shelfMode===m.k?"linear-gradient(135deg,#8b5cf6,#667eea)":"transparent",color:shelfMode===m.k?"#fff":"#6b7280",cursor:"pointer",boxShadow:shelfMode===m.k?"0 10px 24px rgba(102,126,234,0.28)":"none",textAlign:"left"}}
-                  , React.createElement('div', { style: {fontSize:15,fontWeight:900,marginBottom:5}}, m.title)
-                  , React.createElement('div', { style: {fontSize:12,fontWeight:700,opacity:shelfMode===m.k?0.86:0.72}}, m.sub)
-                )
-              ))
-            )
-
-            , React.createElement('div', { style: {display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:8,marginBottom:14}}
+            , React.createElement('div', { style: {background:"rgba(255,255,255,0.82)",border:"1px solid rgba(255,255,255,0.9)",borderRadius:20,padding:0,display:"grid",gridTemplateColumns:"1fr 1fr 1fr",boxShadow:"0 14px 36px rgba(88,70,143,0.08)",backdropFilter:"blur(16px)",marginBottom:22,overflow:"hidden"}}
               , [
-                {icon:"📤",label:"借出中",value:`${lentOutBooks.length} 本书`,bg:"#f0f2ff",color:"#667eea"},
-                {icon:"⏳",label:"待归还",value:`${dueReturnBooks.length} 本书`,bg:"#fff7ed",color:"#d97706"},
-                {icon:"💬",label:"协商中",value:`${negotiatingBooks.length} 本书`,bg:"#f5f0ff",color:"#7c3aed"},
-                {icon:"📚",label:"全部共享",value:`${sharedShelfBooks.length} 本书`,bg:"#ecfdf5",color:"#168f65"}
-              ].map(s=>(
-                React.createElement('div', { key:s.label, style: {background:s.bg,borderRadius:18,padding:"11px 8px",minHeight:76,boxShadow:"0 6px 18px rgba(74,58,130,0.05)"}}
-                  , React.createElement('div', { style: {fontSize:17,marginBottom:5}}, s.icon)
-                  , React.createElement('div', { style: {fontSize:11,color:"#6b7280",fontWeight:800,marginBottom:3}}, s.label)
-                  , React.createElement('div', { style: {fontSize:12,color:s.color,fontWeight:900}}, s.value)
+                {k:"shared",icon:"👥",title:"我的共享",count:sharedShelfBooks.length,sub:"分享给邻里的书"},
+                {k:"private",icon:"🔖",title:"我的收藏",count:privateBooks.length,sub:"仅自己可见"},
+                {k:"borrowed",icon:"♡",title:"我的借阅",count:borrowed.length,sub:"我借来的书"}
+              ].map((m,i)=>(
+                React.createElement('button', { key:m.k, onClick:()=>{setShelfMode(m.k);setShelfFilter("all");}, style: {padding:"16px 10px",border:"none",borderLeft:i?"1px solid #f0eef8":"none",background:shelfMode===m.k?"linear-gradient(180deg,rgba(139,92,246,0.13),rgba(255,255,255,0.94))":"transparent",color:shelfMode===m.k?"#6045d8":"#575d72",cursor:"pointer",boxShadow:shelfMode===m.k?"inset 0 0 0 1.5px rgba(139,92,246,0.22)":"none",textAlign:"center"}}
+                  , React.createElement('div', { style: {fontSize:22,marginBottom:7}}, m.icon)
+                  , React.createElement('div', { style: {fontSize:14,fontWeight:900,marginBottom:5,whiteSpace:"nowrap"}}, m.title, " ", m.count)
+                  , React.createElement('div', { style: {fontSize:11,fontWeight:700,color:shelfMode===m.k?"#7661db":"#8d93a5",lineHeight:1.25}}, m.sub)
                 )
               ))
             )
 
-            , React.createElement('div', { style: {background:"rgba(255,255,255,0.9)",borderRadius:24,padding:"16px",marginBottom:16,boxShadow:"0 12px 30px rgba(74,58,130,0.08)",border:"1px solid rgba(255,255,255,0.78)"}}
-              , React.createElement('div', { style: {display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}
-                , React.createElement('div', { style: {fontSize:16,fontWeight:900,color:"#18152c",fontFamily:"'Noto Serif SC',serif"}}, "待处理")
-                , React.createElement('div', { style: {fontSize:11,color:"#a4a8b8",fontWeight:800}}, attentionRows.length ? `${attentionRows.length} 项` : "已清空")
+            , React.createElement('div', { style: {display:"flex",alignItems:"center",justifyContent:"space-between",gap:10,marginBottom:16}}
+              , React.createElement('div', { style: {display:"flex",gap:10,overflowX:"auto",WebkitOverflowScrolling:"touch",padding:"1px 0 4px"}}
+                , [
+                  {k:"all",l:"全部",n:modeBooks.length},
+                  {k:"borrowed",l:"借出中",n:modeBooks.filter(b=>b.status==="BORROWED").length},
+                  {k:"negotiating",l:"协商中",n:modeBooks.filter(b=>b.status==="PENDING_HANDOVER").length},
+                  {k:"available",l:"可借出",n:modeBooks.filter(b=>b.status==="AVAILABLE").length}
+                ].map(f=>React.createElement('button', { key:f.k, onClick:()=>setShelfFilter(f.k), style: {flexShrink:0,padding:"11px 18px",borderRadius:18,border:"none",background:shelfFilter===f.k?"linear-gradient(135deg,#8b5cf6,#5f3fd4)":"rgba(255,255,255,0.86)",color:shelfFilter===f.k?"#fff":"#596073",fontWeight:900,fontSize:13,cursor:"pointer",boxShadow:shelfFilter===f.k?"0 10px 24px rgba(101,73,214,0.28)":"0 4px 14px rgba(71,54,134,0.04)"}}, f.l, " ", f.n))
               )
-              , attentionRows.length ? attentionRows.map((r,i)=>(
-                React.createElement('div', { key:i, onClick:()=>r.book&&setSelShelfBook(r.book), style: {display:"flex",alignItems:"center",gap:12,padding:i?"12px 0 0":"0",borderTop:i?"1px solid #f0eef8":"none",cursor:"pointer"}}
-                  , React.createElement('div', { style: {width:36,height:36,borderRadius:13,background:r.type==="due"?"#fff7ed":r.type==="return"?"#ecfdf5":"#f5f0ff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:17}}, r.type==="due"?"⏳":r.type==="return"?"✅":"💬")
-                  , React.createElement('div', { style: {flex:1,minWidth:0}}
-                    , React.createElement('div', { style: {fontSize:13,fontWeight:900,color:"#25213b",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, r.title)
-                    , React.createElement('div', { style: {fontSize:12,color:"#8b8fa3",marginTop:3,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, r.sub)
-                  )
-                  , React.createElement('span', { style: {fontSize:11,fontWeight:900,color:r.type==="due"?"#d97706":r.type==="return"?"#168f65":"#7c3aed",background:r.type==="due"?"#fff7ed":r.type==="return"?"#ecfdf5":"#f5f0ff",borderRadius:999,padding:"5px 8px",whiteSpace:"nowrap"}}, r.tag)
-                )
-              )) : React.createElement('div', { style: {fontSize:13,color:"#8b8fa3",lineHeight:1.6,background:"#f8f7ff",borderRadius:16,padding:"12px 14px"}}, "今天没有需要处理的书籍，可以安心享受阅读。")
-            )
-
-            , React.createElement('div', { style: {display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,marginBottom:12}}
-              , React.createElement('div', { style: {display:"flex",gap:8,overflowX:"auto",WebkitOverflowScrolling:"touch",paddingBottom:3}}
-                , [{k:"all",l:"全部"},{k:"borrowed",l:"借出中"},{k:"due",l:"待归还"},{k:"negotiating",l:"协商中"}].map(f=>React.createElement('button', { key:f.k, onClick:()=>setShelfFilter(f.k), style: {flexShrink:0,padding:"8px 13px",borderRadius:999,border:"none",background:shelfFilter===f.k?"linear-gradient(135deg,#8b5cf6,#667eea)":"#fff",color:shelfFilter===f.k?"#fff":"#6b7280",fontWeight:900,fontSize:12,cursor:"pointer",boxShadow:shelfFilter===f.k?"0 8px 18px rgba(102,126,234,0.24)":"0 2px 8px rgba(0,0,0,0.04)"}}, f.l))
-              )
-              , React.createElement('button', { style: {border:"none",borderRadius:999,background:"#fff",padding:"8px 11px",fontSize:12,color:"#7c3aed",fontWeight:900,boxShadow:"0 2px 8px rgba(0,0,0,0.04)",whiteSpace:"nowrap"}}, "最近更新")
+              , React.createElement('button', { style: {border:"none",borderRadius:16,background:"rgba(255,255,255,0.86)",padding:"10px 11px",fontSize:13,color:"#6a6380",fontWeight:900,boxShadow:"0 4px 14px rgba(71,54,134,0.04)",whiteSpace:"nowrap",display:"flex",alignItems:"center",gap:5}}, "⌘", "筛选")
             )
 
             , visibleShelfBooks.length===0
-              ? React.createElement('div', { style: {textAlign:"center",padding:"52px 16px",background:"rgba(255,255,255,0.76)",borderRadius:24,color:"#8b8fa3"}}, React.createElement('div', { style: {fontSize:46,marginBottom:12}}, shelfMode==="private"?"💜":"📚"), React.createElement('div', { style: {fontSize:16,fontWeight:900,color:"#25213b",marginBottom:6}}, shelfMode==="private"?"还没有私人收藏":"这个分类暂时没有书"), React.createElement('div', { style: {fontSize:13,lineHeight:1.6,marginBottom:16}}, shelfMode==="private"?"把只想自己保存的书放在这里。":"添加一本书，开始和邻居分享阅读。"), React.createElement('button', { onClick: ()=>runProtectedAction(()=>setShowAdd(true)), style: {padding:"12px 22px",borderRadius:16,border:"none",background:"linear-gradient(135deg,#8b5cf6,#667eea)",color:"#fff",fontWeight:900,cursor:"pointer"}}, "+ 添加书籍"))
-              : visibleShelfBooks.map((b,i)=>React.createElement(ShelfBookCard_memo, { key: b.id, book: b, index: i,
-                  onToggle: toggleMyBookShare,
-                  onDelete: deleteMyBook,
-                  onSetVisibility: (id,visibility)=>updateMyBook(id,{visibility}),
-                  onSetReturn: (id,date)=>setMyBooks(p=>p.map(bk=>bk.id===id?{...bk,returnDate:date}:bk)),
-                  onHandover: handleHandover,
-                  onReturnReceived: book=>setReturnReviewBook(book),
-                  onRemindReturn: remindReturn,
-                  onPress: setSelShelfBook,
-                  showCountdown: false}
+              ? React.createElement('div', { style: {textAlign:"center",padding:"54px 18px",background:"rgba(255,255,255,0.78)",borderRadius:22,color:"#8b8fa3",boxShadow:"0 10px 24px rgba(71,54,134,0.05)"}}, React.createElement('div', { style: {fontSize:46,marginBottom:12}}, shelfMode==="borrowed"?"♡":shelfMode==="private"?"🔖":"📚"), React.createElement('div', { style: {fontSize:17,fontWeight:900,color:"#25213b",marginBottom:6}}, shelfMode==="borrowed"?"还没有借阅中的书":shelfMode==="private"?"还没有私人收藏":"这个分类暂时没有书"), React.createElement('div', { style: {fontSize:13,lineHeight:1.6,marginBottom:16}}, "一本书遇见一个邻居，阅读就多了一条连接。"), React.createElement('button', { onClick: ()=>runProtectedAction(()=>setShowAdd(true)), style: {padding:"12px 22px",borderRadius:16,border:"none",background:"linear-gradient(135deg,#8b5cf6,#5f3fd4)",color:"#fff",fontWeight:900,cursor:"pointer"}}, "+ 添加书籍"))
+              : visibleShelfBooks.map((b,i)=>React.createElement(ReadingBookCard, { key: b.id, book: b, index: i, mode: shelfMode,
+                  onPress: shelfMode==="borrowed" ? item=>{setSelectedChat(item.owner);setTab(2);} : setSelShelfBook,
+                  onMore: shelfMode==="borrowed" ? item=>{setSelectedChat(item.owner);setTab(2);} : setSelShelfBook,
+                  onPrimary: handleShelfPrimary}
                 ))
           )
         )

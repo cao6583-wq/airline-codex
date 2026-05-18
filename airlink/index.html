@@ -7,7 +7,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="linknest-white-favicon.png">
   <title>LinkNest · 手机网页版</title>
-  <meta name="build-id" content="202605171205">
+  <meta name="build-id" content="202605181520">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;700&display=swap">
   <style>
@@ -243,7 +243,7 @@ const MEETING_POINTS = [
 ];
 
 const CATEGORIES = ["全部","小说","文学","历史","科技","儿童","心理","商业","艺术","教育","健康","其他"];
-const TABS = ["发现","书架","消息","好友","我的"];
+const TABS = ["附近","书架","消息","社区","我的"];
 const BOOK_CONDITIONS = ["全新","九成新","轻微使用","有笔记","折痕/磨损"];
 const BOOK_DURATIONS = ["1 week","2 weeks","1 month","2 months","3 months"];
 const VISIBILITY_OPTIONS = [
@@ -271,21 +271,21 @@ const CSS = `
   @keyframes liquidPageIn{0%{opacity:.55;transform:translateY(12px) scale(.982);filter:blur(2px)}58%{opacity:1;transform:translateY(-2px) scale(1.006);filter:blur(0)}100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
   @keyframes liquidBreath{0%,100%{transform:scaleX(1) scaleY(1)}45%{transform:scaleX(1.06) scaleY(.96)}70%{transform:scaleX(.985) scaleY(1.025)}}
   @keyframes liquidSpark{0%{transform:translateX(-140%) rotate(16deg);opacity:0}32%{opacity:.95}100%{transform:translateX(140%) rotate(16deg);opacity:0}}
-  .dot{width:7px;height:7px;border-radius:50%;background:#667eea;display:inline-block;animation:dotB 1.2s ease-in-out infinite;}
+  .dot{width:7px;height:7px;border-radius:50%;background:#4d9b86;display:inline-block;animation:dotB 1.2s ease-in-out infinite;}
   .liquid-tab-page{animation:liquidPageIn .42s cubic-bezier(.18,.9,.2,1) both;transform-origin:50% 100%;will-change:opacity,transform,filter;}
   .liquid-tab-shell{isolation:isolate;overflow:hidden;}
   .liquid-tab-shell:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,255,255,.78));backdrop-filter:blur(22px) saturate(1.7);-webkit-backdrop-filter:blur(22px) saturate(1.7);z-index:0;}
   .liquid-tab-blob{position:absolute;top:8px;width:68px;height:52px;pointer-events:none;z-index:1;filter:url(#airlink-liquid-goo);transition:left .52s cubic-bezier(.18,1.2,.2,1),transform .52s cubic-bezier(.18,1.2,.2,1);will-change:left,transform;}
-  .liquid-tab-core{position:absolute;inset:4px 5px;border-radius:26px;background:linear-gradient(145deg,rgba(255,255,255,.92),rgba(232,238,255,.54) 52%,rgba(204,216,255,.42));box-shadow:inset 0 1px 1px rgba(255,255,255,.98),inset 0 -10px 22px rgba(102,126,234,.18),0 14px 34px rgba(102,126,234,.25),0 2px 10px rgba(31,41,55,.08);border:1px solid rgba(255,255,255,.82);backdrop-filter:blur(18px) saturate(1.9);-webkit-backdrop-filter:blur(18px) saturate(1.9);animation:liquidBreath 2.4s cubic-bezier(.22,1,.36,1) infinite;}
+  .liquid-tab-core{position:absolute;inset:4px 5px;border-radius:26px;background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(232,246,240,.76) 52%,rgba(212,236,228,.58));box-shadow:inset 0 1px 1px rgba(255,255,255,.98),inset 0 -10px 22px rgba(77,155,134,.16),0 14px 34px rgba(77,155,134,.18),0 2px 10px rgba(31,41,55,.06);border:1px solid rgba(255,255,255,.9);backdrop-filter:blur(18px) saturate(1.9);-webkit-backdrop-filter:blur(18px) saturate(1.9);animation:liquidBreath 2.4s cubic-bezier(.22,1,.36,1) infinite;}
   .liquid-tab-core:before{content:"";position:absolute;inset:4px 8px 58% 9px;border-radius:999px;background:linear-gradient(100deg,rgba(255,255,255,.98),rgba(255,255,255,.28));opacity:.9;}
   .liquid-tab-core:after{content:"";position:absolute;top:4px;bottom:5px;width:22px;border-radius:999px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.72),transparent);animation:liquidSpark 1.45s ease-in-out infinite;}
-  .liquid-tab-dot{position:absolute;border-radius:50%;background:rgba(232,238,255,.78);box-shadow:inset 0 1px 1px rgba(255,255,255,.95),0 8px 18px rgba(102,126,234,.18);}
+  .liquid-tab-dot{position:absolute;border-radius:50%;background:rgba(221,242,234,.82);box-shadow:inset 0 1px 1px rgba(255,255,255,.95),0 8px 18px rgba(77,155,134,.16);}
   .liquid-tab-dot.a{width:18px;height:18px;left:1px;top:18px;}
   .liquid-tab-dot.b{width:13px;height:13px;right:2px;top:25px;}
   .liquid-tab-button{transition:color .24s ease,transform .28s cubic-bezier(.22,1,.36,1);}
   .liquid-tab-button svg,.liquid-tab-label{transition:transform .28s cubic-bezier(.22,1,.36,1),font-weight .2s ease,text-shadow .2s ease;}
-  .liquid-tab-button.is-active svg{transform:translateY(-2px) scale(1.08);filter:drop-shadow(0 4px 8px rgba(102,126,234,.18));}
-  .liquid-tab-button.is-active .liquid-tab-label{transform:translateY(-1px);text-shadow:0 3px 12px rgba(102,126,234,.22);}
+  .liquid-tab-button.is-active svg{transform:translateY(-2px) scale(1.08);filter:drop-shadow(0 4px 8px rgba(77,155,134,.18));}
+  .liquid-tab-button.is-active .liquid-tab-label{transform:translateY(-1px);text-shadow:0 3px 12px rgba(77,155,134,.2);}
   @media (prefers-reduced-motion: reduce){
     .liquid-tab-page,.liquid-tab-core,.liquid-tab-core:after{animation:none!important;}
     .liquid-tab-blob,.liquid-tab-button,.liquid-tab-button svg,.liquid-tab-label{transition:none!important;}
@@ -725,23 +725,27 @@ function BookCard({book,onPress,onOwnerPress,delay=0}){
   useEffect(()=>{const t=setTimeout(()=>setVis(true),delay);return()=>clearTimeout(t);},[delay]);
   const p = OWNER_PROFILES[book.owner];
   return (
-    React.createElement('div', { onClick: ()=>onPress(book), style: {background:"#fff",borderRadius:20,padding:"18px 20px",marginBottom:12,display:"flex",alignItems:"center",gap:16,cursor:"pointer",boxShadow:"0 2px 12px rgba(0,0,0,0.06)",transform:vis?"translateY(0)":"translateY(18px)",opacity:vis?1:0,transition:"transform .4s cubic-bezier(.22,1,.36,1),opacity .4s,box-shadow .2s"},
-      onMouseEnter: e=>{e.currentTarget.style.boxShadow="0 8px 28px rgba(0,0,0,0.12)";e.currentTarget.style.transform="translateY(-2px)";},
-      onMouseLeave: e=>{e.currentTarget.style.boxShadow="0 2px 12px rgba(0,0,0,0.06)";e.currentTarget.style.transform="translateY(0)";}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 377}}
-      , React.createElement(CoverDisplay_memo, { value: book.cover, size: 72, radius: 12, style: {flexShrink:0,boxShadow:"2px 4px 12px rgba(0,0,0,0.08)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 380}})
+    React.createElement('div', { onClick: ()=>onPress(book), style: {background:"rgba(255,255,255,0.92)",borderRadius:26,padding:"16px 14px",marginBottom:14,display:"flex",alignItems:"stretch",gap:14,cursor:"pointer",boxShadow:"0 8px 24px rgba(36,80,70,0.06)",border:"1.5px solid #dfece7",transform:vis?"translateY(0)":"translateY(18px)",opacity:vis?1:0,transition:"transform .4s cubic-bezier(.22,1,.36,1),opacity .4s,box-shadow .2s"},
+      onMouseEnter: e=>{e.currentTarget.style.boxShadow="0 12px 28px rgba(36,80,70,0.1)";e.currentTarget.style.transform="translateY(-2px)";},
+      onMouseLeave: e=>{e.currentTarget.style.boxShadow="0 8px 24px rgba(36,80,70,0.06)";e.currentTarget.style.transform="translateY(0)";}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 377}}
+      , React.createElement(CoverDisplay_memo, { value: book.cover, size: 82, radius: 9, style: {flexShrink:0,boxShadow:"0 8px 18px rgba(36,80,70,0.12)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 380}})
       , React.createElement('div', { style: {flex:1,minWidth:0}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 381}}
-        , React.createElement('div', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:16,fontWeight:700,color:"#1a1a2e",marginBottom:3,lineHeight:1.3}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 382}}, book.title)
-        , React.createElement('div', { style: {fontSize:13,color:"#8892a4",marginBottom:8}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 383}}, book.author)
-        , React.createElement('div', { style: {display:"flex",gap:6,flexWrap:"wrap",marginBottom:8}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 384}}
-          , React.createElement('span', { style: {background:book.available?"#e6f9f0":"#fef3e2",color:book.available?"#1a9c5b":"#d97706",borderRadius:20,padding:"3px 9px",fontSize:11,fontWeight:600}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 385}}, book.available?`✓ 可借 (${book.duration})`:"○ 借出中")
-          , book.condition && React.createElement('span', { style: {background:"#f0f2ff",color:"#667eea",borderRadius:20,padding:"3px 9px",fontSize:11,fontWeight:600}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 386}}, "📖 " , book.condition)
-          , book.category && React.createElement('span', { style: {background:"#f8f4ff",color:"#9c6fea",borderRadius:20,padding:"3px 9px",fontSize:11,fontWeight:600}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 387}}, book.category)
+        , React.createElement('div', { style: {display:"flex",justifyContent:"space-between",gap:8,alignItems:"flex-start",marginBottom:5}}
+          , React.createElement('div', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:20,fontWeight:900,color:"#19352f",lineHeight:1.25,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, book.title)
+          , React.createElement('span', { style: {background:book.visibility==="friends"?"#e8f4f8":book.visibility==="club"?"#fff0ec":"#dcf2eb",color:book.visibility==="friends"?"#6aa6bd":book.visibility==="club"?"#d88a78":"#3e9b84",borderRadius:999,padding:"4px 9px",fontSize:11,fontWeight:900,whiteSpace:"nowrap"}}, book.visibility==="friends"?"仅好友":book.visibility==="club"?"俱乐部":"公开")
         )
-        , React.createElement('div', { style: {display:"flex",justifyContent:"space-between",alignItems:"center",gap:8}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 389}}
-          , React.createElement('span', { style: {fontSize:12,color:"#8892a4"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 390}}, "📍 " , book.distance, " km" )
-          , React.createElement('button', { onClick: e=>{e.stopPropagation();onOwnerPress&&onOwnerPress(book.owner);}, style: {display:"flex",alignItems:"center",gap:5,border:"none",background:"#f8f9ff",borderRadius:999,padding:"3px 8px 3px 4px",fontSize:12,fontWeight:700,color:"#3d5a99",cursor:"pointer",maxWidth:"60%"}}
-            , React.createElement('span', { style: {width:22,height:22,borderRadius:8,background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,flexShrink:0}}, p?.avatar || "👤")
-            , React.createElement('span', { style: {whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, book.owner, p?` ★${p.rating}`:"")
+        , React.createElement('div', { style: {fontSize:13,color:"#8ba39b",fontWeight:700,marginBottom:9}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 383}}, book.author)
+        , React.createElement('div', { style: {display:"flex",gap:7,flexWrap:"wrap",marginBottom:14}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 384}}
+          , book.category && React.createElement('span', { style: {background:"#edf5f2",color:"#78918a",borderRadius:20,padding:"4px 10px",fontSize:12,fontWeight:800}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 387}}, book.category)
+          , book.condition && React.createElement('span', { style: {color:"#5b746d",fontSize:13,fontWeight:800,lineHeight:"22px"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 386}}, "· ", book.condition)
+        )
+        , React.createElement('div', { style: {display:"grid",gridTemplateColumns:"1fr 1px 1.25fr",alignItems:"center",gap:12}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 389}}
+          , React.createElement('span', { style: {fontSize:14,color:"#469986",fontWeight:900}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 390}}, "📍 " , book.distance, " km" )
+          , React.createElement('span', { style: {height:20,background:"#dde9e4"}})
+          , React.createElement('button', { onClick: e=>{e.stopPropagation();onOwnerPress&&onOwnerPress(book.owner);}, style: {display:"flex",alignItems:"center",justifyContent:"flex-end",gap:7,border:"none",background:"transparent",padding:0,fontSize:13,fontWeight:900,color:"#19352f",cursor:"pointer",minWidth:0}}
+            , React.createElement('span', { style: {width:28,height:28,borderRadius:14,background:"#d38ea0",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,flexShrink:0,color:"#fff"}}, p?.avatar || "👤")
+            , React.createElement('span', { style: {whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, book.owner)
+            , React.createElement('span', { style: {whiteSpace:"nowrap",color:"#c99b50"}}, p?`☆ ${p.rating}`:"")
           )
         )
       )
@@ -2035,7 +2039,7 @@ function LinkNest(){
   const [cloudBusy,setCloudBusy]=useState(false);
   const [pushStatus,setPushStatus]=useState("");
   const supabaseRef = useRef({url:"", key:"", client:null});
-  const [tab,setTab]=useState(1);
+  const [tab,setTab]=useState(0);
   const [radius,setRadius]=usePersistedState("radius", 10);
   const [showMapSheet,setShowMapSheet]=useState(false);
   const [savedRadii,setSavedRadii]=usePersistedState("savedRadii", [3,5,10]);
@@ -2813,18 +2817,19 @@ function LinkNest(){
   const secondarySmallButton = {padding:"10px 8px",borderRadius:12,border:"1.5px solid #e8ecf4",background:"#fff",color:"#168f65",fontSize:12,fontWeight:800,cursor:"pointer"};
 
   const TabIcon = ({i,active}) => {
+    const color = "currentColor";
     const icons=[
-      React.createElement('svg', { key: "d", viewBox: "0 0 24 24"   , fill: "none", stroke: "currentColor", strokeWidth: "2", width: "22", height: "22", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1397}}, React.createElement('circle', { cx: "11", cy: "11", r: "8", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1397}}), React.createElement('path', { d: "M21 21l-4.35-4.35" , strokeLinecap: "round", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1397}})),
-      React.createElement('svg', { key: "s", viewBox: "0 0 24 24"   , fill: "none", stroke: "currentColor", strokeWidth: "2", width: "22", height: "22", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1398}}, React.createElement('path', { d: "M4 19.5A2.5 2.5 0 016.5 17H20V3H6.5A2.5 2.5 0 004 5.5v14z"         , __self: this, __source: {fileName: _jsxFileName, lineNumber: 1398}})),
-      React.createElement('svg', { key: "m", viewBox: "0 0 24 24"   , fill: "none", stroke: "currentColor", strokeWidth: "2", width: "22", height: "22", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1399}}, React.createElement('path', { d: "M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z"             , __self: this, __source: {fileName: _jsxFileName, lineNumber: 1399}})),
-      React.createElement('svg', { key: "f", viewBox: "0 0 24 24"   , fill: "none", stroke: "currentColor", strokeWidth: "2", width: "22", height: "22"}, React.createElement('path', { d: "M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"}), React.createElement('circle', { cx: "9", cy: "7", r: "4"}), React.createElement('path', { d: "M22 21v-2a4 4 0 00-3-3.87"}), React.createElement('path', { d: "M16 3.13a4 4 0 010 7.75"})),
-      React.createElement('svg', { key: "p", viewBox: "0 0 24 24"   , fill: "none", stroke: "currentColor", strokeWidth: "2", width: "22", height: "22", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1400}}, React.createElement('path', { d: "M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"        , __self: this, __source: {fileName: _jsxFileName, lineNumber: 1400}}), React.createElement('circle', { cx: "12", cy: "7", r: "4", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1400}})),
+      React.createElement('svg', { key: "near", viewBox: "0 0 24 24", fill: "none", stroke: color, strokeWidth: "2.2", width: "25", height: "25", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('path', { d: "M12 21s7-6.2 7-12a7 7 0 10-14 0c0 5.8 7 12 7 12z" }), React.createElement('circle', { cx: "12", cy: "9", r: "2.4" })),
+      React.createElement('svg', { key: "shelf", viewBox: "0 0 24 24", fill: "none", stroke: color, strokeWidth: "2.2", width: "25", height: "25", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('path', { d: "M5 4v16" }), React.createElement('path', { d: "M9 5v14" }), React.createElement('path', { d: "M14 4v16" }), React.createElement('path', { d: "M18 6l2 13" })),
+      React.createElement('svg', { key: "msg", viewBox: "0 0 24 24", fill: "none", stroke: color, strokeWidth: "2.2", width: "25", height: "25", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('path', { d: "M21 15a4 4 0 01-4 4H8l-5 3 1.4-4.6A8 8 0 113 12" })),
+      React.createElement('svg', { key: "community", viewBox: "0 0 24 24", fill: "none", stroke: color, strokeWidth: "2.2", width: "25", height: "25", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('path', { d: "M16 20v-1.8A3.2 3.2 0 0012.8 15H7.2A3.2 3.2 0 004 18.2V20" }), React.createElement('circle', { cx: "10", cy: "8", r: "3.5" }), React.createElement('path', { d: "M20 20v-1.6a3 3 0 00-2.2-2.9" }), React.createElement('path', { d: "M17 5.4a3 3 0 010 5.2" })),
+      React.createElement('svg', { key: "me", viewBox: "0 0 24 24", fill: "none", stroke: color, strokeWidth: "2.2", width: "25", height: "25", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('path', { d: "M20 21a8 8 0 00-16 0" }), React.createElement('circle', { cx: "12", cy: "8", r: "4" })),
     ];
     return icons[i];
   };
 
   return (
-    React.createElement('div', { style: {width:"100%",maxWidth:390,margin:"0 auto",height:"var(--app-height, 100dvh)",maxHeight:"none",background:"#f4f6fb",borderRadius:0,position:"relative",overflow:"hidden",boxShadow:"0 24px 80px rgba(0,0,0,0.2)",fontFamily:"'DM Sans',sans-serif"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1406}}
+    React.createElement('div', { style: {width:"100%",maxWidth:390,margin:"0 auto",height:"var(--app-height, 100dvh)",maxHeight:"none",background:"#eef8f4",borderRadius:0,position:"relative",overflow:"hidden",boxShadow:"0 24px 80px rgba(36,80,70,0.18)",fontFamily:"'DM Sans',sans-serif",color:"#18352e"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1406}}
       , React.createElement('style', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1407}}, CSS)
 
       /* ── Registration overlay ── */
@@ -2912,30 +2917,27 @@ function LinkNest(){
 
         /* DISCOVER */
         , tab===0 && (
-          React.createElement('div', { style: {padding:"16px 20px 0"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1498}}
-            , React.createElement('div', { style: {display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,gap:10}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1499}}
+          React.createElement('div', { style: {padding:"26px 20px 0",background:"linear-gradient(180deg,#eef8f4 0%,#f7fbf9 55%,#f8fbfa 100%)",minHeight:"100%"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1498}}
+            , React.createElement('div', { style: {display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:18,gap:10}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1499}}
               , React.createElement('div', { style: {flexShrink:0}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1500}}
-                , React.createElement('div', { style: {fontSize:22,fontWeight:700,color:"#1a1a2e",fontFamily:"'Noto Serif SC',serif",whiteSpace:"nowrap"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1501}}, "附近书籍")
-                , React.createElement('div', { style: {fontSize:13,color:"#8892a4",marginTop:2}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1502}}, filtered.length, " 本可借阅" )
+                , React.createElement('div', { style: {fontSize:25,fontWeight:900,color:"#18352e",fontFamily:"'Noto Serif SC',serif",whiteSpace:"nowrap",letterSpacing:0}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1501}}, "附近有 ", React.createElement('span', { style: {fontFamily:"'DM Sans',sans-serif",fontWeight:900}}, filtered.length), " 本书")
+                , React.createElement('button', { onClick: ()=>setShowMapSheet(true), style: {marginTop:10,display:"inline-flex",alignItems:"center",gap:8,background:"#dff1eb",border:"none",borderRadius:999,padding:"7px 13px",cursor:"pointer",color:"#4d9b86",fontWeight:900,fontSize:14}}, "📍 ", geoLabel, React.createElement('span', { style: {opacity:.55}}, "|"), radius, " km⌄")
               )
-              /* Location + radius pill */
-              , React.createElement('button', { onClick: ()=>setShowMapSheet(true), style: {display:"flex",alignItems:"center",gap:6,background:"#fff",border:"1.5px solid #e8ecf4",borderRadius:20,padding:"7px 12px",cursor:"pointer",boxShadow:"0 2px 8px rgba(0,0,0,0.06)",minWidth:0,flexShrink:1,maxWidth:"60%"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1505}}
-                , React.createElement('svg', { viewBox: "0 0 18 22"   , width: "14", height: "17", fill: "none", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1506}}, React.createElement('path', { d: "M9 1C5.686 1 3 3.686 3 7c0 4.5 6 13 6 13s6-8.5 6-13c0-3.314-2.686-6-6-6z"            , fill: "#667eea", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1506}}), React.createElement('circle', { cx: "9", cy: "7", r: "2.5", fill: "#fff", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1506}}))
-                , React.createElement('span', { style: {fontSize:13,fontWeight:700,color:"#667eea",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",maxWidth:120}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1507}}, geoLabel)
-                , React.createElement('span', { style: {fontSize:12,color:"#b0b8cc"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1508}}, "·")
-                , React.createElement('span', { style: {fontSize:12,fontWeight:600,color:"#5a6272"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1509}}, radius, " km" )
+              , React.createElement('div', { style: {marginTop:10,background:"#edf5f2",borderRadius:26,padding:5,display:"flex",gap:4,boxShadow:"inset 0 0 0 1px rgba(24,53,46,0.03)"}}
+                , React.createElement('button', { style: {width:42,height:42,borderRadius:22,border:"none",background:"#fff",color:"#4d9b86",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 4px 12px rgba(36,80,70,0.08)"}}, React.createElement('svg', { viewBox:"0 0 24 24", width:22, height:22, fill:"none", stroke:"currentColor", strokeWidth:2, strokeLinecap:"round"}, React.createElement('path', { d:"M8 6h13M8 12h13M8 18h13" }), React.createElement('path', { d:"M3 6h.01M3 12h.01M3 18h.01" })))
+                , React.createElement('button', { style: {width:42,height:42,borderRadius:22,border:"none",background:"transparent",color:"#9eb3ad",display:"flex",alignItems:"center",justifyContent:"center"}}, React.createElement('svg', { viewBox:"0 0 24 24", width:22, height:22, fill:"none", stroke:"currentColor", strokeWidth:2, strokeLinecap:"round", strokeLinejoin:"round"}, React.createElement('path', { d:"M4 19.5V5a2 2 0 012-2h12v16H6a2 2 0 00-2 2" }), React.createElement('path', { d:"M9 7h5" })))
               )
             )
 
-            , React.createElement('div', { style: {position:"relative",marginBottom:14}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1513}}
-              , React.createElement('span', { style: {position:"absolute",left:14,top:"50%",transform:"translateY(-50%)",fontSize:16}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1514}}, "🔍")
-              , React.createElement('input', { value: search, onChange: e=>setSearch(e.target.value), placeholder: "搜索书名或作者…", style: {width:"100%",padding:"12px 14px 12px 42px",borderRadius:14,border:"1.5px solid #e8ecf4",fontSize:14,background:"#fff",outline:"none"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1515}})
+            , React.createElement('div', { style: {position:"relative",marginBottom:16}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1513}}
+              , React.createElement('span', { style: {position:"absolute",left:18,top:"50%",transform:"translateY(-50%)",fontSize:21,color:"#a6b8b2"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1514}}, "⌕")
+              , React.createElement('input', { value: search, onChange: e=>setSearch(e.target.value), placeholder: "搜索书名、作者或邻里", style: {width:"100%",padding:"16px 18px 16px 48px",borderRadius:28,border:"1.5px solid #dfece7",fontSize:16,background:"rgba(255,255,255,0.9)",outline:"none",color:"#18352e",boxShadow:"0 4px 16px rgba(36,80,70,0.03)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1515}})
             )
 
             /* Category filter */
-            , React.createElement('div', { style: {display:"flex",gap:8,overflowX:"auto",paddingBottom:4,marginBottom:14}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1519}}
+            , React.createElement('div', { style: {display:"flex",gap:10,overflowX:"auto",paddingBottom:4,marginBottom:16}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1519}}
               , CATEGORIES.map(c=>(
-                React.createElement('button', { key: c, onClick: ()=>setCat(c), style: {flexShrink:0,padding:"6px 14px",borderRadius:20,border:"none",background:cat===c?"linear-gradient(135deg,#667eea,#764ba2)":"#fff",color:cat===c?"#fff":"#8892a4",fontWeight:700,fontSize:12,cursor:"pointer",boxShadow:cat===c?"0 3px 10px rgba(102,126,234,0.3)":"0 1px 4px rgba(0,0,0,0.06)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1521}}
+                React.createElement('button', { key: c, onClick: ()=>setCat(c), style: {flexShrink:0,padding:"10px 17px",borderRadius:999,border:"1.5px solid #dfece7",background:cat===c?"#18352e":"rgba(255,255,255,0.82)",color:cat===c?"#fff":"#5b746d",fontWeight:900,fontSize:14,cursor:"pointer",boxShadow:cat===c?"0 8px 18px rgba(24,53,46,0.16)":"0 2px 8px rgba(36,80,70,0.03)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1521}}
                   , c
                 )
               ))
@@ -2951,12 +2953,12 @@ function LinkNest(){
 
         /* SHELF */
         , tab===1 && (
-          React.createElement('div', { style: {padding:"24px 18px 170px",height:"100%",overflowY:"auto",background:"linear-gradient(180deg,#fbf9ff 0%,#f7f4ff 44%,#f7f8fc 100%)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1537}}
+          React.createElement('div', { style: {padding:"24px 18px 170px",height:"100%",overflowY:"auto",background:"linear-gradient(180deg,#eef8f4 0%,#f7fbf9 55%,#f8fbfa 100%)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1537}}
             , React.createElement('div', { style: {display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:14,marginBottom:18}}
               , React.createElement('div', { style: {minWidth:0,flex:1}}
                 , React.createElement('h2', { style: {fontFamily:"'Noto Serif SC',serif",fontSize:27,lineHeight:1.12,color:"#171633",margin:"0",fontWeight:900}}, "我的书架")
               )
-              , React.createElement('button', { onClick: ()=>runProtectedAction(()=>setShowAdd(true)), style: {border:"none",borderRadius:17,padding:"13px 16px",background:"linear-gradient(135deg,#9b63ff,#5f3fd4)",color:"#fff",fontWeight:900,fontSize:14,cursor:"pointer",boxShadow:"0 12px 28px rgba(101,73,214,0.36)",whiteSpace:"nowrap",display:"flex",alignItems:"center",gap:8}}, React.createElement('span', { style: {fontSize:22,lineHeight:1}}, "+"), "添加书籍")
+              , React.createElement('button', { onClick: ()=>runProtectedAction(()=>setShowAdd(true)), style: {border:"none",borderRadius:17,padding:"13px 16px",background:"#18352e",color:"#fff",fontWeight:900,fontSize:14,cursor:"pointer",boxShadow:"0 12px 24px rgba(24,53,46,0.2)",whiteSpace:"nowrap",display:"flex",alignItems:"center",gap:8}}, React.createElement('span', { style: {fontSize:22,lineHeight:1}}, "+"), "添加书籍")
             )
 
             , React.createElement('div', { style: {background:"rgba(255,255,255,0.84)",border:"1px solid rgba(255,255,255,0.9)",borderRadius:18,padding:0,display:"grid",gridTemplateColumns:"1fr 1fr 1fr",boxShadow:"0 10px 26px rgba(88,70,143,0.07)",backdropFilter:"blur(16px)",marginBottom:18,overflow:"hidden"}}
@@ -2978,7 +2980,7 @@ function LinkNest(){
                   {k:"borrowed",l:"借出中",n:modeBooks.filter(b=>b.status==="BORROWED").length},
                   {k:"negotiating",l:"协商中",n:modeBooks.filter(b=>b.status==="PENDING_HANDOVER").length},
                   {k:"available",l:"可借出",n:modeBooks.filter(b=>b.status==="AVAILABLE").length}
-                ].map(f=>React.createElement('button', { key:f.k, onClick:()=>setShelfFilter(f.k), style: {flexShrink:0,padding:"8px 13px",borderRadius:15,border:"none",background:shelfFilter===f.k?"linear-gradient(135deg,#8b5cf6,#5f3fd4)":"rgba(255,255,255,0.86)",color:shelfFilter===f.k?"#fff":"#596073",fontWeight:900,fontSize:12,cursor:"pointer",boxShadow:shelfFilter===f.k?"0 8px 18px rgba(101,73,214,0.22)":"0 3px 10px rgba(71,54,134,0.04)"}}, f.l, " ", f.n))
+                ].map(f=>React.createElement('button', { key:f.k, onClick:()=>setShelfFilter(f.k), style: {flexShrink:0,padding:"8px 13px",borderRadius:15,border:"none",background:shelfFilter===f.k?"#18352e":"rgba(255,255,255,0.86)",color:shelfFilter===f.k?"#fff":"#596073",fontWeight:900,fontSize:12,cursor:"pointer",boxShadow:shelfFilter===f.k?"0 8px 18px rgba(24,53,46,0.15)":"0 3px 10px rgba(36,80,70,0.04)"}}, f.l, " ", f.n))
             )
 
             , visibleShelfBooks.length===0
@@ -3453,7 +3455,7 @@ function LinkNest(){
           )
         )
       )
-      , React.createElement('div', { className: "liquid-tab-shell", style: {position:"absolute",bottom:0,left:0,right:0,height:"calc(80px + env(safe-area-inset-bottom, 0px))",background:"rgba(255,255,255,0.78)",borderTop:"1px solid rgba(232,236,244,0.82)",display:"flex",alignItems:"center",justifyContent:"space-around",paddingBottom:"calc(8px + env(safe-area-inset-bottom, 0px))",boxShadow:"0 -8px 30px rgba(25,31,45,0.08)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1684}}
+      , React.createElement('div', { className: "liquid-tab-shell", style: {position:"absolute",bottom:0,left:0,right:0,height:"calc(82px + env(safe-area-inset-bottom, 0px))",background:"rgba(255,255,255,0.9)",borderTop:"1px solid #dfece7",display:"flex",alignItems:"center",justifyContent:"space-around",paddingBottom:"calc(8px + env(safe-area-inset-bottom, 0px))",boxShadow:"0 -10px 28px rgba(36,80,70,0.08)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1684}}
         , React.createElement('div', { className: "liquid-tab-blob", style: {left:`calc(${tab * (100/TABS.length)}% + ${50/TABS.length}% - 34px)`}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1685}}
           , React.createElement('div', { className: "liquid-tab-dot a", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1686}})
           , React.createElement('div', { className: "liquid-tab-core", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1687}})
@@ -3462,10 +3464,10 @@ function LinkNest(){
         , TABS.map((t,i)=>{
           const count=i===2?unreadN:i===1?(myBooks.length+borrowed.length):i===3?friends.length:0;
           return (
-            React.createElement('button', { key: t, className: `liquid-tab-button ${tab===i?"is-active":""}`, onClick: ()=>setTab(i), style: {flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:3,border:"none",background:"transparent",cursor:"pointer",color:tab===i?"#667eea":"#8892a4",position:"relative",padding:"8px 0",zIndex:2}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1688}}
+            React.createElement('button', { key: t, className: `liquid-tab-button ${tab===i?"is-active":""}`, onClick: ()=>setTab(i), style: {flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:4,border:"none",background:"transparent",cursor:"pointer",color:tab===i?"#4d9b86":"#9eb3ad",position:"relative",padding:"8px 0",zIndex:2}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1688}}
               , React.createElement(TabIcon, { i: i, active: tab===i, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1689}})
               , count>0&&React.createElement('div', { style: {position:"absolute",top:4,right:"calc(50% - 20px)",width:16,height:16,background:"#ef4444",borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,color:"#fff",fontWeight:700,border:"2px solid #fff"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1690}}, count>9?"9+":count)
-              , React.createElement('span', { className: "liquid-tab-label", style: {fontSize:10,fontWeight:tab===i?700:500}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1691}}, t)
+              , React.createElement('span', { className: "liquid-tab-label", style: {fontSize:12,fontWeight:tab===i?900:700}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1691}}, t)
             )
           );
         })
@@ -3485,7 +3487,7 @@ function LinkNest(){
       )
 
       /* FAB */
-      , (tab===0||tab===1)&&React.createElement('button', { onClick: ()=>runProtectedAction(()=>setShowAdd(true)), "aria-label": "添加书籍", title: "添加书籍", style: {position:"absolute",right:20,bottom:"calc(96px + env(safe-area-inset-bottom, 0px))",width:54,height:54,borderRadius:18,border:"none",background:"linear-gradient(135deg,#8b5cf6,#667eea)",color:"#fff",fontSize:28,fontWeight:800,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 14px 34px rgba(102,126,234,0.42)",zIndex:28}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1711}}, "+")
+      , (tab===0||tab===1)&&React.createElement('button', { onClick: ()=>runProtectedAction(()=>setShowAdd(true)), "aria-label": "添加书籍", title: "添加书籍", style: {position:"absolute",right:20,bottom:"calc(96px + env(safe-area-inset-bottom, 0px))",width:54,height:54,borderRadius:18,border:"none",background:"#18352e",color:"#fff",fontSize:28,fontWeight:800,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 14px 28px rgba(24,53,46,0.25)",zIndex:28}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1711}}, "+")
 
       /* Overlays */
       , showMapSheet&&React.createElement(MapRadiusSheet, { radius: radius, onChangeRadius: setRadius, savedRadii: savedRadii, onSaveRadius: r=>setSavedRadii(p=>[...p,r].sort((a,b)=>a-b)), onRemoveSaved: r=>setSavedRadii(p=>p.filter(x=>x!==r)), books: BOOKS.filter(b=>b.distance<=20), geoLabel: geoLabel, mapProvider: mapProvider, googleMapsApiKey: googleMapsApiKey, amapApiKey: amapApiKey, onClose: ()=>setShowMapSheet(false), __self: this, __source: {fileName: _jsxFileName, lineNumber: 1714}})

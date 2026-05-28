@@ -7,12 +7,12 @@
   <meta name="apple-mobile-web-app-title" content="LinkNest">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <link rel="manifest" href="manifest.json?v=202605272146">
-  <link rel="icon" type="image/png" href="linknest-white-favicon.png?v=202605272146">
-  <link rel="apple-touch-icon" sizes="192x192" href="linknest-white-icon-192.png?v=202605272146">
-  <link rel="apple-touch-icon" sizes="512x512" href="linknest-white-icon-512.png?v=202605272146">
+  <link rel="manifest" href="manifest.json?v=202605272226">
+  <link rel="icon" type="image/png" href="linknest-white-favicon.png?v=202605272226">
+  <link rel="apple-touch-icon" sizes="192x192" href="linknest-white-icon-192.png?v=202605272226">
+  <link rel="apple-touch-icon" sizes="512x512" href="linknest-white-icon-512.png?v=202605272226">
   <title>LinkNest · Mobile Web App</title>
-  <meta name="build-id" content="202605272146">
+  <meta name="build-id" content="202605272226">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; background: #e8eaf0; }
@@ -20,16 +20,16 @@
     body { display: flex; align-items: center; justify-content: center; min-height: 100vh; min-height: -webkit-fill-available; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI', sans-serif; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
     #root { width: 100%; min-height: 100vh; display: flex; justify-content: center; }
     @media (max-width: 430px) {
-      html, body { background: #e8eaf0 !important; }
+      html, body { background: #fff !important; }
       body { align-items: flex-start; padding: 0; margin: 0; }
       #root { width: 100%; height: 100%; }
       #root > div { 
-        max-width: 370px !important; 
-        width: calc(100% - 20px) !important;
+        max-width: 100% !important; 
+        width: 100% !important;
         height: var(--app-height, 100dvh) !important; 
         max-height: none !important; 
-        border-radius: 28px !important;
-        box-shadow: 0 18px 44px rgba(36,80,70,0.16) !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
       }
     }
     #loading { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #18352e, #4d9b86); color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI', sans-serif; z-index: 9999; }
@@ -328,19 +328,19 @@ const CSS = `
   .liquid-tab-page{animation:liquidPageIn .42s cubic-bezier(.18,.9,.2,1) both;transform-origin:50% 100%;will-change:opacity,transform,filter;}
   .liquid-tab-shell{isolation:isolate;overflow:hidden;}
   .liquid-tab-shell:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,255,255,.78));backdrop-filter:blur(22px) saturate(1.7);-webkit-backdrop-filter:blur(22px) saturate(1.7);z-index:0;}
-  .liquid-tab-blob{position:absolute;top:7px;width:50px;height:38px;pointer-events:none;z-index:1;filter:url(#airlink-liquid-goo);transition:left .52s cubic-bezier(.18,1.2,.2,1),transform .52s cubic-bezier(.18,1.2,.2,1);will-change:left,transform;}
-  .liquid-tab-core{position:absolute;inset:4px 5px;border-radius:26px;background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(232,246,240,.76) 52%,rgba(212,236,228,.58));box-shadow:inset 0 1px 1px rgba(255,255,255,.98),inset 0 -10px 22px rgba(77,155,134,.16),0 14px 34px rgba(77,155,134,.18),0 2px 10px rgba(31,41,55,.06);border:1px solid rgba(255,255,255,.9);backdrop-filter:blur(18px) saturate(1.9);-webkit-backdrop-filter:blur(18px) saturate(1.9);animation:liquidBreath 2.4s cubic-bezier(.22,1,.36,1) infinite;}
+  .liquid-tab-blob{position:absolute;top:6px;width:60px;height:44px;pointer-events:none;z-index:1;filter:url(#airlink-liquid-goo);transition:left .52s cubic-bezier(.18,1.2,.2,1),transform .52s cubic-bezier(.18,1.2,.2,1);will-change:left,transform;}
+  .liquid-tab-core{position:absolute;inset:4px 6px;border-radius:28px;background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(232,246,240,.76) 52%,rgba(212,236,228,.58));box-shadow:inset 0 1px 1px rgba(255,255,255,.98),inset 0 -10px 22px rgba(77,155,134,.16),0 14px 34px rgba(77,155,134,.18),0 2px 10px rgba(31,41,55,.06);border:1px solid rgba(255,255,255,.9);backdrop-filter:blur(18px) saturate(1.9);-webkit-backdrop-filter:blur(18px) saturate(1.9);animation:liquidBreath 2.4s cubic-bezier(.22,1,.36,1) infinite;}
   .liquid-tab-core:before{content:"";position:absolute;inset:4px 8px 58% 9px;border-radius:999px;background:linear-gradient(100deg,rgba(255,255,255,.98),rgba(255,255,255,.28));opacity:.9;}
   .liquid-tab-core:after{content:"";position:absolute;top:4px;bottom:5px;width:22px;border-radius:999px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.72),transparent);animation:liquidSpark 1.45s ease-in-out infinite;}
   .liquid-tab-dot{position:absolute;border-radius:50%;background:rgba(221,242,234,.82);box-shadow:inset 0 1px 1px rgba(255,255,255,.95),0 8px 18px rgba(77,155,134,.16);}
-  .liquid-tab-dot.a{width:12px;height:12px;left:1px;top:14px;}
-  .liquid-tab-dot.b{width:9px;height:9px;right:2px;top:19px;}
+  .liquid-tab-dot.a{width:14px;height:14px;left:1px;top:15px;}
+  .liquid-tab-dot.b{width:10px;height:10px;right:2px;top:22px;}
   .liquid-tab-button{transition:color .24s ease,transform .28s cubic-bezier(.22,1,.36,1);}
   .liquid-tab-button:focus-visible{box-shadow:none!important;}
   .liquid-tab-button svg,.liquid-tab-label{transition:transform .28s cubic-bezier(.22,1,.36,1),font-weight .2s ease,text-shadow .2s ease;}
   .liquid-tab-button.is-active svg{transform:translateY(-1px) scale(1.05);filter:drop-shadow(0 4px 8px rgba(77,155,134,.16));}
   .liquid-tab-button.is-active .liquid-tab-label{transform:translateY(-1px);text-shadow:0 3px 12px rgba(77,155,134,.2);}
-  :root{--bottom-nav-height:calc(64px + env(safe-area-inset-bottom, 0px));--sheet-bottom-padding:calc(34px + env(safe-area-inset-bottom, 0px));--keyboard-offset:0px;}
+  :root{--bottom-nav-height:calc(70px + env(safe-area-inset-bottom, 0px));--sheet-bottom-padding:calc(34px + env(safe-area-inset-bottom, 0px));--keyboard-offset:0px;}
   .liquid-tab-page{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
   .liquid-tab-shell,.chat-input-bar{transition:transform .22s ease,opacity .22s ease,bottom .22s ease;}
   .mobile-sheet-backdrop{overscroll-behavior:contain;touch-action:none;}
@@ -776,7 +776,7 @@ function NearbyMapHome({books, onOpenBook, onOpenRadius, geoLabel, radius}){
     if(startY != null && endY != null && endY - startY > 48) closeAreaSheet();
   };
   return (
-    React.createElement('div', { className:"nearby-map-shell", style: {position:"relative",margin:"0 -26px",overflow:"hidden",borderTop:"1px solid #d7ebe4",background:"linear-gradient(180deg,#e8f5f1 0%,#dff1eb 48%,#eaf6f2 100%)"}}
+    React.createElement('div', { className:"nearby-map-shell", style: {position:"relative",margin:"0 -20px",overflow:"hidden",borderTop:"1px solid #d7ebe4",background:"linear-gradient(180deg,#e8f5f1 0%,#dff1eb 48%,#eaf6f2 100%)"}}
       , React.createElement('svg', { width:"100%", height:"100%", preserveAspectRatio:"none", style:{position:"absolute",inset:0,opacity:.95}}
         , React.createElement('defs', null
           , React.createElement('pattern', { id:"nearby-grid", width:"54", height:"54", patternUnits:"userSpaceOnUse"}
@@ -959,7 +959,7 @@ function BookCoverStack({book,size=82,compact=false,style={}}){
               , React.createElement('div', { style:{position:"absolute",left:compact?14:16,right:compact?10:12,top:compact?13:16,height:compact?34:42,borderRadius:10,background:"rgba(255,255,255,0.16)"}})
               , React.createElement('div', { style:{position:"absolute",left:compact?16:18,right:compact?13:16,bottom:compact?16:20,height:compact?7:8,borderRadius:999,background:"rgba(255,255,255,0.28)"}})
               , React.createElement('div', { style:{position:"absolute",left:compact?16:18,right:compact?25:30,bottom:compact?29:34,height:compact?5:6,borderRadius:999,background:"rgba(255,255,255,0.18)"}})
-              , React.createElement('div', { style:{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",fontSize:compact?Math.max(14,size*.19):size*.21,fontWeight:800,lineHeight:1.18,textAlign:"center",whiteSpace:"pre-line",padding:compact?8:12,color:"#fff",textShadow:"0 2px 10px rgba(0,0,0,0.18)"}}, coverTitleLabel(book))
+              , React.createElement('div', { style:{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",fontSize:compact?Math.max(15,size*.2):size*.22,fontWeight:800,lineHeight:1.18,textAlign:"center",whiteSpace:"pre-line",padding:compact?8:12,color:"#fff",textShadow:"0 2px 10px rgba(0,0,0,0.18)"}}, coverTitleLabel(book))
             )
       )
       , React.createElement('div', { style:{position:"absolute",right:-4,top:7,bottom:7,width:7,borderRadius:"0 8px 8px 0",background:tone.paper,boxShadow:"inset -1px 0 0 rgba(36,80,70,0.08)"}})
@@ -978,23 +978,23 @@ function BookCard({book,onPress,onOwnerPress,delay=0}){
       onMouseEnter: e=>{e.currentTarget.style.boxShadow="0 12px 24px rgba(36,80,70,0.08)";e.currentTarget.style.transform="translateY(-1px)";},
       onMouseLeave: e=>{e.currentTarget.style.boxShadow="0 7px 18px rgba(36,80,70,0.04)";e.currentTarget.style.transform="translateY(0)";}}
       , React.createElement(BookCoverStack, { book, size:70, compact:true, style:{alignSelf:"center",justifySelf:"center",filter:"drop-shadow(0 6px 9px rgba(36,80,70,0.09))"} })
-      , React.createElement('span', { style: {position:"absolute",right:11,top:12,background:available?"#e8f5ef":"#fff7ed",color:available?"#3e9b84":"#d97706",borderRadius:999,padding:"2px 6px",fontSize:11,fontWeight:700,whiteSpace:"nowrap"}}, available ? displayVisibility(book) : "Checked out")
+      , React.createElement('span', { style: {position:"absolute",right:11,top:12,background:available?"#e8f5ef":"#fff7ed",color:available?"#3e9b84":"#d97706",borderRadius:999,padding:"5px 7px",fontSize:12,fontWeight:700,whiteSpace:"nowrap"}}, available ? displayVisibility(book) : "Checked out")
       , React.createElement('div', { style: {minWidth:0,display:"flex",flexDirection:"column"}}
         , React.createElement('div', { style: {display:"flex",alignItems:"flex-start",gap:8,marginBottom:1,minWidth:0,paddingRight:40}}
-          , React.createElement('div', { style: {fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",fontSize:16,fontWeight:500,color:"#18352e",lineHeight:1.18,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",flex:1}}, book.title)
+          , React.createElement('div', { style: {fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",fontSize:17,fontWeight:500,color:"#18352e",lineHeight:1.18,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",flex:1}}, book.title)
         )
-        , React.createElement('div', { style: {fontSize:12,color:"#91a8a1",fontWeight:600,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",marginBottom:7}}, book.author || "Unknown author")
+        , React.createElement('div', { style: {fontSize:13,color:"#91a8a1",fontWeight:600,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",marginBottom:7}}, book.author || "Unknown author")
         , React.createElement('div', { style:{display:"flex",alignItems:"center",gap:4,flexWrap:"wrap",marginBottom:8}}
-          , book.category && React.createElement('span', { style:{background:"#f0f6f3",color:"#607a72",borderRadius:999,padding:"2px 6px",fontSize:11,fontWeight:700,lineHeight:1}}, book.category)
-          , book.condition && React.createElement('span', { style:{fontSize:11,color:"#6f8780",fontWeight:600}}, "· ", book.condition)
+          , book.category && React.createElement('span', { style:{background:"#f0f6f3",color:"#607a72",borderRadius:999,padding:"5px 7px",fontSize:12,fontWeight:700,lineHeight:1}}, book.category)
+          , book.condition && React.createElement('span', { style:{fontSize:12,color:"#6f8780",fontWeight:600}}, "· ", book.condition)
         )
         , React.createElement('div', { style:{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8,marginTop:"auto"}}
-          , React.createElement('div', { style:{fontSize:12,color:"#3e9b84",fontWeight:700,whiteSpace:"nowrap"}}, "📍 ", book.distance ?? 0, " km")
+          , React.createElement('div', { style:{fontSize:13,color:"#3e9b84",fontWeight:700,whiteSpace:"nowrap"}}, "📍 ", book.distance ?? 0, " km")
           , React.createElement('div', { style:{width:1,height:15,background:"#e4eee9",flexShrink:0}})
           , React.createElement('button', { onClick:e=>{e.stopPropagation();onOwnerPress&&onOwnerPress(book.owner);}, style:{border:"none",background:"transparent",padding:0,display:"flex",alignItems:"center",gap:6,minWidth:0,cursor:"pointer",color:"#18352e"}}
-            , React.createElement('span', { style:{width:20,height:20,borderRadius:999,background:tone.cover,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,flexShrink:0,color:"#fff"}}, p?.avatar || "👤")
-            , React.createElement('span', { style:{fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",fontSize:15,fontWeight:500,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",maxWidth:52}}, book.owner || "Neighbor")
-            , p && React.createElement('span', { style:{fontSize:12,fontWeight:700,color:"#c99b50",whiteSpace:"nowrap"}}, "☆", p.rating)
+            , React.createElement('span', { style:{width:20,height:20,borderRadius:999,background:tone.cover,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,flexShrink:0,color:"#fff"}}, p?.avatar || "👤")
+            , React.createElement('span', { style:{fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",fontSize:16,fontWeight:500,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",maxWidth:60}}, book.owner || "Neighbor")
+            , p && React.createElement('span', { style:{fontSize:13,fontWeight:700,color:"#c99b50",whiteSpace:"nowrap"}}, "☆", p.rating)
           )
         )
       )
@@ -1066,15 +1066,15 @@ function BookDetail({book,onClose,onBorrow,onBorrowBatch,extraReviews=[],onAddRe
           , React.createElement(BookCoverStack, { book, size:84, style:{alignSelf:"center",filter:"drop-shadow(0 6px 9px rgba(36,80,70,0.08))"} })
           , React.createElement('div', { style:{minWidth:0,paddingBottom:3}}
             , React.createElement('div', { style:{display:"flex",gap:5,flexWrap:"wrap",marginBottom:7}}
-              , React.createElement('span', { style:{background:available?"#e8f5ef":"#fff7ed",color:available?"#3e9b84":"#d97706",borderRadius:999,padding:"2px 6px",fontSize:10,fontWeight:700}}, available ? displayVisibility(book) : "Unavailable")
-              , book.category && React.createElement('span', { style:{background:"#f0f6f3",color:"#607a72",borderRadius:999,padding:"2px 6px",fontSize:10,fontWeight:700}}, book.category)
+              , React.createElement('span', { style:{background:available?"#e8f5ef":"#fff7ed",color:available?"#3e9b84":"#d97706",borderRadius:999,padding:"5px 7px",fontSize:12,fontWeight:700,lineHeight:1}}, available ? displayVisibility(book) : "Unavailable")
+              , book.category && React.createElement('span', { style:{background:"#f0f6f3",color:"#607a72",borderRadius:999,padding:"5px 7px",fontSize:12,fontWeight:700,lineHeight:1}}, book.category)
             )
             , React.createElement('h2', { style: {color:"#18352e",fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",fontSize:20,lineHeight:1.16,fontWeight:650,margin:"0 0 6px",letterSpacing:0}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 409}}, book.title)
-            , React.createElement('p', { style: {color:"#91a8a1",margin:"0 0 9px",fontSize:12,fontWeight:600,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 410}}, book.author || "Unknown author")
-            , React.createElement('div', { style:{display:"flex",alignItems:"center",gap:6,color:"#607a72",fontSize:12,fontWeight:600,minWidth:0}}
+            , React.createElement('p', { style: {color:"#91a8a1",margin:"0 0 9px",fontSize:13,fontWeight:600,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 410}}, book.author || "Unknown author")
+            , React.createElement('div', { style:{display:"flex",alignItems:"center",gap:6,color:"#607a72",fontSize:13,fontWeight:600,minWidth:0}}
               , React.createElement('span', { style:{width:22,height:22,borderRadius:999,background:"#edf5f2",display:"inline-flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:13}}, p?.avatar || "👤")
               , React.createElement('span', { style:{whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, book.owner || "Neighbor")
-              , p && React.createElement('span', { style:{color:"#c99d45",whiteSpace:"nowrap",fontSize:11}}, "★ ", p.rating)
+              , p && React.createElement('span', { style:{color:"#c99d45",whiteSpace:"nowrap",fontSize:13}}, "★ ", p.rating)
             )
           )
         )
@@ -1083,17 +1083,17 @@ function BookDetail({book,onClose,onBorrow,onBorrowBatch,extraReviews=[],onAddRe
         , React.createElement('div', { style: {display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:7,marginBottom:10}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 414}}
           , [{l:"Distance",v:`${book.distance ?? 0} km`,f:null},{l:"Loan period",v:book.duration||"Flexible",f:"duration"},{l:"Condition",v:book.condition||"Not specified",f:"condition"}].map(({l,v,f})=>(
             React.createElement('button', { key: l, onClick: ()=>editable&&f&&setEditField(f), disabled: !editable||!f, style: {background:"#fff",borderRadius:14,padding:"8px 6px",textAlign:"center",border:"1px solid #e2eee9",boxShadow:"0 6px 16px rgba(36,80,70,0.035)",cursor:editable&&f?"pointer":"default"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 416}}
-              , React.createElement('div', { style: {fontSize:12,fontWeight:700,color:"#19352f",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 417}}, v)
-              , React.createElement('div', { style: {fontSize:10,color:"#78918a",fontWeight:600,marginTop:3}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 418}}, l, editable&&f?" · Edit":"")
+              , React.createElement('div', { style: {fontSize:13,fontWeight:700,color:"#19352f",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 417}}, v)
+              , React.createElement('div', { style: {fontSize:12,color:"#78918a",fontWeight:600,marginTop:3}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 418}}, l, editable&&f?" · Edit":"")
             )
           ))
         )
         , React.createElement('div', { style:{background:"#fff",border:"1px solid #e2eee9",borderRadius:15,padding:"11px 12px",marginBottom:10,boxShadow:"0 6px 16px rgba(36,80,70,0.035)"}}
           , React.createElement('div', { style:{display:"flex",alignItems:"center",justifyContent:"space-between",gap:10,marginBottom:7}}
             , React.createElement('div', { style:{fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",fontSize:14,fontWeight:700,color:"#19352f"}}, "Borrowing fit")
-            , React.createElement('span', { style:{fontSize:10,fontWeight:700,color:available?"#3e9b84":"#d97706",background:available?"#ecf7f2":"#fff7ed",borderRadius:999,padding:"2px 6px",whiteSpace:"nowrap"}}, available ? "Available now" : "Unavailable")
+            , React.createElement('span', { style:{fontSize:12,fontWeight:700,color:available?"#3e9b84":"#d97706",background:available?"#ecf7f2":"#fff7ed",borderRadius:999,padding:"5px 7px",whiteSpace:"nowrap",lineHeight:1}}, available ? "Available now" : "Unavailable")
           )
-          , React.createElement('div', { style:{display:"grid",gap:5,fontSize:12,color:"#5b746d",fontWeight:600,lineHeight:1.42}}
+          , React.createElement('div', { style:{display:"grid",gap:5,fontSize:13,color:"#5b746d",fontWeight:600,lineHeight:1.42}}
             , React.createElement('div', null, "Owner: ", book.owner || "Neighbor", p ? ` · ${ownerTrust}` : "")
             , React.createElement('div', null, "Sharing: ", visibilityMeta.chip, book.visibility==="friends" ? "; friends see it first" : "; nearby readers can request")
             , avgBookRating && React.createElement('div', null, "Reader feedback: ★ ", avgBookRating, " · ", bookReviews.length, " reviews")
@@ -1101,8 +1101,8 @@ function BookDetail({book,onClose,onBorrow,onBorrowBatch,extraReviews=[],onAddRe
         )
         , editable && React.createElement('div', { style: {marginBottom:11}}
           , React.createElement('button', { onClick: ()=>setEditField("visibility"), style: {width:"100%",padding:"9px 11px",borderRadius:14,border:"1.5px solid #e2eee9",background:"#fff",display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer"}}
-            , React.createElement('span', { style: {fontSize:12,fontWeight:700,color:"#162033"}}, "Sharing")
-            , React.createElement('span', { style: {fontSize:11,fontWeight:700,color:book.visibility==="private"?"#78918a":book.visibility==="friends"?"#4d9b86":"#168f65"}}, visibilityMeta.chip, " ›")
+            , React.createElement('span', { style: {fontSize:13,fontWeight:700,color:"#162033"}}, "Sharing")
+            , React.createElement('span', { style: {fontSize:12,fontWeight:700,color:book.visibility==="private"?"#78918a":book.visibility==="friends"?"#4d9b86":"#168f65"}}, visibilityMeta.chip, " ›")
           )
         )
         , React.createElement('div', { onClick: ()=>editable&&setEditField("description"), style: {marginBottom:14,cursor:editable?"pointer":"default",border:editable?"1.5px solid #e2eee9":"none",borderRadius:15,padding:editable?"11px 12px":0}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 423}}
@@ -1110,26 +1110,26 @@ function BookDetail({book,onClose,onBorrow,onBorrowBatch,extraReviews=[],onAddRe
           , React.createElement('p', { style: {fontSize:13,color:"#4f6761",lineHeight:1.6,margin:0}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 425}}, book.description||"A well-loved book that can keep moving through the neighborhood.")
         )
         , editable && React.createElement('div', { style: {display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:14}}
-          , React.createElement('button', { onClick: ()=>onToggleShare&&onToggleShare(book.id), style: {padding:"9px 10px",borderRadius:14,border:"1.5px solid #f3e8ff",background:book.status==="PAUSED"?"#f0fdf4":"#fff7ed",color:book.status==="PAUSED"?"#168f65":"#d97706",fontWeight:700,fontSize:12,cursor:"pointer"}}, book.status==="PAUSED" ? "Resume sharing" : "Pause sharing")
-          , React.createElement('button', { onClick: ()=>setDeleteConfirm(true), style: {padding:"9px 10px",borderRadius:14,border:"1.5px solid #fecaca",background:"#fff5f5",color:"#dc2626",fontWeight:700,fontSize:12,cursor:"pointer"}}, "Delete")
+          , React.createElement('button', { onClick: ()=>onToggleShare&&onToggleShare(book.id), style: {padding:"10px 10px",borderRadius:14,border:"1.5px solid #f3e8ff",background:book.status==="PAUSED"?"#f0fdf4":"#fff7ed",color:book.status==="PAUSED"?"#168f65":"#d97706",fontWeight:700,fontSize:13,cursor:"pointer"}}, book.status==="PAUSED" ? "Resume sharing" : "Pause sharing")
+          , React.createElement('button', { onClick: ()=>setDeleteConfirm(true), style: {padding:"10px 10px",borderRadius:14,border:"1.5px solid #fecaca",background:"#fff5f5",color:"#dc2626",fontWeight:700,fontSize:13,cursor:"pointer"}}, "Delete")
         )
         , React.createElement('div', { style: {background:"#fff",border:"1.5px solid #e2eee9",borderRadius:15,padding:"11px 12px",marginBottom:12,boxShadow:"0 6px 16px rgba(36,80,70,0.035)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 426}}
           , React.createElement('div', { style: {display:"flex",alignItems:"center",justifyContent:"space-between",gap:10,marginBottom:9}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 427}}
             , React.createElement('div', null
               , React.createElement('div', { style: {fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",fontSize:14,fontWeight:700,color:"#19352f"}}, "Book reviews")
-              , React.createElement('div', { style: {fontSize:11,color:"#78918a",marginTop:2}}, avgBookRating ? `★ ${avgBookRating} · ${bookReviews.length} reviews` : "No reviews yet")
+              , React.createElement('div', { style: {fontSize:12,color:"#78918a",marginTop:2}}, avgBookRating ? `★ ${avgBookRating} · ${bookReviews.length} reviews` : "No reviews yet")
             )
-            , React.createElement('button', { onClick: ()=>setShowReview(true), style: {padding:"6px 9px",borderRadius:999,border:"none",background:"#4d9b86",color:"#fff",fontWeight:700,fontSize:11,cursor:"pointer",whiteSpace:"nowrap"}}, "Write review")
+            , React.createElement('button', { onClick: ()=>setShowReview(true), style: {padding:"5px 7px",borderRadius:999,border:"none",background:"#4d9b86",color:"#fff",fontWeight:700,fontSize:12,cursor:"pointer",whiteSpace:"nowrap"}}, "Write review")
           )
           , bookReviews.length > 0 ? bookReviews.slice(0,3).map((r,i)=>(
             React.createElement('div', { key: i, style: {background:"#f4fbf8",borderRadius:12,padding:"9px 10px",marginTop:i?7:0}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 428}}
               , React.createElement('div', { style: {display:"flex",justifyContent:"space-between",gap:7,marginBottom:4}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 429}}
-                , React.createElement('span', { style: {fontSize:12,fontWeight:600,color:"#19352f"}}, r.from || "Reader")
-                , React.createElement('span', { style: {fontSize:11,color:"#f59e0b",whiteSpace:"nowrap"}}, "★".repeat(Number(r.stars)||0), React.createElement('span', { style: {color:"#b0b8cc",marginLeft:4}}, r.time||""))
+                , React.createElement('span', { style: {fontSize:13,fontWeight:600,color:"#19352f"}}, r.from || "Reader")
+                , React.createElement('span', { style: {fontSize:12,color:"#f59e0b",whiteSpace:"nowrap"}}, "★".repeat(Number(r.stars)||0), React.createElement('span', { style: {color:"#b0b8cc",marginLeft:4}}, r.time||""))
               )
-              , React.createElement('div', { style: {fontSize:12,color:"#4f6761",lineHeight:1.5}}, r.text)
+              , React.createElement('div', { style: {fontSize:13,color:"#4f6761",lineHeight:1.5}}, r.text)
             )
-          )) : React.createElement('div', { style: {fontSize:12,color:"#9eb3ad",background:"#f4fbf8",borderRadius:12,padding:"9px 10px",lineHeight:1.5}}, "After reading, leave a note to help neighbors decide if it is a good fit.")
+          )) : React.createElement('div', { style: {fontSize:13,color:"#9eb3ad",background:"#f4fbf8",borderRadius:12,padding:"10px 10px",lineHeight:1.5}}, "After reading, leave a note to help neighbors decide if it is a good fit.")
         )
         , p && (
           React.createElement('div', { style: {background:"#fff",borderRadius:15,padding:"11px 12px",marginBottom:14,border:"1px solid #e2eee9",boxShadow:"0 6px 16px rgba(36,80,70,0.035)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 428}}
@@ -1137,12 +1137,12 @@ function BookDetail({book,onClose,onBorrow,onBorrowBatch,extraReviews=[],onAddRe
               , React.createElement('div', { style: {width:40,height:40,background:"#f4efe8",borderRadius:14,display:"flex",alignItems:"center",justifyContent:"center",fontSize:21,flexShrink:0}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 430}}, p.avatar)
               , React.createElement('div', { style: {flex:1}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 431}}
                 , React.createElement('div', { style: {fontWeight:600,fontSize:14,color:"#19352f"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 432}}, book.owner)
-                , React.createElement('div', { style: {fontSize:12,color:"#78918a",fontWeight:600,marginTop:2}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 433}}, "★ ", p.rating, " · "  , p.totalLends, "  lends · "  , p.onTimeRate, "%  on time")
+                , React.createElement('div', { style: {fontSize:13,color:"#78918a",fontWeight:600,marginTop:2}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 433}}, "★ ", p.rating, " · "  , p.totalLends, "  lends · "  , p.onTimeRate, "%  on time")
               )
             )
             , React.createElement('div', { style: {display:"flex",gap:7}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 436}}
-              , React.createElement('button', { onClick: ()=>setShowShelf(true), style: {flex:1,padding:"8px",borderRadius:12,border:"none",background:"#18352e",color:"#fff",fontWeight:700,fontSize:11,cursor:"pointer",boxShadow:"0 7px 14px rgba(24,53,46,0.14)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 437}}, "View shelf"  )
-              , React.createElement('button', { onClick: ()=>setShowProfile(true), style: {flex:1,padding:"8px",borderRadius:12,border:"1px solid #e2eee9",background:"#f7fbf9",color:"#4f6761",fontWeight:700,fontSize:11,cursor:"pointer"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 438}}, "Trust & reviews" )
+              , React.createElement('button', { onClick: ()=>setShowShelf(true), style: {flex:1,padding:"9px",borderRadius:12,border:"none",background:"#18352e",color:"#fff",fontWeight:700,fontSize:12,cursor:"pointer",boxShadow:"0 7px 14px rgba(24,53,46,0.14)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 437}}, "View shelf"  )
+              , React.createElement('button', { onClick: ()=>setShowProfile(true), style: {flex:1,padding:"9px",borderRadius:12,border:"1px solid #e2eee9",background:"#f7fbf9",color:"#4f6761",fontWeight:700,fontSize:12,cursor:"pointer"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 438}}, "Trust & reviews" )
             )
           )
         )
@@ -1150,8 +1150,8 @@ function BookDetail({book,onClose,onBorrow,onBorrowBatch,extraReviews=[],onAddRe
       )
       , book.available && !editable && book.owner!=="Me" && (
         React.createElement('div', { style:{position:"sticky",bottom:0,left:0,right:0,padding:"10px 18px calc(12px + env(safe-area-inset-bottom, 0px))",background:"rgba(247,251,249,0.94)",backdropFilter:"blur(16px)",borderTop:"1px solid #dfece7",display:"grid",gridTemplateColumns:"1fr 1.45fr",gap:8,zIndex:5}}
-          , React.createElement('button', { onClick: ()=>setShowShelf(true), style:{border:"1px solid #e2eee9",background:"#fff",color:"#4f6761",borderRadius:999,fontSize:12,fontWeight:700,cursor:"pointer"}}, "View shelf")
-          , React.createElement('button', { onClick: ()=>{setDone(true);onBorrow(book);}, style:{padding:"11px 12px",borderRadius:999,border:"none",background:done?"#e6f9f0":"#18352e",color:done?"#1a9c5b":"#fff",fontSize:12,fontWeight:700,cursor:"pointer",transition:"all .25s",boxShadow:done?"none":"0 9px 18px rgba(24,53,46,0.18)"}}
+          , React.createElement('button', { onClick: ()=>setShowShelf(true), style:{padding:"11px 12px",border:"1px solid #e2eee9",background:"#fff",color:"#4f6761",borderRadius:999,fontSize:13,fontWeight:700,cursor:"pointer"}}, "View shelf")
+          , React.createElement('button', { onClick: ()=>{setDone(true);onBorrow(book);}, style:{padding:"11px 12px",borderRadius:999,border:"none",background:done?"#e6f9f0":"#18352e",color:done?"#1a9c5b":"#fff",fontSize:13,fontWeight:700,cursor:"pointer",transition:"all .25s",boxShadow:done?"none":"0 9px 18px rgba(24,53,46,0.18)"}}
             , done ? "Request sent" : "Request"
           )
         )
@@ -2308,11 +2308,11 @@ function ReadingBookCard({book,index,mode,onPress,onPrimary,onMore,onReturnReque
         , React.createElement(CoverDisplay_memo, { value: book.cover, size: 66, radius: 9, style: {boxShadow:"0 6px 14px rgba(36,80,70,0.10)"} })
         , React.createElement('div', { style: {minWidth:0}}
           , React.createElement('div', { style: {display:"flex",alignItems:"center",gap:7,minWidth:0}}
-            , React.createElement('div', { style: {fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",fontSize:15,fontWeight:500,color:"#19352f",lineHeight:1.18,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, title)
+            , React.createElement('div', { style: {fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",fontSize:16,fontWeight:500,color:"#19352f",lineHeight:1.18,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, title)
           )
-          , React.createElement('div', { style: {fontSize:11,color:"#7d8496",fontWeight:600,marginTop:4,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, author)
+          , React.createElement('div', { style: {fontSize:12,color:"#7d8496",fontWeight:600,marginTop:4,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, author)
           , React.createElement('div', { style: {marginTop:6,display:"flex",alignItems:"center",gap:5,flexWrap:"wrap"}}
-            , React.createElement('span', { style: {background:meta.bg,color:meta.color,borderRadius:999,padding:"2px 6px",fontSize:10,fontWeight:700,lineHeight:1}}, meta.label)
+            , React.createElement('span', { style: {background:meta.bg,color:meta.color,borderRadius:999,padding:"5px 7px",fontSize:12,fontWeight:700,lineHeight:1}}, meta.label)
           )
           , React.createElement('div', { style: {display:"flex",alignItems:"center",gap:6,marginTop:7,minWidth:0}}
             , personAvatar
@@ -2320,14 +2320,14 @@ function ReadingBookCard({book,index,mode,onPress,onPrimary,onMore,onReturnReque
               : interested.length
                 ? React.createElement('span', { style: {display:"inline-flex",alignItems:"center",flexShrink:0}}, interested.slice(0,3).map((n,i)=>React.createElement('span', { key:n, style: {width:20,height:20,marginLeft:i?-6:0,borderRadius:999,background:"#fff",boxShadow:"0 0 0 2px #fff",display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:12}}, OWNER_PROFILES[n]?.avatar || "👤")))
                 : null
-            , React.createElement('span', { style: {fontSize:11,color:"#7c8195",fontWeight:600,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, line)
+            , React.createElement('span', { style: {fontSize:12,color:"#7c8195",fontWeight:600,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, line)
           )
-          , React.createElement('div', { style: {fontSize:11,color:detail.includes("overdue")?"#dc2626":"#8c92a4",fontWeight:600,marginTop:4,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, detail)
+          , React.createElement('div', { style: {fontSize:12,color:detail.includes("overdue")?"#dc2626":"#8c92a4",fontWeight:600,marginTop:4,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, detail)
         )
         , React.createElement('div', { style: {alignSelf:"stretch",display:"flex",flexDirection:"column",alignItems:"flex-end",justifyContent:"space-between",gap:8}}
           , React.createElement('button', { onClick: e=>{e.stopPropagation();onMore?onMore(book):onPress&&onPress(book);}, style: {width:26,height:22,border:"none",background:"transparent",color:"#7b728d",fontSize:18,fontWeight:700,lineHeight:1,cursor:"pointer"}}, "...")
           , React.createElement('div', { style: {display:"flex",alignItems:"center",gap:8}}
-            , React.createElement('button', { onClick: e=>{e.stopPropagation();isBorrowedMode ? (!book.pendingReturnDate&&setReturnSheet(true)) : onPrimary&&onPrimary(book);}, disabled: isBorrowedMode&&!!book.pendingReturnDate, style: {border:"none",borderRadius:999,background:"rgba(77,155,134,0.12)",color:"#3e9b84",fontSize:11,fontWeight:700,padding:"6px 8px",cursor:isBorrowedMode&&book.pendingReturnDate?"default":"pointer",whiteSpace:"nowrap",opacity:isBorrowedMode&&book.pendingReturnDate?0.82:1}}, primary)
+            , React.createElement('button', { onClick: e=>{e.stopPropagation();isBorrowedMode ? (!book.pendingReturnDate&&setReturnSheet(true)) : onPrimary&&onPrimary(book);}, disabled: isBorrowedMode&&!!book.pendingReturnDate, style: {border:"none",borderRadius:999,background:"rgba(77,155,134,0.12)",color:"#3e9b84",fontSize:12,fontWeight:700,padding:"5px 7px",cursor:isBorrowedMode&&book.pendingReturnDate?"default":"pointer",whiteSpace:"nowrap",opacity:isBorrowedMode&&book.pendingReturnDate?0.82:1,lineHeight:1}}, primary)
             , React.createElement('span', { style: {color:"#9aa1b6",fontSize:19,fontWeight:600,lineHeight:1}}, "›")
           )
         )
@@ -3585,7 +3585,7 @@ function LinkNest(){
   };
 
   return (
-    React.createElement('div', { style: {width:"100%",maxWidth:370,margin:"0 auto",height:"var(--app-height, 100dvh)",maxHeight:"none",background:"#eef8f4",borderRadius:28,position:"relative",overflow:"hidden",boxShadow:"0 18px 44px rgba(36,80,70,0.16)",fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI', sans-serif",color:"#18352e"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1406}}
+    React.createElement('div', { style: {width:"100%",maxWidth:"none",margin:"0",height:"var(--app-height, 100dvh)",maxHeight:"none",background:"#eef8f4",borderRadius:0,position:"relative",overflow:"hidden",boxShadow:"none",fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI', sans-serif",color:"#18352e"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1406}}
       , React.createElement('style', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1407}}, CSS)
 
       /* ── Registration overlay ── */
@@ -3673,7 +3673,7 @@ function LinkNest(){
 
         /* DISCOVER */
         , tab===0 && (
-          React.createElement('div', { style: {padding:discoverView==="map"?"24px 26px 0":"25px 26px 122px",background:"linear-gradient(180deg,#eef8f4 0%,#f8fbfa 40%,#fbfcfb 100%)",height:"100%",minHeight:"100%",overflow:discoverView==="map"?"hidden":"visible"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1498}}
+          React.createElement('div', { style: {padding:discoverView==="map"?"24px 20px 0":"25px 20px 122px",background:"linear-gradient(180deg,#eef8f4 0%,#f8fbfa 40%,#fbfcfb 100%)",height:"100%",minHeight:"100%",overflow:discoverView==="map"?"hidden":"visible"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1498}}
             , React.createElement('div', { style: {display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:discoverView==="map"?14:14,gap:10}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1499}}
               , React.createElement('div', { style: {flexShrink:0}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1500}}
                 , React.createElement('div', { style: {fontSize:28,fontWeight:800,color:"#18352e",fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",whiteSpace:"nowrap",letterSpacing:0,lineHeight:1.06}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1501}}, "Nearby ", React.createElement('span', { style: {fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI', sans-serif",fontWeight:800,fontSize:17}}, filtered.length, " books"))
@@ -3696,13 +3696,13 @@ function LinkNest(){
                   ),
                   React.createElement('div', { key:"cats", style: {display:"flex",gap:6,overflowX:"auto",paddingBottom:2,marginBottom:13}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1519}}
                     , CATEGORIES.map(c=>(
-                      React.createElement('button', { key: c, onClick: ()=>setCat(c), style: {flexShrink:0,padding:"7px 10px",borderRadius:999,border:cat===c?"none":"1.5px solid #dfece7",background:cat===c?"#18352e":"rgba(255,255,255,0.68)",color:cat===c?"#fff":"#5b746d",fontWeight:800,fontSize:12,cursor:"pointer",boxShadow:"none"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1521}}
+                      React.createElement('button', { key: c, onClick: ()=>setCat(c), style: {flexShrink:0,padding:"7px 10px",borderRadius:999,border:cat===c?"none":"1.5px solid #dfece7",background:cat===c?"#18352e":"rgba(255,255,255,0.68)",color:cat===c?"#fff":"#5b746d",fontWeight:800,fontSize:13,cursor:"pointer",boxShadow:"none"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1521}}
                         , c
                       )
                     ))
                   ),
                   filtered.length===0
-                    ? React.createElement('div', { key:"empty", style: {textAlign:"center",padding:"40px 0"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1529}}, React.createElement('div', { style: {fontSize:49,marginBottom:12}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1529}}, "📭"), React.createElement('div', { style: {fontSize:16,fontWeight:700,color:"#1a1a2e"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1529}}, "No nearby books found"))
+                    ? React.createElement('div', { key:"empty", style: {textAlign:"center",padding:"40px 0"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1529}}, React.createElement('div', { style: {fontSize:49,marginBottom:12}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1529}}, "📭"), React.createElement('div', { style: {fontSize:17,fontWeight:700,color:"#1a1a2e"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1529}}, "No nearby books found"))
                     : sortedFiltered.map((b,i)=>React.createElement(BookCard_memo, { key: b.id, book: b, onPress: setSelBook, onOwnerPress: setChatProfileName, delay: i*60, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1530}}))
                 ]
             
@@ -3740,11 +3740,11 @@ function LinkNest(){
                   {k:"borrowed",l:"Lent out",n:modeBooks.filter(b=>b.status==="BORROWED").length},
                   {k:"negotiating",l:"Coordinating",n:modeBooks.filter(b=>b.status==="PENDING_HANDOVER").length},
                   {k:"available",l:"Available",n:modeBooks.filter(b=>b.status==="AVAILABLE").length}
-                ].map(f=>React.createElement('button', { key:f.k, onClick:()=>setShelfFilter(f.k), style: {flexShrink:0,padding:"6px 9px",borderRadius:999,border:"none",background:shelfFilter===f.k?"#18352e":"rgba(255,255,255,0.86)",color:shelfFilter===f.k?"#fff":"#596073",fontWeight:800,fontSize:11,cursor:"pointer",boxShadow:"none"}}, f.l, " ", f.n))
+                ].map(f=>React.createElement('button', { key:f.k, onClick:()=>setShelfFilter(f.k), style: {flexShrink:0,padding:"7px 10px",borderRadius:999,border:"none",background:shelfFilter===f.k?"#18352e":"rgba(255,255,255,0.86)",color:shelfFilter===f.k?"#fff":"#596073",fontWeight:800,fontSize:13,cursor:"pointer",boxShadow:"none"}}, f.l, " ", f.n))
             )
 
             , visibleShelfBooks.length===0
-              ? React.createElement('div', { style: {textAlign:"center",padding:"42px 18px",background:"rgba(255,255,255,0.78)",borderRadius:15,color:"#8b8fa3",boxShadow:"0 6px 16px rgba(36,80,70,0.035)",border:"1.5px solid #e2eee9"}}, React.createElement('div', { style: {fontSize:39,marginBottom:10}}, shelfMode==="borrowed"?"♡":shelfMode==="private"?"🔖":"📚"), React.createElement('div', { style: {fontSize:15,fontWeight:700,color:"#19352f",marginBottom:5}}, shelfMode==="borrowed"?"No borrowed books yet":shelfMode==="private"?"No saved books yet":"No books in this view yet"), React.createElement('div', { style: {fontSize:12,lineHeight:1.5,marginBottom:14}}, "Every book on your shelf can become a neighborhood connection."), React.createElement('button', { onClick: ()=>runProtectedAction(()=>setShowAdd(true)), style: {padding:"8px 12px",borderRadius:999,border:"none",background:"#18352e",color:"#fff",fontSize:12,fontWeight:800,cursor:"pointer"}}, "+ Add book"))
+              ? React.createElement('div', { style: {textAlign:"center",padding:"42px 18px",background:"rgba(255,255,255,0.78)",borderRadius:15,color:"#8b8fa3",boxShadow:"0 6px 16px rgba(36,80,70,0.035)",border:"1.5px solid #e2eee9"}}, React.createElement('div', { style: {fontSize:39,marginBottom:10}}, shelfMode==="borrowed"?"♡":shelfMode==="private"?"🔖":"📚"), React.createElement('div', { style: {fontSize:16,fontWeight:700,color:"#19352f",marginBottom:5}}, shelfMode==="borrowed"?"No borrowed books yet":shelfMode==="private"?"No saved books yet":"No books in this view yet"), React.createElement('div', { style: {fontSize:13,lineHeight:1.5,marginBottom:14}}, "Every book on your shelf can become a neighborhood connection."), React.createElement('button', { onClick: ()=>runProtectedAction(()=>setShowAdd(true)), style: {padding:"9px 12px",borderRadius:999,border:"none",background:"#18352e",color:"#fff",fontSize:13,fontWeight:800,cursor:"pointer"}}, "+ Add book"))
               : visibleShelfBooks.map((b,i)=>React.createElement(ReadingBookCard, { key: b.id, book: b, index: i, mode: shelfMode,
                   onPress: shelfMode==="borrowed" ? item=>{setSelectedChat(item.owner);setTab(2);} : setSelShelfBook,
                   onMore: shelfMode==="borrowed" ? item=>{setSelectedChat(item.owner);setTab(2);} : setSelShelfBook,
@@ -3763,7 +3763,7 @@ function LinkNest(){
                   , React.createElement('div', { style: {fontSize:27,fontWeight:800,color:"#19352f",fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",lineHeight:1.06}}, "Chat")
                   , React.createElement('div', { style: {fontSize:12,color:"#78918a",fontWeight:700,marginTop:5}}, chatPeople.length, " conversations")
                 )
-                , unreadN>0&&React.createElement('span', { style: {background:"#dcf2eb",color:"#3e9b84",borderRadius:999,padding:"4px 8px",fontSize:11,fontWeight:800,whiteSpace:"nowrap"}}, unreadN, " unread")
+                , unreadN>0&&React.createElement('span', { style: {background:"#dcf2eb",color:"#3e9b84",borderRadius:999,padding:"5px 7px",fontSize:12,fontWeight:800,whiteSpace:"nowrap",lineHeight:1}}, unreadN, " unread")
               )
               , chatPeople.map(chat=>(
                 React.createElement('div', { key: chat.name, onClick: ()=>openChat(chat.name), style: {background:"rgba(255,255,255,0.92)",borderRadius:15,padding:"10px 12px",marginBottom:10,display:"flex",alignItems:"center",gap:10,cursor:"pointer",boxShadow:"0 6px 16px rgba(36,80,70,0.035)",border:"1.5px solid #e2eee9"}}
@@ -3796,12 +3796,12 @@ function LinkNest(){
             , selectedChat && txState==="borrowing" && React.createElement('div', { style: {background:"rgba(255,255,255,0.92)",padding:"12px 16px",borderRadius:18,marginBottom:12,display:"flex",justifyContent:"space-between",alignItems:"center",boxShadow:"0 10px 24px rgba(36,80,70,0.06)",border:"1.5px solid #dfece7"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1581}}
               , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1582}}
                 , React.createElement('div', { style: {fontSize:12,fontWeight:900,textTransform:"uppercase",letterSpacing:.5,color:"#3e9b84"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1583}}, "📖 Borrowing active")
-                , txState==="borrowing"&&borrowed[0]&&React.createElement('div', { style: {fontSize:11,color:"#ef4444",marginTop:2}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1584}}, (()=>{const diff=new Date(borrowed[0].borrowedAt).getTime()+durationMs(borrowed[0].duration)-Date.now();return diff>0?`${Math.ceil(diff/86400000)} days left`:"Overdue";})())
+                , txState==="borrowing"&&borrowed[0]&&React.createElement('div', { style: {fontSize:12,color:"#ef4444",marginTop:2}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1584}}, (()=>{const diff=new Date(borrowed[0].borrowedAt).getTime()+durationMs(borrowed[0].duration)-Date.now();return diff>0?`${Math.ceil(diff/86400000)} days left`:"Overdue";})())
               )
               , React.createElement('div', { style: {display:"flex",gap:8}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1586}}
                 , React.createElement(React.Fragment, null
-                  , React.createElement('button', { onClick: ()=>setShowExt(true), style: {padding:"7px 12px",borderRadius:10,border:"1px solid #dfece7",background:"#fff",color:"#3e9b84",fontWeight:800,fontSize:13,cursor:"pointer"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1588}}, "Extend")
-                  , React.createElement('button', { onClick: ()=>{setShelfMode("borrowed");setTab(1);}, style: {padding:"7px 12px",borderRadius:10,border:"none",background:"#18352e",color:"#fff",fontWeight:800,fontSize:13,cursor:"pointer"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1589}}, "Return")
+                  , React.createElement('button', { onClick: ()=>setShowExt(true), style: {padding:"8px 12px",borderRadius:12,border:"1px solid #dfece7",background:"#fff",color:"#3e9b84",fontWeight:800,fontSize:13,cursor:"pointer"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1588}}, "Extend")
+                  , React.createElement('button', { onClick: ()=>{setShelfMode("borrowed");setTab(1);}, style: {padding:"8px 12px",borderRadius:12,border:"none",background:"#18352e",color:"#fff",fontWeight:800,fontSize:13,cursor:"pointer"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1589}}, "Return")
                 )
               )
             )
@@ -3841,7 +3841,7 @@ function LinkNest(){
               const incomingBorrowRequest = !mine && !msg.isSystem && msg.type!=="friend_request" && /借|借阅/.test(msg.msg || "");
               if(msg.isSystem&&!mine) return (
                 React.createElement('div', { key: msg.id, style: {textAlign:"center",marginBottom:10}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1626}}
-                  , React.createElement('span', { style: {fontSize:13,color:"#78918a",background:"#edf5f2",borderRadius:10,padding:"4px 12px",fontWeight:800}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1627}}, msg.msg)
+                  , React.createElement('span', { style: {fontSize:13,color:"#78918a",background:"#edf5f2",borderRadius:999,padding:"5px 12px",fontWeight:800}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1627}}, msg.msg)
                 )
               );
               return (
@@ -3851,11 +3851,11 @@ function LinkNest(){
                     , React.createElement('div', { style: {fontSize:11,color:"#78918a",fontWeight:800}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1634}}, mine?"Me":msg.name, " · "  , msg.time)
                     , React.createElement('div', { style: {background:mine?"#18352e":"#fff",color:mine?"#fff":"#19352f",borderRadius:mine?"18px 18px 4px 18px":"18px 18px 18px 4px",padding:"10px 14px",fontSize:14,lineHeight:1.5,boxShadow:mine?"0 8px 18px rgba(24,53,46,0.18)":"0 6px 16px rgba(36,80,70,0.06)",border:mine?"none":"1px solid #dfece7"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1635}}, msg.msg)
                     , incomingBorrowRequest && React.createElement('div', { style: {display:"flex",gap:6,marginTop:7,flexWrap:"wrap"}}
-                      , React.createElement('button', { onClick: ()=>handleAcceptBorrowRequest(msg), style: {padding:"7px 10px",borderRadius:10,border:"none",background:"linear-gradient(135deg,#1a9c5b,#34d399)",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer"}}, "Approve")
+                      , React.createElement('button', { onClick: ()=>handleAcceptBorrowRequest(msg), style: {padding:"8px 10px",borderRadius:999,border:"none",background:"linear-gradient(135deg,#1a9c5b,#34d399)",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer"}}, "Approve")
                     )
                     , pendingFriendMsg && React.createElement('div', { style: {display:"flex",gap:6,marginTop:7,flexWrap:"wrap"}}
-                      , React.createElement('button', { onClick: ()=>handleAcceptFriendRequest(msg), style: {padding:"7px 10px",borderRadius:10,border:"none",background:"linear-gradient(135deg,#1a9c5b,#34d399)",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer"}}, "Approve")
-                      , React.createElement('button', { onClick: ()=>handleDeclineFriendRequest(msg), style: {padding:"7px 10px",borderRadius:10,border:"1px solid #e8ecf4",background:"#fff",color:"#8892a4",fontSize:12,fontWeight:700,cursor:"pointer"}}, "Decline")
+                      , React.createElement('button', { onClick: ()=>handleAcceptFriendRequest(msg), style: {padding:"8px 10px",borderRadius:999,border:"none",background:"linear-gradient(135deg,#1a9c5b,#34d399)",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer"}}, "Approve")
+                      , React.createElement('button', { onClick: ()=>handleDeclineFriendRequest(msg), style: {padding:"8px 10px",borderRadius:999,border:"1px solid #e8ecf4",background:"#fff",color:"#8892a4",fontSize:12,fontWeight:700,cursor:"pointer"}}, "Decline")
                     )
                   )
                   , mine&&React.createElement('div', { style: {width:36,height:36,background:"#dcf2eb",borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",fontSize:19,flexShrink:0}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1637}}, "🧑")
@@ -3875,13 +3875,13 @@ function LinkNest(){
             )
             , React.createElement('div', { style: {display:"grid",gridTemplateColumns:"1fr 1fr",gap:0,background:"#edf5f2",borderRadius:15,padding:3,marginBottom:12}}
               , [{k:"friends",label:"Friends",count:friendItems.length,dot:"#d99aac"},{k:"clubs",label:"Club",count:clubCount,dot:"#73cbb7"}].map(item=>(
-                React.createElement('button', { key:item.k, onClick:()=>setCommunityView(item.k), style:{height:34,border:"none",borderRadius:12,background:communityView===item.k?"#fff":"transparent",color:communityView===item.k?"#4d9b86":"#8ca39d",fontSize:12,fontWeight:800,cursor:"pointer",boxShadow:communityView===item.k?"0 3px 8px rgba(36,80,70,0.07)":"none"}}
+                React.createElement('button', { key:item.k, onClick:()=>setCommunityView(item.k), style:{height:36,border:"none",borderRadius:12,background:communityView===item.k?"#fff":"transparent",color:communityView===item.k?"#4d9b86":"#8ca39d",fontSize:13,fontWeight:800,cursor:"pointer",boxShadow:communityView===item.k?"0 3px 8px rgba(36,80,70,0.07)":"none"}}
                   , React.createElement('span', { style:{display:"inline-block",width:6,height:6,borderRadius:6,background:item.dot,marginRight:6,verticalAlign:"1px"}}, "")
                   , item.label, " ", item.count
                 )
               ))
             )
-            , communityView==="friends" && pendingFriendRequestCount>0 && React.createElement('button', { onClick:()=>setTab(2), style:{width:"100%",border:"none",background:"#f6e7ec",color:"#d88ba0",borderRadius:14,padding:"10px 12px",textAlign:"left",fontSize:12,fontWeight:800,marginBottom:12,cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center"}}, pendingFriendRequestCount, " friend requests pending", React.createElement('span', null, "→"))
+            , communityView==="friends" && pendingFriendRequestCount>0 && React.createElement('button', { onClick:()=>setTab(2), style:{width:"100%",border:"none",background:"#f6e7ec",color:"#d88ba0",borderRadius:14,padding:"11px 12px",textAlign:"left",fontSize:13,fontWeight:800,marginBottom:12,cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center"}}, pendingFriendRequestCount, " friend requests pending", React.createElement('span', null, "→"))
             , communityView==="friends" && React.createElement('div', { style:{position:"relative",marginBottom:12}}
               , React.createElement('span', { style:{position:"absolute",left:14,top:"50%",transform:"translateY(-50%)",color:"#a6b8b2",fontSize:16}}, "⌕")
               , React.createElement('input', { value: communitySearch, onChange:e=>setCommunitySearch(e.target.value), placeholder:"Search friends or add someone", style:{width:"100%",padding:"11px 14px 11px 38px",borderRadius:22,border:"1.5px solid #dfece7",background:"#fff",fontSize:14,fontWeight:500,color:"#19352f",outline:"none"} })
@@ -3890,8 +3890,8 @@ function LinkNest(){
               ? React.createElement('div', { style: {background:"rgba(255,255,255,0.9)",borderRadius:15,padding:"30px 18px",textAlign:"center",boxShadow:"0 6px 16px rgba(36,80,70,0.035)",border:"1.5px solid #e2eee9"}}
                   , React.createElement('div', { style: {fontSize:37,marginBottom:10}}, "👥")
                   , React.createElement('div', { style: {fontSize:15,fontWeight:700,color:"#19352f",marginBottom:6}}, communitySearch.trim()?"No matching friends":"No friends yet")
-                  , React.createElement('div', { style: {fontSize:12,color:"#78918a",lineHeight:1.5,marginBottom:14}}, communitySearch.trim()?"Try another name, or add friends from Chat.":"Add friends from borrower profiles in Chat.")
-                  , React.createElement('button', { onClick: ()=>setTab(2), style: {padding:"8px 12px",borderRadius:999,border:"none",background:"#18352e",color:"#fff",fontSize:12,fontWeight:800,cursor:"pointer"}}, "Open Chat")
+                  , React.createElement('div', { style: {fontSize:13,color:"#78918a",lineHeight:1.5,marginBottom:14}}, communitySearch.trim()?"Try another name, or add friends from Chat.":"Add friends from borrower profiles in Chat.")
+                  , React.createElement('button', { onClick: ()=>setTab(2), style: {padding:"9px 12px",borderRadius:999,border:"none",background:"#18352e",color:"#fff",fontSize:13,fontWeight:800,cursor:"pointer"}}, "Open Chat")
                 )
               : React.createElement('div', { style:{border:"1.5px solid #e2eee9",borderRadius:15,overflow:"hidden",background:"#fff"}}
                   , visibleFriendItems.map((f,i)=>(
@@ -3899,9 +3899,9 @@ function LinkNest(){
                       , React.createElement('div', { style: {width:40,height:40,borderRadius:999,background:["#cb748d","#7db0c2","#d99a86","#a394bd","#91ad83"][i%5],color:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,position:"relative",flexShrink:0}}, f.avatar || "👤", f.unread>0&&React.createElement('span', { style: {position:"absolute",right:-1,top:-1,width:10,height:10,background:"#4d9b86",borderRadius:99,border:"2px solid #fff"}}))
                       , React.createElement('div', { style:{flex:1,minWidth:0}}
                         , React.createElement('div', { style:{fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",fontSize:15,fontWeight:600,color:"#19352f",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, f.name)
-                        , React.createElement('div', { style:{fontSize:12,color:"#9eb3ad",fontWeight:600,marginTop:2}}, "", f.profile?.distance || "1.1 km", " · ", f.books.length ? `Swapped ${Math.max(1,Math.min(4,f.books.length))} books` : "2 mutual neighbors")
+                        , React.createElement('div', { style:{fontSize:13,color:"#9eb3ad",fontWeight:600,marginTop:2}}, "", f.profile?.distance || "1.1 km", " · ", f.books.length ? `Swapped ${Math.max(1,Math.min(4,f.books.length))} books` : "2 mutual neighbors")
                       )
-                      , React.createElement('button', { onClick:()=>{setSelectedChat(f.name);setTab(2);}, style:{border:"none",background:"#e8f5ef",color:"#3e9b84",borderRadius:999,padding:"6px 9px",fontSize:11,fontWeight:800,cursor:"pointer",whiteSpace:"nowrap"}}, "Chat")
+                      , React.createElement('button', { onClick:()=>{setSelectedChat(f.name);setTab(2);}, style:{border:"none",background:"#e8f5ef",color:"#3e9b84",borderRadius:999,padding:"5px 7px",fontSize:12,fontWeight:800,cursor:"pointer",whiteSpace:"nowrap",lineHeight:1}}, "Chat")
                     )
                   ))
                 )
@@ -3921,16 +3921,16 @@ function LinkNest(){
                       , React.createElement('div', { style:{width:40,height:40,borderRadius:13,background:club.color||"#dff1eb",color:"#4d9b86",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",fontSize:17,fontWeight:800,flexShrink:0}}, club.initial || club.name.slice(0,1))
                       , React.createElement('div', { style:{flex:1,minWidth:0}}
                         , React.createElement('div', { style:{fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",fontSize:15,fontWeight:600,color:"#19352f",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, club.name)
-                        , React.createElement('div', { style:{fontSize:12,color:"#9eb3ad",fontWeight:600,marginTop:2}}, club.members, " members · ", club.books, " books", club.distance ? ` · ${club.distance}` : "")
+                        , React.createElement('div', { style:{fontSize:13,color:"#9eb3ad",fontWeight:600,marginTop:2}}, club.members, " members · ", club.books, " books", club.distance ? ` · ${club.distance}` : "")
                       )
                       , club.unread>0
-                        ? React.createElement('span', { style:{background:"#eca17e",color:"#fff",borderRadius:999,padding:"4px 7px",fontSize:11,fontWeight:800,whiteSpace:"nowrap"}}, club.unread, " new")
-                        : React.createElement('span', { style:{color:club.joined?"#9eb3ad":"#4d9b86",fontSize:11,fontWeight:800,whiteSpace:"nowrap"}}, club.joined?"Details":"Join")
+                        ? React.createElement('span', { style:{background:"#eca17e",color:"#fff",borderRadius:999,padding:"5px 7px",fontSize:12,fontWeight:800,whiteSpace:"nowrap",lineHeight:1}}, club.unread, " new")
+                        : React.createElement('span', { style:{color:club.joined?"#9eb3ad":"#4d9b86",fontSize:12,fontWeight:800,whiteSpace:"nowrap"}}, club.joined?"Details":"Join")
                     )
                   ))
                 )
             )
-            , communityView==="clubs" && React.createElement('button', { onClick:()=>setShowClubSheet(true), style:{width:"100%",border:"1.5px dashed #9eb3ad",background:"rgba(255,255,255,0.55)",color:"#5b746d",borderRadius:15,padding:"11px 12px",fontSize:12,fontWeight:800,cursor:"pointer"}}, "+ Discover / create club")
+            , communityView==="clubs" && React.createElement('button', { onClick:()=>setShowClubSheet(true), style:{width:"100%",border:"1.5px dashed #9eb3ad",background:"rgba(255,255,255,0.55)",color:"#5b746d",borderRadius:15,padding:"12px 12px",fontSize:13,fontWeight:800,cursor:"pointer"}}, "+ Discover / create club")
           )
         )
 
@@ -3944,8 +3944,8 @@ function LinkNest(){
                 , React.createElement('div', { style: {flex:1,minWidth:0}}
                   , React.createElement('div', { style: {fontSize:18,fontWeight:700,color:"#132033",fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, regName || "LinkNest user")
                   , React.createElement('div', { style: {display:"flex",gap:5,flexWrap:"wrap",marginTop:6}}
-                    , React.createElement('span', { style: {fontSize:11,fontWeight:700,color:cloudUser?"#168f65":"#7c8798",background:cloudUser?"#dcfce7":"#eef2f7",borderRadius:99,padding:"3px 7px"}}, cloudUser ? "Cloud connected" : "Local mode")
-                    , React.createElement('span', { style: {fontSize:11,fontWeight:700,color:appDiagnostics.online?"#168f65":"#dc2626",background:appDiagnostics.online?"#dcfce7":"#fee2e2",borderRadius:99,padding:"3px 7px"}}, appDiagnostics.online ? "Online" : "Offline")
+                    , React.createElement('span', { style: {fontSize:12,fontWeight:700,color:cloudUser?"#168f65":"#7c8798",background:cloudUser?"#dcfce7":"#eef2f7",borderRadius:99,padding:"5px 7px",lineHeight:1}}, cloudUser ? "Cloud connected" : "Local mode")
+                    , React.createElement('span', { style: {fontSize:12,fontWeight:700,color:appDiagnostics.online?"#168f65":"#dc2626",background:appDiagnostics.online?"#dcfce7":"#fee2e2",borderRadius:99,padding:"5px 7px",lineHeight:1}}, appDiagnostics.online ? "Online" : "Offline")
                   )
                 )
               )
@@ -3956,9 +3956,9 @@ function LinkNest(){
                   {value:String(lentOutCount),label:"Checked out",action:()=>{setShelfMode("shared");setShelfFilter("borrowed");setTab(1);}},
                   {value:`${points}`,label:"Points"}
                 ].map(({value,label,action})=>(
-                  React.createElement(action ? 'button' : 'div', { key: label, onClick: action, style: {background:"rgba(255,255,255,0.82)",border:"1px solid rgba(232,236,244,0.8)",borderRadius:12,padding:"7px 4px",textAlign:"center",cursor:action?"pointer":"default"}}
-                    , React.createElement('div', { style: {fontSize:15,fontWeight:800,color:"#132033"}}, value)
-                    , React.createElement('div', { style: {fontSize:10,color:"#8b95a8",fontWeight:600,marginTop:2}}, label)
+                  React.createElement(action ? 'button' : 'div', { key: label, onClick: action, style: {background:"rgba(255,255,255,0.82)",border:"1px solid rgba(232,236,244,0.8)",borderRadius:12,padding:"8px 4px",textAlign:"center",cursor:action?"pointer":"default"}}
+                    , React.createElement('div', { style: {fontSize:16,fontWeight:800,color:"#132033"}}, value)
+                    , React.createElement('div', { style: {fontSize:12,color:"#8b95a8",fontWeight:600,marginTop:2}}, label)
                   )
                 ))
               )
@@ -3976,8 +3976,8 @@ function LinkNest(){
                 , React.createElement('input', { value: authEmail, onChange: e=>setAuthEmail(e.target.value.trim()), placeholder: "Email", inputMode: "email", style: {...profileInputStyle,flex:1,minWidth:0}})
                 , React.createElement('input', { value: authPassword, onChange: e=>setAuthPassword(e.target.value), placeholder: "Password", type: "password", style: {...profileInputStyle,flex:1,minWidth:0}})
               )
-              , cloudStatus && React.createElement('div', { style: {fontSize:12,color:"#168f65",background:"#ecfdf5",borderRadius:12,padding:"8px 10px",marginBottom:8,lineHeight:1.5}}, cloudStatus)
-              , cloudProfile && React.createElement('div', { style: {fontSize:12,color:"#5b746d",background:"#f4fbf8",border:"1px solid #dfece7",borderRadius:12,padding:"8px 10px",marginBottom:8,lineHeight:1.5}},
+              , cloudStatus && React.createElement('div', { style: {fontSize:13,color:"#168f65",background:"#ecfdf5",borderRadius:12,padding:"9px 10px",marginBottom:8,lineHeight:1.5}}, cloudStatus)
+              , cloudProfile && React.createElement('div', { style: {fontSize:13,color:"#5b746d",background:"#f4fbf8",border:"1px solid #dfece7",borderRadius:12,padding:"9px 10px",marginBottom:8,lineHeight:1.5}},
                 "Profile connected: ", cloudProfile.display_name || regName || "LinkNest user",
                 profileSyncedAt ? ` · ${profileSyncedAt.slice(5,16).replace("T"," ")}` : ""
               )
@@ -4003,7 +4003,7 @@ function LinkNest(){
               , React.createElement('details', { open: false, style: {borderBottom:"1px solid #f0f2f8",paddingBottom:12,marginBottom:12}}
                 , React.createElement('summary', { style: {fontSize:14,fontWeight:900,color:"#162033",cursor:"pointer"}}, "Web Push")
                 , React.createElement('input', { value: vapidPublicKey, onChange: e=>setVapidPublicKey(e.target.value.trim()), placeholder: "VAPID public key", style: {...profileInputStyle,marginTop:10,marginBottom:8}})
-                , pushStatus && React.createElement('div', { style: {fontSize:12,color:"#168f65",background:"#ecfdf5",borderRadius:12,padding:"8px 10px",marginBottom:8,lineHeight:1.5}}, pushStatus)
+                , pushStatus && React.createElement('div', { style: {fontSize:13,color:"#168f65",background:"#ecfdf5",borderRadius:12,padding:"9px 10px",marginBottom:8,lineHeight:1.5}}, pushStatus)
                 , React.createElement('div', { style: {display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}
                   , React.createElement('button', { onClick: enableWebPush, style: primarySmallButton}, "Enable push")
                   , React.createElement('button', { onClick: sendTestPush, style: secondarySmallButton}, "Test push")
@@ -4069,13 +4069,13 @@ function LinkNest(){
                   ["Error logs", `${appDiagnostics.errors.length}${appDiagnostics.lastCrash ? " + crash" : ""}`]
                 ].map(([label,value])=>(
                   React.createElement('div', { key: label, style: {background:"#f8fafc",borderRadius:13,padding:"9px 10px"}}
-                    , React.createElement('div', { style: {fontSize:11,color:"#8b95a8",fontWeight:800,marginBottom:4}}, label)
+                    , React.createElement('div', { style: {fontSize:12,color:"#8b95a8",fontWeight:800,marginBottom:4}}, label)
                     , React.createElement('div', { style: {fontSize:14,fontWeight:900,color:"#162033",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}, value)
                   )
                 ))
               )
-              , appDiagnostics.lastCrash && React.createElement('div', { style: {background:"#fff7ed",border:"1px solid #fed7aa",borderRadius:13,padding:"9px 10px",fontSize:12,color:"#9a3412",lineHeight:1.5,marginBottom:10}}, "Recentlycrash：", String(appDiagnostics.lastCrash.message || "Unknown error").slice(0, 70))
-              , updateState && React.createElement('div', { style: {fontSize:12,color:"#168f65",background:"#ecfdf5",borderRadius:12,padding:"8px 10px",marginBottom:10,lineHeight:1.5}}, updateState)
+              , appDiagnostics.lastCrash && React.createElement('div', { style: {background:"#fff7ed",border:"1px solid #fed7aa",borderRadius:13,padding:"10px 10px",fontSize:13,color:"#9a3412",lineHeight:1.5,marginBottom:10}}, "Recentlycrash：", String(appDiagnostics.lastCrash.message || "Unknown error").slice(0, 70))
+              , updateState && React.createElement('div', { style: {fontSize:13,color:"#168f65",background:"#ecfdf5",borderRadius:12,padding:"9px 10px",marginBottom:10,lineHeight:1.5}}, updateState)
               , React.createElement('div', { style: {display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}
                 , React.createElement('button', { onClick: refreshAppShell, style: primarySmallButton}, "Check update")
                 , React.createElement('button', { onClick: ()=>window.location.reload(), style: secondarySmallButton}, "Reload")
@@ -4262,8 +4262,8 @@ function LinkNest(){
           )
         )
       )
-      , React.createElement('div', { className: "liquid-tab-shell", style: {position:"absolute",bottom:0,left:0,right:0,height:"calc(64px + env(safe-area-inset-bottom, 0px))",background:"rgba(255,255,255,0.9)",borderTop:"1px solid #dfece7",display:"flex",alignItems:"center",justifyContent:"space-around",paddingBottom:"calc(3px + env(safe-area-inset-bottom, 0px))",boxShadow:"0 -8px 22px rgba(36,80,70,0.07)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1684}}
-        , React.createElement('div', { className: "liquid-tab-blob", style: {left:`calc(${tab * (100/TABS.length)}% + ${50/TABS.length}% - 27px)`}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1685}}
+      , React.createElement('div', { className: "liquid-tab-shell", style: {position:"absolute",bottom:0,left:0,right:0,height:"calc(70px + env(safe-area-inset-bottom, 0px))",background:"rgba(255,255,255,0.9)",borderTop:"1px solid #dfece7",display:"flex",alignItems:"center",justifyContent:"space-around",paddingBottom:"calc(4px + env(safe-area-inset-bottom, 0px))",boxShadow:"0 -8px 22px rgba(36,80,70,0.07)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1684}}
+        , React.createElement('div', { className: "liquid-tab-blob", style: {left:`calc(${tab * (100/TABS.length)}% + ${50/TABS.length}% - 32px)`}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1685}}
           , React.createElement('div', { className: "liquid-tab-dot a", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1686}})
           , React.createElement('div', { className: "liquid-tab-core", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1687}})
           , React.createElement('div', { className: "liquid-tab-dot b", __self: this, __source: {fileName: _jsxFileName, lineNumber: 1688}})
@@ -4271,10 +4271,10 @@ function LinkNest(){
         , TABS.map((t,i)=>{
           const count=i===2?unreadN:i===1?(myBooks.length+borrowed.length):i===3?(friendItems.length+clubCount):0;
           return (
-            React.createElement('button', { key: t, className: `liquid-tab-button ${tab===i?"is-active":""}`, onClick: ()=>setTab(i), style: {flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:0,border:"none",background:"transparent",cursor:"pointer",color:tab===i?"#4d9b86":"#9eb3ad",position:"relative",padding:"3px 0",zIndex:2}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1688}}
+            React.createElement('button', { key: t, className: `liquid-tab-button ${tab===i?"is-active":""}`, onClick: ()=>setTab(i), style: {flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:1,border:"none",background:"transparent",cursor:"pointer",color:tab===i?"#4d9b86":"#9eb3ad",position:"relative",padding:"4px 0",zIndex:2}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1688}}
               , React.createElement(TabIcon, { i: i, active: tab===i, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1689}})
               , count>0&&React.createElement('div', { style: {position:"absolute",top:4,right:"calc(50% - 18px)",width:14,height:14,background:"#ef4444",borderRadius:7,display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,color:"#fff",fontWeight:700,border:"2px solid #fff"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1690}}, count>9?"9+":count)
-              , React.createElement('span', { className: "liquid-tab-label", style: {fontSize:"8.5px",fontWeight:tab===i?800:600}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1691}}, t)
+              , React.createElement('span', { className: "liquid-tab-label", style: {fontSize:"10.5px",fontWeight:tab===i?800:600}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1691}}, t)
             )
           );
         })

@@ -7,12 +7,12 @@
   <meta name="apple-mobile-web-app-title" content="LinkNest">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <link rel="manifest" href="manifest.json?v=202605252214">
-  <link rel="icon" type="image/png" href="linknest-white-favicon.png?v=202605252214">
-  <link rel="apple-touch-icon" sizes="192x192" href="linknest-white-icon-192.png?v=202605252214">
-  <link rel="apple-touch-icon" sizes="512x512" href="linknest-white-icon-512.png?v=202605252214">
+  <link rel="manifest" href="manifest.json?v=202605272146">
+  <link rel="icon" type="image/png" href="linknest-white-favicon.png?v=202605272146">
+  <link rel="apple-touch-icon" sizes="192x192" href="linknest-white-icon-192.png?v=202605272146">
+  <link rel="apple-touch-icon" sizes="512x512" href="linknest-white-icon-512.png?v=202605272146">
   <title>LinkNest · Mobile Web App</title>
-  <meta name="build-id" content="202605252214">
+  <meta name="build-id" content="202605272146">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; background: #e8eaf0; }
@@ -20,16 +20,16 @@
     body { display: flex; align-items: center; justify-content: center; min-height: 100vh; min-height: -webkit-fill-available; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI', sans-serif; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
     #root { width: 100%; min-height: 100vh; display: flex; justify-content: center; }
     @media (max-width: 430px) {
-      html, body { background: #fff !important; }
+      html, body { background: #e8eaf0 !important; }
       body { align-items: flex-start; padding: 0; margin: 0; }
       #root { width: 100%; height: 100%; }
       #root > div { 
-        max-width: 100% !important; 
-        width: 100% !important;
+        max-width: 370px !important; 
+        width: calc(100% - 20px) !important;
         height: var(--app-height, 100dvh) !important; 
         max-height: none !important; 
-        border-radius: 0 !important;
-        box-shadow: none !important;
+        border-radius: 28px !important;
+        box-shadow: 0 18px 44px rgba(36,80,70,0.16) !important;
       }
     }
     #loading { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #18352e, #4d9b86); color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI', sans-serif; z-index: 9999; }
@@ -776,7 +776,7 @@ function NearbyMapHome({books, onOpenBook, onOpenRadius, geoLabel, radius}){
     if(startY != null && endY != null && endY - startY > 48) closeAreaSheet();
   };
   return (
-    React.createElement('div', { className:"nearby-map-shell", style: {position:"relative",margin:"0 -20px",overflow:"hidden",borderTop:"1px solid #d7ebe4",background:"linear-gradient(180deg,#e8f5f1 0%,#dff1eb 48%,#eaf6f2 100%)"}}
+    React.createElement('div', { className:"nearby-map-shell", style: {position:"relative",margin:"0 -26px",overflow:"hidden",borderTop:"1px solid #d7ebe4",background:"linear-gradient(180deg,#e8f5f1 0%,#dff1eb 48%,#eaf6f2 100%)"}}
       , React.createElement('svg', { width:"100%", height:"100%", preserveAspectRatio:"none", style:{position:"absolute",inset:0,opacity:.95}}
         , React.createElement('defs', null
           , React.createElement('pattern', { id:"nearby-grid", width:"54", height:"54", patternUnits:"userSpaceOnUse"}
@@ -974,27 +974,27 @@ function BookCard({book,onPress,onOwnerPress,delay=0}){
   const tone = bookTone(book);
   const available = book.available !== false;
   return (
-    React.createElement('article', { onClick: ()=>onPress(book), style: {background:"#fff",borderRadius:15,padding:"9px 10px",marginBottom:10,display:"grid",gridTemplateColumns:"78px minmax(0,1fr)",gap:11,cursor:"pointer",boxShadow:"0 6px 16px rgba(36,80,70,0.035)",border:"1.5px solid #e2eee9",transform:vis?"translateY(0)":"translateY(16px)",opacity:vis?1:0,transition:"transform .35s cubic-bezier(.22,1,.36,1),opacity .35s,box-shadow .2s",position:"relative",overflow:"hidden"},
+    React.createElement('article', { onClick: ()=>onPress(book), style: {background:"#fff",borderRadius:15,padding:"10px 11px",marginBottom:11,display:"grid",gridTemplateColumns:"78px minmax(0,1fr)",gap:12,cursor:"pointer",boxShadow:"0 6px 16px rgba(36,80,70,0.035)",border:"1.5px solid #e2eee9",transform:vis?"translateY(0)":"translateY(16px)",opacity:vis?1:0,transition:"transform .35s cubic-bezier(.22,1,.36,1),opacity .35s,box-shadow .2s",position:"relative",overflow:"hidden"},
       onMouseEnter: e=>{e.currentTarget.style.boxShadow="0 12px 24px rgba(36,80,70,0.08)";e.currentTarget.style.transform="translateY(-1px)";},
       onMouseLeave: e=>{e.currentTarget.style.boxShadow="0 7px 18px rgba(36,80,70,0.04)";e.currentTarget.style.transform="translateY(0)";}}
       , React.createElement(BookCoverStack, { book, size:70, compact:true, style:{alignSelf:"center",justifySelf:"center",filter:"drop-shadow(0 6px 9px rgba(36,80,70,0.09))"} })
-      , React.createElement('span', { style: {position:"absolute",right:10,top:12,background:available?"#e8f5ef":"#fff7ed",color:available?"#3e9b84":"#d97706",borderRadius:999,padding:"2px 6px",fontSize:10,fontWeight:700,whiteSpace:"nowrap"}}, available ? displayVisibility(book) : "Checked out")
+      , React.createElement('span', { style: {position:"absolute",right:11,top:12,background:available?"#e8f5ef":"#fff7ed",color:available?"#3e9b84":"#d97706",borderRadius:999,padding:"2px 6px",fontSize:11,fontWeight:700,whiteSpace:"nowrap"}}, available ? displayVisibility(book) : "Checked out")
       , React.createElement('div', { style: {minWidth:0,display:"flex",flexDirection:"column"}}
         , React.createElement('div', { style: {display:"flex",alignItems:"flex-start",gap:8,marginBottom:1,minWidth:0,paddingRight:40}}
-          , React.createElement('div', { style: {fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",fontSize:15,fontWeight:500,color:"#18352e",lineHeight:1.18,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",flex:1}}, book.title)
+          , React.createElement('div', { style: {fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",fontSize:16,fontWeight:500,color:"#18352e",lineHeight:1.18,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",flex:1}}, book.title)
         )
-        , React.createElement('div', { style: {fontSize:11,color:"#91a8a1",fontWeight:600,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",marginBottom:7}}, book.author || "Unknown author")
+        , React.createElement('div', { style: {fontSize:12,color:"#91a8a1",fontWeight:600,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",marginBottom:7}}, book.author || "Unknown author")
         , React.createElement('div', { style:{display:"flex",alignItems:"center",gap:4,flexWrap:"wrap",marginBottom:8}}
-          , book.category && React.createElement('span', { style:{background:"#f0f6f3",color:"#607a72",borderRadius:999,padding:"2px 6px",fontSize:10,fontWeight:700,lineHeight:1}}, book.category)
-          , book.condition && React.createElement('span', { style:{fontSize:10,color:"#6f8780",fontWeight:600}}, "· ", book.condition)
+          , book.category && React.createElement('span', { style:{background:"#f0f6f3",color:"#607a72",borderRadius:999,padding:"2px 6px",fontSize:11,fontWeight:700,lineHeight:1}}, book.category)
+          , book.condition && React.createElement('span', { style:{fontSize:11,color:"#6f8780",fontWeight:600}}, "· ", book.condition)
         )
         , React.createElement('div', { style:{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8,marginTop:"auto"}}
-          , React.createElement('div', { style:{fontSize:11,color:"#3e9b84",fontWeight:700,whiteSpace:"nowrap"}}, "📍 ", book.distance ?? 0, " km")
+          , React.createElement('div', { style:{fontSize:12,color:"#3e9b84",fontWeight:700,whiteSpace:"nowrap"}}, "📍 ", book.distance ?? 0, " km")
           , React.createElement('div', { style:{width:1,height:15,background:"#e4eee9",flexShrink:0}})
           , React.createElement('button', { onClick:e=>{e.stopPropagation();onOwnerPress&&onOwnerPress(book.owner);}, style:{border:"none",background:"transparent",padding:0,display:"flex",alignItems:"center",gap:6,minWidth:0,cursor:"pointer",color:"#18352e"}}
-            , React.createElement('span', { style:{width:20,height:20,borderRadius:999,background:tone.cover,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,flexShrink:0,color:"#fff"}}, p?.avatar || "👤")
-            , React.createElement('span', { style:{fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",fontSize:14,fontWeight:500,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",maxWidth:52}}, book.owner || "Neighbor")
-            , p && React.createElement('span', { style:{fontSize:11,fontWeight:700,color:"#c99b50",whiteSpace:"nowrap"}}, "☆", p.rating)
+            , React.createElement('span', { style:{width:20,height:20,borderRadius:999,background:tone.cover,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,flexShrink:0,color:"#fff"}}, p?.avatar || "👤")
+            , React.createElement('span', { style:{fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",fontSize:15,fontWeight:500,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",maxWidth:52}}, book.owner || "Neighbor")
+            , p && React.createElement('span', { style:{fontSize:12,fontWeight:700,color:"#c99b50",whiteSpace:"nowrap"}}, "☆", p.rating)
           )
         )
       )
@@ -3585,7 +3585,7 @@ function LinkNest(){
   };
 
   return (
-    React.createElement('div', { style: {width:"100%",maxWidth:390,margin:"0 auto",height:"var(--app-height, 100dvh)",maxHeight:"none",background:"#eef8f4",borderRadius:0,position:"relative",overflow:"hidden",boxShadow:"0 24px 80px rgba(36,80,70,0.18)",fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI', sans-serif",color:"#18352e"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1406}}
+    React.createElement('div', { style: {width:"100%",maxWidth:370,margin:"0 auto",height:"var(--app-height, 100dvh)",maxHeight:"none",background:"#eef8f4",borderRadius:28,position:"relative",overflow:"hidden",boxShadow:"0 18px 44px rgba(36,80,70,0.16)",fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI', sans-serif",color:"#18352e"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1406}}
       , React.createElement('style', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1407}}, CSS)
 
       /* ── Registration overlay ── */
@@ -3673,15 +3673,15 @@ function LinkNest(){
 
         /* DISCOVER */
         , tab===0 && (
-          React.createElement('div', { style: {padding:discoverView==="map"?"23px 20px 0":"24px 20px 122px",background:"linear-gradient(180deg,#eef8f4 0%,#f8fbfa 40%,#fbfcfb 100%)",height:"100%",minHeight:"100%",overflow:discoverView==="map"?"hidden":"visible"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1498}}
+          React.createElement('div', { style: {padding:discoverView==="map"?"24px 26px 0":"25px 26px 122px",background:"linear-gradient(180deg,#eef8f4 0%,#f8fbfa 40%,#fbfcfb 100%)",height:"100%",minHeight:"100%",overflow:discoverView==="map"?"hidden":"visible"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1498}}
             , React.createElement('div', { style: {display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:discoverView==="map"?14:14,gap:10}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1499}}
               , React.createElement('div', { style: {flexShrink:0}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1500}}
-                , React.createElement('div', { style: {fontSize:27,fontWeight:800,color:"#18352e",fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",whiteSpace:"nowrap",letterSpacing:0,lineHeight:1.06}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1501}}, "Nearby ", React.createElement('span', { style: {fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI', sans-serif",fontWeight:800,fontSize:16}}, filtered.length, " books"))
-                , discoverView==="list" && React.createElement('button', { onClick: ()=>setShowMapSheet(true), style: {marginTop:7,display:"inline-flex",alignItems:"center",gap:4,background:"#dff1eb",border:"none",borderRadius:999,padding:"4px 8px",cursor:"pointer",color:"#4d9b86",fontWeight:800,fontSize:11,lineHeight:1}}, React.createElement('svg', { viewBox:"0 0 24 24", width:11, height:11, fill:"none", stroke:"currentColor", strokeWidth:2.2, strokeLinecap:"round", strokeLinejoin:"round"}, React.createElement('path', { d:"M12 21s6-5.4 6-11a6 6 0 10-12 0c0 5.6 6 11 6 11z" }), React.createElement('circle', { cx:12, cy:10, r:2 })), geoLabel, React.createElement('span', { style: {opacity:.45}}, "|"), radius, " km⌄")
+                , React.createElement('div', { style: {fontSize:28,fontWeight:800,color:"#18352e",fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif",whiteSpace:"nowrap",letterSpacing:0,lineHeight:1.06}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1501}}, "Nearby ", React.createElement('span', { style: {fontFamily:"-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI', sans-serif",fontWeight:800,fontSize:17}}, filtered.length, " books"))
+                , discoverView==="list" && React.createElement('button', { onClick: ()=>setShowMapSheet(true), style: {marginTop:8,display:"inline-flex",alignItems:"center",gap:4,background:"#dff1eb",border:"none",borderRadius:999,padding:"5px 9px",cursor:"pointer",color:"#4d9b86",fontWeight:800,fontSize:12,lineHeight:1}}, React.createElement('svg', { viewBox:"0 0 24 24", width:12, height:12, fill:"none", stroke:"currentColor", strokeWidth:2.2, strokeLinecap:"round", strokeLinejoin:"round"}, React.createElement('path', { d:"M12 21s6-5.4 6-11a6 6 0 10-12 0c0 5.6 6 11 6 11z" }), React.createElement('circle', { cx:12, cy:10, r:2 })), geoLabel, React.createElement('span', { style: {opacity:.45}}, "|"), radius, " km⌄")
               )
               , React.createElement('div', { style: {marginTop:17,background:"#edf5f2",borderRadius:18,padding:3,display:"flex",gap:2,boxShadow:"0 3px 9px rgba(36,80,70,0.045), inset 0 0 0 1px rgba(24,53,46,0.03)"}}
-                , React.createElement('button', { onClick:()=>setDiscoverView("list"), "aria-label":"List view", title:"List view", style: {width:30,height:30,borderRadius:16,border:"none",background:discoverView==="list"?"#fff":"transparent",color:discoverView==="list"?"#4d9b86":"#9eb3ad",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:discoverView==="list"?"0 3px 7px rgba(36,80,70,0.065)":"none",cursor:"pointer"}}, React.createElement('svg', { viewBox:"0 0 24 24", width:15, height:15, fill:"none", stroke:"currentColor", strokeWidth:2, strokeLinecap:"round"}, React.createElement('path', { d:"M8 6h13M8 12h13M8 18h13" }), React.createElement('path', { d:"M3 6h.01M3 12h.01M3 18h.01" })))
-                , React.createElement('button', { onClick:()=>setDiscoverView("map"), "aria-label":"Map view", title:"Map view", style: {width:30,height:30,borderRadius:16,border:"none",background:discoverView==="map"?"#fff":"transparent",color:discoverView==="map"?"#4d9b86":"#9eb3ad",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:discoverView==="map"?"0 3px 7px rgba(36,80,70,0.065)":"none",cursor:"pointer"}}, React.createElement('svg', { viewBox:"0 0 24 24", width:15, height:15, fill:"none", stroke:"currentColor", strokeWidth:2, strokeLinecap:"round", strokeLinejoin:"round"}, React.createElement('path', { d:"M4 19.5V5a2 2 0 012-2l5 3 5-3h1a2 2 0 012 2v14a2 2 0 01-2 2l-5-3-5 3-5-3" }), React.createElement('path', { d:"M9 6v14M15 4v14" })))
+                , React.createElement('button', { onClick:()=>setDiscoverView("list"), "aria-label":"List view", title:"List view", style: {width:32,height:32,borderRadius:16,border:"none",background:discoverView==="list"?"#fff":"transparent",color:discoverView==="list"?"#4d9b86":"#9eb3ad",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:discoverView==="list"?"0 3px 7px rgba(36,80,70,0.065)":"none",cursor:"pointer"}}, React.createElement('svg', { viewBox:"0 0 24 24", width:16, height:16, fill:"none", stroke:"currentColor", strokeWidth:2, strokeLinecap:"round"}, React.createElement('path', { d:"M8 6h13M8 12h13M8 18h13" }), React.createElement('path', { d:"M3 6h.01M3 12h.01M3 18h.01" })))
+                , React.createElement('button', { onClick:()=>setDiscoverView("map"), "aria-label":"Map view", title:"Map view", style: {width:32,height:32,borderRadius:16,border:"none",background:discoverView==="map"?"#fff":"transparent",color:discoverView==="map"?"#4d9b86":"#9eb3ad",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:discoverView==="map"?"0 3px 7px rgba(36,80,70,0.065)":"none",cursor:"pointer"}}, React.createElement('svg', { viewBox:"0 0 24 24", width:16, height:16, fill:"none", stroke:"currentColor", strokeWidth:2, strokeLinecap:"round", strokeLinejoin:"round"}, React.createElement('path', { d:"M4 19.5V5a2 2 0 012-2l5 3 5-3h1a2 2 0 012 2v14a2 2 0 01-2 2l-5-3-5 3-5-3" }), React.createElement('path', { d:"M9 6v14M15 4v14" })))
               )
             )
 
@@ -3691,12 +3691,12 @@ function LinkNest(){
                 : React.createElement(NearbyMapHome, { books: sortedFiltered, onOpenBook: setSelBook, onOpenRadius: ()=>setShowMapSheet(true), geoLabel: geoLabel, radius: radius }))
               : [
                   React.createElement('div', { key:"search", style: {position:"relative",margin:"0 0 12px"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1513}}
-                    , React.createElement('span', { style: {position:"absolute",left:14,top:"50%",transform:"translateY(-50%)",fontSize:16,color:"#a6b8b2"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1514}}, "⌕")
-                    , React.createElement('input', { value: search, onChange: e=>setSearch(e.target.value), placeholder: "Search title, author, or neighbor", style: {width:"100%",padding:"11px 14px 11px 38px",borderRadius:22,border:"1.5px solid #dfece7",fontSize:14,background:"rgba(255,255,255,0.72)",outline:"none",color:"#18352e",boxShadow:"0 4px 12px rgba(36,80,70,0.018)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1515}})
+                    , React.createElement('span', { style: {position:"absolute",left:15,top:"50%",transform:"translateY(-50%)",fontSize:17,color:"#a6b8b2"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1514}}, "⌕")
+                    , React.createElement('input', { value: search, onChange: e=>setSearch(e.target.value), placeholder: "Search title, author, or neighbor", style: {width:"100%",padding:"12px 15px 12px 40px",borderRadius:23,border:"1.5px solid #dfece7",fontSize:15,background:"rgba(255,255,255,0.72)",outline:"none",color:"#18352e",boxShadow:"0 4px 12px rgba(36,80,70,0.018)"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1515}})
                   ),
-                  React.createElement('div', { key:"cats", style: {display:"flex",gap:5,overflowX:"auto",paddingBottom:2,marginBottom:12}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1519}}
+                  React.createElement('div', { key:"cats", style: {display:"flex",gap:6,overflowX:"auto",paddingBottom:2,marginBottom:13}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1519}}
                     , CATEGORIES.map(c=>(
-                      React.createElement('button', { key: c, onClick: ()=>setCat(c), style: {flexShrink:0,padding:"6px 9px",borderRadius:999,border:cat===c?"none":"1.5px solid #dfece7",background:cat===c?"#18352e":"rgba(255,255,255,0.68)",color:cat===c?"#fff":"#5b746d",fontWeight:800,fontSize:11,cursor:"pointer",boxShadow:"none"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1521}}
+                      React.createElement('button', { key: c, onClick: ()=>setCat(c), style: {flexShrink:0,padding:"7px 10px",borderRadius:999,border:cat===c?"none":"1.5px solid #dfece7",background:cat===c?"#18352e":"rgba(255,255,255,0.68)",color:cat===c?"#fff":"#5b746d",fontWeight:800,fontSize:12,cursor:"pointer",boxShadow:"none"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1521}}
                         , c
                       )
                     ))

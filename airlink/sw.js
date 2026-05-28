@@ -1,5 +1,5 @@
 // LinkNest Service Worker — auto-versioned
-const BUILD_ID = '202605252214';
+const BUILD_ID = '202605272146';
 const CACHE_NAME = 'linknest-' + BUILD_ID;
 const CORE_ASSETS = [
   './',

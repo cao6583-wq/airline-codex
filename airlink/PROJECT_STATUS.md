@@ -47,7 +47,7 @@ LinkNest 是一个邻里/朋友之间共享书籍的手机网页版 PWA。当前
 - React 加载失败时显示明确错误提示。
 - 应用品牌已改为 `LinkNest`。
 - 已替换 LinkNest 图标资源。
-- 构建号与 Service Worker 缓存版本：`202605272226`。
+- 构建号与 Service Worker 缓存版本：`202605272303`。
 - Manifest、favicon、iOS `apple-touch-icon` 已加版本参数，便于手机 Safari/PWA 获取新图标。
 - “我的 > 应用诊断”新增“清理缓存”，会清除 Cache Storage 和注销旧 Service Worker 后带新构建号重载，不会清空本地书架/消息数据。
 

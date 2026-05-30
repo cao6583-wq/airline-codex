@@ -7,12 +7,12 @@
   <meta name="apple-mobile-web-app-title" content="LinkNest">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <link rel="manifest" href="manifest.json?v=202605272303">
-  <link rel="icon" type="image/png" href="linknest-white-favicon.png?v=202605272303">
-  <link rel="apple-touch-icon" sizes="192x192" href="linknest-white-icon-192.png?v=202605272303">
-  <link rel="apple-touch-icon" sizes="512x512" href="linknest-white-icon-512.png?v=202605272303">
+  <link rel="manifest" href="manifest.json?v=202605301446">
+  <link rel="icon" type="image/png" href="linknest-white-favicon.png?v=202605301446">
+  <link rel="apple-touch-icon" sizes="192x192" href="linknest-white-icon-192.png?v=202605301446">
+  <link rel="apple-touch-icon" sizes="512x512" href="linknest-white-icon-512.png?v=202605301446">
   <title>LinkNest · Mobile Web App</title>
-  <meta name="build-id" content="202605272303">
+  <meta name="build-id" content="202605301446">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; background: #e8eaf0; }
@@ -974,7 +974,7 @@ function BookCard({book,onPress,onOwnerPress,delay=0}){
   const tone = bookTone(book);
   const available = book.available !== false;
   return (
-    React.createElement('article', { onClick: ()=>onPress(book), style: {background:"#fff",borderRadius:15,padding:"12px 11px",marginBottom:11,display:"grid",gridTemplateColumns:"78px minmax(0,1fr)",gap:12,cursor:"pointer",boxShadow:"0 6px 16px rgba(36,80,70,0.035)",border:"1.5px solid #e2eee9",transform:vis?"translateY(0)":"translateY(16px)",opacity:vis?1:0,transition:"transform .35s cubic-bezier(.22,1,.36,1),opacity .35s,box-shadow .2s",position:"relative",overflow:"hidden"},
+    React.createElement('article', { onClick: ()=>onPress(book), style: {background:"#fff",borderRadius:15,padding:"16px 11px",marginBottom:11,display:"grid",gridTemplateColumns:"78px minmax(0,1fr)",gap:12,cursor:"pointer",boxShadow:"0 6px 16px rgba(36,80,70,0.035)",border:"1.5px solid #e2eee9",transform:vis?"translateY(0)":"translateY(16px)",opacity:vis?1:0,transition:"transform .35s cubic-bezier(.22,1,.36,1),opacity .35s,box-shadow .2s",position:"relative",overflow:"hidden"},
       onMouseEnter: e=>{e.currentTarget.style.boxShadow="0 12px 24px rgba(36,80,70,0.08)";e.currentTarget.style.transform="translateY(-1px)";},
       onMouseLeave: e=>{e.currentTarget.style.boxShadow="0 7px 18px rgba(36,80,70,0.04)";e.currentTarget.style.transform="translateY(0)";}}
       , React.createElement(BookCoverStack, { book, size:70, compact:true, style:{alignSelf:"center",justifySelf:"center",filter:"drop-shadow(0 6px 9px rgba(36,80,70,0.09))"} })
